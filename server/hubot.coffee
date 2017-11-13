@@ -5,6 +5,8 @@ model = share.model # import
 # Log messages?
 DEBUG = true
 
+BOTNAME = Meteor.settings?.botname or process.env.BOTNAME or 'codexbot'
+
 # Monkey-patch Hubot to support private messages
 Hubot.Response::priv = (strings...) ->
   @robot.adapter.priv @envelope, strings...
@@ -135,8 +137,9 @@ class BlackboardAdapter extends Hubot.Adapter
   # Returns nothing.
   close: ->
 
+return unless model.DO_BATCH_PROCESSING
 Meteor.startup ->
-  robot = new Robot null, null, false, Meteor.settings?.botname ? 'codexbot'
+  robot = new Robot null, null, false, BOTNAME
   robot.alias = 'bot'
   adapter = robot.adapter = new BlackboardAdapter robot
   # what's (the regexp for) my name?

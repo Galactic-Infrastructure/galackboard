@@ -3,7 +3,7 @@ model = share.model
 
 # if the database is empty on server start, create some sample data.
 # (useful during development; disable this before hunt)
-POPULATE_DB_WHEN_RESET = if Meteor.settings.production then false else true
+POPULATE_DB_WHEN_RESET = !Meteor.settings.production && !Meteor.isProduction
 
 SAMPLE_DATA = [
   name: "Mega man"
@@ -414,7 +414,7 @@ SAMPLE_QUIPS = [
 ]
 
 Meteor.startup ->
-  if POPULATE_DB_WHEN_RESET and model.RoundGroups.find().count() is 0
+  if model.DO_BATCH_PROCESSING and POPULATE_DB_WHEN_RESET and model.RoundGroups.find().count() is 0
     # Meteor.call is sync on server!
     console.log 'Populating initial puzzle database...'
     console.log '(use production:true in settings.json to disable this)'
