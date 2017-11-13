@@ -202,12 +202,8 @@ purge = () -> rmrfFolder(rootFolder)
 
 # Intialize APIs and load rootFolder
 do ->
-  Gapi.apis.auth.getApplicationDefault(Meteor.bindEnvironment (err, jwt) ->
-    if err
-      console.warn "Error trying to retrieve drive API:", error.__proto__
-      console.warn "Google Drive integration disabled."
-      drive = null
-      return
+  try
+    jwt = Meteor.wrapAsync(Gapi.apis.auth.getApplicationDefault, Gapi.apis.auth)()
     if jwt.createScopedRequired && jwt.createScopedRequired()
       jwt = jwt.createScoped(SCOPES)
     # record the API and auth info
@@ -223,7 +219,10 @@ do ->
     # for debugging/development
     debug.drive = drive
     debug.jwt = jwt
-  )
+  catch error
+    console.warn "Error trying to retrieve drive API:", error
+    console.warn "Google Drive integration disabled."
+    drive = null
 
 
 # exports
