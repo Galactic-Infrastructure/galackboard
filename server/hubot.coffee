@@ -138,6 +138,10 @@ class BlackboardAdapter extends Hubot.Adapter
   close: ->
 
 return unless model.DO_BATCH_PROCESSING
+IGNORED_NICKS =
+  'codexbot': true
+  '': true
+  'thehunt': true
 Meteor.startup ->
   robot = new Robot null, null, false, BOTNAME
   robot.alias = 'bot'
@@ -166,7 +170,7 @@ Meteor.startup ->
   model.Messages.find({}).observeChanges
     added: (id, msg) ->
       return if startup
-      return if msg.nick is "codexbot" or msg.nick is ""
+      return if IGNORED_NICKS[msg.nick]?
       return if msg.system or msg.action or msg.oplog or msg.bodyIsHtml
       console.log "Received from #{msg.nick} in #{msg.room_name}: #{msg.body}"\
         if DEBUG
