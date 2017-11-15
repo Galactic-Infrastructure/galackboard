@@ -3,7 +3,7 @@
 model = share.model # import
 
 # Log messages?
-DEBUG = Meteor.isProduction
+DEBUG = !Meteor.isProduction
 
 BOTNAME = Meteor.settings?.botname or process.env.BOTNAME or 'codexbot'
 
