@@ -217,6 +217,7 @@ Template.header_breadcrumbs.helpers
   type: -> Session.get('type')
   id: -> Session.get('id')
   idIsNew: -> Session.equals('id', 'new')
+  picker: -> settings.PICKER_CLIENT_ID? and settings.PICKER_APP_ID? and settings.PICKER_DEVELOPER_KEY?
   drive: -> switch Session.get('type')
     when 'general'
       Session.get 'RINGHUNTERS_FOLDER'
@@ -272,7 +273,7 @@ uploadToDriveFolder = share.uploadToDriveFolder = (folder, callback) ->
       else
         console.log 'Unexpected action:', data
   gapi.auth.authorize
-    client_id: '571639156428-60p46e0himfh5flqducjd4komitga1d4.apps.googleusercontent.com'
+    client_id: settings.PICKER_CLIENT_ID
     scope: ['https://www.googleapis.com/auth/drive']
     immediate: false
   , (authResult) ->
@@ -281,8 +282,8 @@ uploadToDriveFolder = share.uploadToDriveFolder = (folder, callback) ->
       console.log 'Authentication failed', authResult
       return
     new google.picker.PickerBuilder()\
-      .setAppId('365816747654.apps.googleusercontent.com')\
-      .setDeveloperKey('AIzaSyC5h171Bt3FrLlSYDur-RbvTXwgxXYgUv0')\
+      .setAppId(settings.PICKER_APP_ID)\
+      .setDeveloperKey(settings.PICKER_DEVELOPER_KEY)\
       .setOAuthToken(oauthToken)\
       .setTitle('Upload Item')\
       .addView(uploadView)\
