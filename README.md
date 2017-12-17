@@ -9,7 +9,7 @@ NGinx, Node.js, Meteor, and MongoDB, build the app, configure systemd to start
 everything on boot, and install an SSL certificate from Lets Encrypt. It will
 also give you a chance to modify the configuration before everything starts.
 You can get an advance idea of what you may configure from reading
-`private/installtemplates/etc/codex-common.ev.handlebars` and
+`private/installtemplates/etc/codex-common.env.handlebars` and
 `private/installfiles/etc/codex-batch.env`. A summary:
 
 * Google Drive integration requires an application default credential. If
@@ -17,19 +17,19 @@ You can get an advance idea of what you may configure from reading
   scope won't be configured; you have to do this while the VM is stopped.
   On any other kind of machine, download the service account key json file,
   put it somewhere nobody:nogroup can read it, and set
-  GOOGLE_APPLICATION_CREDENTIALS=$(path to file) in `/etc/codex-common.env`.
+  `GOOGLE_APPLICATION_CREDENTIALS=${path_to_file}` in `/etc/codex-common.env`.
   If this is a shared machine, you can change the user the blackboard runs as
-  by editing /etc/systemd/system/codex@.service and
-  /etc/systemd/system/codex-batch.service so the file can be owned by root.
+  by editing `/etc/systemd/system/codex@.service` and
+  `/etc/systemd/system/codex-batch.service` so the file can be owned by root.
 * Letting users upload files to the drive folders requires Google Picker
   credentials. Get some from
   https://console.developers.google.com/start/api?id=picker&credential=client_key
-  and add a `picker` key to the METEOR_SETTING json object in
+  and add a `picker` key to the `METEOR_SETTINGS` json object in
   `/etc/codex-common.env`.
-* Scraping twitter requires creating a twitter application at app.twitter.com.
-  You may want to create a burner twitter account, since you have to give the
-  app read/write access to the twitter account to use the streaming API. These
-  credentials go in `/etc/codex-batch.env`.
+* Scraping twitter requires creating a twitter application at
+  https://app.twitter.com. You may want to create a burner twitter account,
+  since you have to give the app read/write access to the twitter account to
+  use the streaming API. These credentials go in `/etc/codex-batch.env`.
 * Scraping email requires putting a login and password in
   `/env/codex-batch.env`. The other settings are documented there.
   
