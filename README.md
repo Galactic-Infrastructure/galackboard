@@ -12,6 +12,11 @@ You can get an advance idea of what you may configure from reading
 `private/installtemplates/etc/codex-common.env.handlebars` and
 `private/installfiles/etc/codex-batch.env`. A summary:
 
+* MongoDB wants to store its data in an XFS partition. If you have
+  unpartitioned space on your hard drive, you may want to create an xfs
+  partition and mount it at /var/lib/mongodb. If you haven't done this, the
+  install script will pause at the start and give you a chance, but you can
+  always not do it--our database probably won't be big enough for it to matter.
 * Google Drive integration requires an application default credential. If
   you're running on Compute Engine, this will be set up, but the Google Drive
   scope won't be configured; you have to do this while the VM is stopped.
