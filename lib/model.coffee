@@ -1242,8 +1242,7 @@ spread_id_to_link = (id) ->
         return "Couldn't find #{id} in #{args.type}"
       if getTag(puzz, 'answer')?
         return "#{puzz.name} is already answered"
-      if getTag(puzz, 'stuck')?
-        return "#{puzz.name} is already marked stuck"
+      oldStuck = getTag(puzz, 'stuck')
       setTagInternal
         object: id
         type: args.type
@@ -1251,6 +1250,8 @@ spread_id_to_link = (id) ->
         value: args.value or 'stuck'
         who: args.who
         now: UTCNow()
+      if oldStuck?
+        return
       body = "has requested help getting unstuck"
       if args.value?
         body = "#{body} (#{UI._escape args.value})"
