@@ -45,6 +45,65 @@ if settings.BB_SUB_ALL
   Meteor.subscribe 'all-roundsandpuzzles'
 # we also always subscribe to the last-pages feed; see chat.coffee
 
+notificationDeps = {}
+
+keystring = (k) -> "notification_#{k}"
+
+share.notification =
+  set: (k, v) ->
+    ks = keystring k
+    localStorage.setItem(ks, v)
+    notificationDeps[ks] ?= new Tracker.Dependency
+    notificationDeps[ks].changed()
+  get: (k) ->
+    ks = keystring k
+    notificationDeps[ks] ?= new Tracker.Dependency
+    notificationDeps[ks].depend()
+    v = localStorage.getItem(ks)
+    return unless v?
+    v is "true"
+
+notificationDefaults =
+  callins: false
+  answers: true
+  stuck: false
+  announcements: true
+  newpuzzles: true
+
+setupNotifications = ->
+  for stream, def of notificationDefaults
+    share.notification.set(stream, def) unless share.notification.get(stream)?
+  Session.set 'notifications', true
+  now = share.model.UTCNow()
+  Meteor.subscribe 'messages-in-range', 'oplog/0', now
+  share.model.Messages.find({room_name: 'oplog/0', timestamp: $gte: now}).observeChanges
+    added: (id, msg) ->
+      return unless Notification.permission is 'granted'
+      return unless share.notification.get(msg.stream)
+      gravatar = $.gravatar chat.nickEmail(msg.nick),
+        image: 'wavatar'
+        size: 192
+        secure: true
+      body = msg.body
+      if msg.type and msg.id
+        body = "#{body} #{share.model.pretty_collection(msg.type)}
+                #{share.model.collection(msg.type).findOne(msg.id)?.name}"
+      new Notification msg.nick,
+        body: body
+        tag: id
+        icon: gravatar[0].src
+
+do ->
+  return if Notification.permission is 'denied'
+  return setupNotifications() if Notification.permission is 'granted'
+  Notification.requestPermission (ok) ->
+    return unless ok is 'granted'
+    setupNotifications()
+
+addEventListener 'storage', (event) ->
+  return unless event.storageArea is localStorage
+  notificationDeps[event.key]?.changed()
+
 # Router
 BlackboardRouter = Backbone.Router.extend
   routes:
