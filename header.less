@@ -6,15 +6,26 @@
     &, & .timestamp { color: #c4c4c4; }
   }
   .bb-breadcrumbs {
-    padding-right: 160px;
     height: 40px;
     overflow: hidden;
-    .bb-drive-buttons {
-      position: absolute;
-      right: 0;
-      width: 163px;
-      .bb-drive-link + .tooltip .tooltip-arrow {
-        left: auto; right: 20px;
+    .nav {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: stretch;
+      float: none;
+      & > li {
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+      & > .fill {
+        flex-grow: 1;
+        flex-shrink: 1;
+        overflow: hidden;
+      }
+      .bb-drive-buttons {
+        .bb-drive-link + .tooltip .tooltip-arrow {
+          left: auto; right: 20px;
+        }
       }
     }
   }
