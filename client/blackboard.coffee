@@ -131,22 +131,9 @@ share.find_bbedit = (event) ->
   return edit.split('/')
 
 Template.blackboard.onRendered ->
-  $("#bb-sidebar").localScroll({ duration: 400, lazy: true })
-  $("body").scrollspy(target: "#bb-sidebar", offset: (NAVBAR_HEIGHT + 10))
-  ss = $("body").data("scrollspy")
-  # hack to ensure first element is selected on first reload
-  ss.activate(ss.targets[0]) if ss.targets.length
-  ss.process()
   #  page title
   $("title").text("Codex Puzzle Blackboard")
-  # affix side menu
-  # XXX disabled because it doesn't play nice with narrow screens
-  #$("#bb-sidebar > .bb-sidenav").affix()
-  # tooltips
-  $('#bb-sidebar .nav > li > a').tooltip placement: 'right'
   $('#bb-tables .bb-puzzle .puzzle-name > a').tooltip placement: 'left'
-  # see the global 'updateScrollSpy' helper for details on how
-  # we update scrollspy when the rounds list changes
 doBoolean = (name, newVal) ->
   Session.set name, newVal
   $.cookie name, (newVal or ''),  {expires: 365, path: '/'}

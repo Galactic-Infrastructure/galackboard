@@ -120,12 +120,6 @@ Template.registerHelper 'pretty_ts', (args) ->
     else
       "Unknown timestamp style: #{style}"
 
-# Scroll spy
-Template.registerHelper 'updateScrollSpy', (args) ->
-  ss = $("body").data("scrollspy")
-  ss?.refresh()
-  return ''
-
 ############## log in/protect/mute panel ####################
 Template.header_loginmute.helpers
   volumeIcon: ->
