@@ -238,8 +238,8 @@ do ->
     resource = ensureFolder ROOT_FOLDER_NAME
     console.log "Google Drive authorized and activated"
     rootFolder = resource.id
-    # Create a special folder for uploads to ringhunters chat
-    resource = ensureFolder 'Ringhunters Uploads', rootFolder
+    # Create a special folder for uploads to loopfinders chat
+    resource = ensureFolder 'Loopfinders Uploads', rootFolder
     ringhuntersFolder = resource.id
     # for debugging/development
     debug.drive = drive
