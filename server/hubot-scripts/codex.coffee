@@ -159,7 +159,7 @@ share.hubot.codex = (robot) ->
       return
     Meteor.call "deleteAnswer",
       type: target.type
-      puzzle: target.object._id
+      target: target.object._id
       who: who
     msg.reply new share.Useful, "Okay, I deleted the answer to \"#{target.object.name}\"."
     msg.finish()
