@@ -208,7 +208,14 @@ Template.messages.onCreated ->
     Tracker.onInvalidate invalidator
 
 Template.messages.onRendered ->
+  chatBottom = document.getElementById('chat-bottom')
+  if window.IntersectionObserver and chatBottom?
+    instachat.bottomObserver = new window.IntersectionObserver (entries) ->
+      return if selfScroll?
+      instachat.scrolledToBottom = entries[0].isIntersecting
+    instachat.bottomObserver.observe(chatBottom)
   if settings.FOLLOWUP_STYLE is "js"
+    # observe future changes
     $("#messages").each ->
       console.log "Observing #{this}" unless Meteor.isProduction
       instachat.mutationObserver.observe(this, {childList: true})
@@ -354,6 +361,7 @@ $(document).on 'mouseenter', '.bb-message-body .inline-image', imageScrollHack
 # unstick from bottom if the user manually scrolls
 $(window).scroll (event) ->
   return unless Session.equals('currentPage', 'chat')
+  return if instachat.bottomObserver
   #console.log if selfScroll? then 'Self scroll' else 'External scroll'
   return maybeScrollMessagesView() if selfScroll?
   # set to false, just in case older browser doesn't have scroll properties
@@ -558,7 +566,8 @@ startupChat = ->
 cleanupChat = ->
   try
     favicon.reset()
-  instachat.mutationObserver.disconnect()
+  instachat.mutationObserver?.disconnect()
+  instachat.bottomObserver?.disconnect()
   if instachat.keepaliveInterval?
     Meteor.clearInterval instachat.keepaliveInterval
     instachat.keepalive = instachat.keepaliveInterval = undefined
