@@ -81,10 +81,12 @@ instachat["mutationObserver"] = new MutationObserver (recs, obs) ->
     check node for node in rec.addedNodes
     check node for node in rec.removedNodes
     continue unless someElement
-    prevEl = rec.previousSibling?.nextSibling?.previousElementSibling
-    effectFollowup(prevEl, prevEl.nextElementSibling) if prevEl?
     for node, i in rec.addedNodes
-      effectFollowup(node, node.nextElementSibling) if node instanceof Element
+      effectFollowup node.previousElementSibling, node if node instanceof Element
+    nextEl = rec.nextSibling
+    unless nextEl instanceof Element
+      nextEl = nextEl?.nextElementSibling
+    effectFollowup nextEl?.previousElementSibling, nextEl
     
 
 # Favicon instance, used for notifications
