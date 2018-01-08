@@ -53,12 +53,15 @@ okCancelEvents = share.okCancelEvents = (selector, callbacks) ->
 compactMode = ->
   editing = (Session.get 'nick') and (Session.get 'canEdit')
   (Session.get 'compactMode') and not editing
+nCols = -> if compactMode() then 2 else \
+  (if ((Session.get 'nick') and (Session.get 'canEdit')) then 3 else 5)
 Template.blackboard.helpers
   sortReverse: -> Session.get 'sortReverse'
   hideSolved: -> Session.get 'hideSolved'
   hideRoundsSolvedMeta: -> Session.get 'hideRoundsSolvedMeta'
   hideStatus: -> Session.get 'hideStatus'
   compactMode: compactMode
+  nCols: nCols
 
 # Notifications
 notificationStreams = [
@@ -300,6 +303,7 @@ Template.blackboard_round.helpers
       count++ if share.isNickNear(p.nick)
     count
   compactMode: compactMode
+  nCols: nCols
 
 Template.blackboard_puzzle.helpers
   tag: (name) ->
@@ -314,6 +318,7 @@ Template.blackboard_puzzle.helpers
       count++ if share.isNickNear(p.nick)
     count
   compactMode: compactMode
+  nCols: nCols
 
 tagHelper = (id) ->
   isRoundGroup = ('rounds' of this)
