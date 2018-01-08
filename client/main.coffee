@@ -50,6 +50,12 @@ notificationDeps = {}
 
 keystring = (k) -> "notification_#{k}"
 
+# Chrome for Android only lets you use Notifications via
+# ServiceWorkerRegistration, not directly with the Notification class.
+# It appears no other browser (that isn't direved from Chrome) is like that.
+# Since there's no capability to detect, we have to use user agent.
+isAndroidChrome = -> /Android.*Chrome\/[.0-9]*/.test(navigator.userAgent)
+
 share.notification =
   set: (k, v) ->
     ks = keystring k
@@ -63,10 +69,15 @@ share.notification =
     v = localStorage.getItem(ks)
     return unless v?
     v is "true"
+  # On android chrome, we clobber this with a version that uses the
+  # ServiceWorkerRegistration.
+  notify: (title, settings) ->
+    new Notification title, settings
   ask: ->
     Notification.requestPermission (ok) ->
       Session.set 'notifications', ok
       setupNotifications() if ok is 'granted'
+    
 
 notificationDefaults =
   callins: false
@@ -76,6 +87,16 @@ notificationDefaults =
   newpuzzles: true
 
 setupNotifications = ->
+  if isAndroidChrome()
+    navigator.serviceWorker.register(Meteor._relativeToSiteRootUrl 'empty.js').then((reg) ->
+      share.notification.notify = (title, settings) ->
+        reg.showNotification title, settings
+      finishSetupNotifications()
+    ).catch (error) -> Session.set 'notifications', 'default'
+    return
+  finishSetupNotifications()
+
+finishSetupNotifications = ->
   for stream, def of notificationDefaults
     share.notification.set(stream, def) unless share.notification.get(stream)?
   now = share.model.UTCNow()
@@ -92,7 +113,7 @@ setupNotifications = ->
       if msg.type and msg.id
         body = "#{body} #{share.model.pretty_collection(msg.type)}
                 #{share.model.collection(msg.type).findOne(msg.id)?.name}"
-      new Notification msg.nick,
+      share.notification.notify msg.nick,
         body: body
         tag: id
         icon: gravatar[0].src
