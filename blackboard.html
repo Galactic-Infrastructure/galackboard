@@ -20,7 +20,7 @@
           data-sortReverse="false">Oldest rounds first</button>
 </div>
     {{#unless canEdit}}<br/>
-<div class="btn-group btn-group-vertical">
+<div class="btn-group btn-group-vertical text-right">
   <label class="checkbox bb-hide-solved">
     <input type="checkbox" id="bb-hide-solved-input" checked="{{hideSolved}}">
     Hide solved puzzles
@@ -33,6 +33,9 @@
     <input type="checkbox" id="bb-compact-mode" checked="{{compactMode}}">
     Compact mode
   </label>
+  {{#if notificationsAsk}}
+  <button id="notification-ask" class="btn btn-small">Enable notifications</button>
+  {{/if}}
 </div>
 {{/unless}}
 </div>

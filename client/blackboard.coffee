@@ -73,9 +73,14 @@ notificationStreams = [
 ]
 Template.blackboard.helpers
   notificationStreams: notificationStreams
-  notificationsEnabled: -> Session.get 'notifications'
+  notificationsAsk: ->
+    p = Session.get 'notifications'
+    p isnt 'granted' and p isnt 'denied'
+  notificationsEnabled: -> Session.equals 'notifications', 'granted'
   notificationStreamEnabled: (stream) -> share.notification.get stream
 Template.blackboard.events
+  "click #notification-ask": (event, template) ->
+    share.notification.ask()
   "change #notification-controls [data-notification-stream]": (event, template) ->
     share.notification.set event.target.dataset.notificationStream, event.target.checked
 

@@ -63,6 +63,10 @@ share.notification =
     v = localStorage.getItem(ks)
     return unless v?
     v is "true"
+  ask: ->
+    Notification.requestPermission (ok) ->
+      Session.set 'notifications', ok
+      setupNotifications() if ok is 'granted'
 
 notificationDefaults =
   callins: false
@@ -74,7 +78,6 @@ notificationDefaults =
 setupNotifications = ->
   for stream, def of notificationDefaults
     share.notification.set(stream, def) unless share.notification.get(stream)?
-  Session.set 'notifications', true
   now = share.model.UTCNow()
   Meteor.subscribe 'messages-in-range', 'oplog/0', now
   share.model.Messages.find({room_name: 'oplog/0', timestamp: $gte: now}).observeChanges
@@ -95,12 +98,11 @@ setupNotifications = ->
         icon: gravatar[0].src
 
 do ->
-  return if not Notification
-  return if Notification.permission is 'denied'
-  return setupNotifications() if Notification.permission is 'granted'
-  Notification.requestPermission (ok) ->
-    return unless ok is 'granted'
-    setupNotifications()
+  if not Notification
+    Session.set 'notifications', 'denied'
+    return
+  Session.set 'notifications', Notification.permission
+  setupNotifications() if Notification.permission is 'granted'
 
 addEventListener 'storage', (event) ->
   return unless event.storageArea is localStorage
