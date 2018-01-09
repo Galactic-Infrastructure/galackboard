@@ -140,7 +140,7 @@ share.find_bbedit = (event) ->
 
 Template.blackboard.onRendered ->
   #  page title
-  $("title").text("Codex Puzzle Blackboard")
+  $("title").text("Codex Ogg Puzzle Blackboard")
   $('#bb-tables .bb-puzzle .puzzle-name > a').tooltip placement: 'left'
 doBoolean = (name, newVal) ->
   Session.set name, newVal
