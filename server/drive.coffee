@@ -61,6 +61,37 @@ afterDelay = (ix, base, name, params, callback) ->
 apiThrottle = Meteor.wrapAsync (base, name, params, callback) ->
   afterDelay 0, base, name, params, callback
 
+awaitOnce = (attempts, name, parent, callback) ->
+  try
+    resp = apiThrottle drive.children, 'list',
+      folderId: parent
+      q: "title=#{quote name}"
+      maxResults: 1
+    if resp.items.length > 0
+      console.log "#{name} found"
+      callback null, resp.items[0]
+    else if attempts < 1
+      console.log "#{name} never existed"
+      callback "never existed", null
+    else
+      console.log "Waiting #{attempts} more times for #{name}"
+      later = -> awaitOnce attempts-1, name, parent, callback
+      Meteor.setTimeout later, 1000
+  catch error
+    callback error, null
+
+awaitFolder = Meteor.wrapAsync (name, parent, callback) ->
+  awaitOnce 5, name, parent, callback
+
+awaitOrEnsureFolder = (name, parent) ->
+  return ensureFolder name, parent if share.model.DO_BATCH_PROCESSING
+  try
+    return awaitFolder name, (parent or 'root')
+  catch error
+    console.log error
+    return ensureFolder name, parent if error is "never existed"
+    throw error
+
 ensureFolder = (name, parent) ->
   # check to see if the folder already exists
   resp = apiThrottle drive.children, 'list',
@@ -235,11 +266,11 @@ do ->
     drive = Gapi.apis.drive('v2')
     Gapi.registerAuth jwt
     # Look up the root folder
-    resource = ensureFolder ROOT_FOLDER_NAME
+    resource = awaitOrEnsureFolder ROOT_FOLDER_NAME
     console.log "Google Drive authorized and activated"
     rootFolder = resource.id
     # Create a special folder for uploads to loopfinders chat
-    resource = ensureFolder 'Loopfinders Uploads', rootFolder
+    resource = awaitOrEnsureFolder 'Loopfinders Uploads', rootFolder
     ringhuntersFolder = resource.id
     # for debugging/development
     debug.drive = drive
