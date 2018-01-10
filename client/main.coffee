@@ -29,6 +29,7 @@ Template.registerHelper 'editing', (args..., options) ->
   canEdit = options?.hash?.canEdit or (Session.get 'canEdit')
   return false unless (Session.get 'nick') and canEdit
   return Session.equals 'editing', args.join('/')
+Template.registerHelper 'stuck', (x) -> share.model.getTag(x, 'stuck')?
 
 Template.registerHelper 'linkify', (contents) ->
   contents = chat.convertURLsToLinksAndImages(UI._escape(contents))

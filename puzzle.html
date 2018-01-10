@@ -11,7 +11,7 @@
   {{> puzzle_callin_modal}}
   {{#with puzzle}}{{> puzzle_summon_button}}{{/with}}
 {{/unless}}
-<h1>Puzzle <small>{{puzzle.name}}
+<h1 class="{{#if stuck puzzle}}bb-status-stuck{{/if}}">Puzzle <small>{{puzzle.name}}
   {{#if puzzle.link}}(<a href="{{puzzle.link}}" target="_blank">puzzle link <i class="icon-share-alt"></i></a>){{/if}}
 </small></h1>
 

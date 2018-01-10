@@ -13,7 +13,7 @@
   {{> puzzle_callin_modal}}
   {{#with round}}{{> puzzle_summon_button}}{{/with}}
 {{/unless}}
-<h1>Round <small>{{round.name}}
+<h1 class="{{#if stuck round}}bb-status-stuck{{/if}}">Round <small>{{round.name}}
   {{#if round.link}}(<a href="{{round.link}}" target="_blank">puzzle link <i class="icon-share-alt"></i></a>){{/if}}
 </small></h1>
 
