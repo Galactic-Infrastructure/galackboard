@@ -35,6 +35,8 @@ DO_BATCH_PROCESSING = do ->
   return !(Meteor.settings.disableBatch ? process.env.DISABLE_BATCH_PROCESSING)
 
 
+emojify = (s) -> share.emojify?(s) or s
+
 # helper function: like _.throttle, but always ensures `wait` of idle time
 # between invocations.  This ensures that we stay chill even if a single
 # execution of the function starts to exceed `wait`.
@@ -1073,6 +1075,8 @@ spread_id_to_link = (id) ->
         room_name: args.room_name or "general/0"
         timestamp: UTCNow()
         useless: args.useless or false
+      # translate emojis!
+      newMsg.body = emojify newMsg.body unless newMsg.bodyIsHtml
       # update the user's 'last read' message to include this one
       # (doing it here allows us to use server timestamp on message)
       unless (args.suppressLastRead or newMsg.system or (not newMsg.nick))
