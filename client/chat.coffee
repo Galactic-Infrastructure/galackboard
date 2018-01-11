@@ -76,17 +76,20 @@ instachat["alertWhenUnreadMessages"] = false
 instachat["scrolledToBottom"]        = true
 instachat["mutationObserver"] = new MutationObserver (recs, obs) ->
   for rec in recs
+    console.log rec unless Meteor.isProduction
     someElement = false
     check = (e) -> someElement = true if e instanceof Element
     check node for node in rec.addedNodes
     check node for node in rec.removedNodes
     continue unless someElement
+    prevEl = rec.previousSibling
+    unless prevEl instanceof Element
+      prevEl = prevEl?.previousElementSibling
     for node, i in rec.addedNodes
-      effectFollowup node.previousElementSibling, node if node instanceof Element
-    nextEl = rec.nextSibling
-    unless nextEl instanceof Element
-      nextEl = nextEl?.nextElementSibling
-    effectFollowup nextEl?.previousElementSibling, nextEl
+      if node instanceof Element
+        effectFollowup prevEl, node
+        prevEl = node
+    effectFollowup prevEl, prevEl?.nextElementSibling
     
 
 # Favicon instance, used for notifications

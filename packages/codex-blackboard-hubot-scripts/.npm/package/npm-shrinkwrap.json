@@ -359,10 +359,14 @@
       "integrity": "sha1-yGIjevCiE/l//0ZZS9HUTspwXWM=",
       "dependencies": {
         "inherits": {
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "resolved": "https://registry.npmjs.org/inherits/-/inherits-1.0.0.tgz",
+          "integrity": "sha1-OOGXUoW/H3upyE2hArsSdxMirEg="
         },
         "yamlish": {
-          "version": "0.0.5"
+          "version": "0.0.5",
+          "resolved": "https://registry.npmjs.org/yamlish/-/yamlish-0.0.5.tgz",
+          "integrity": "sha1-hsbI5rKLCCdBbcyG90GbulYQtX0="
         }
       }
     },
