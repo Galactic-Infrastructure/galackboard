@@ -98,7 +98,7 @@ favicon = badge: (-> false), reset: (-> false)
 Meteor.startup ->
   favicon = share.chat.favicon = new Favico
     animation: 'slide'
-    fontFamily: 'Noto Sans'
+    fontFamily: 'Droid Sans'
     fontStyle: '700'
 
 Template.chat.helpers
