@@ -159,6 +159,13 @@ Template.header_loginmute.events
     event.preventDefault()
     share.chat.cleanupChat() if Session.equals('currentPage', 'chat')
     $.removeCookie 'nick', {path:'/'}
+    if (Session.get 'canEdit') and Session.equals 'currentPage', 'blackboard'
+      # Don't clear canEdit, as it makes the login box undismissable.
+      Session.set
+        nick: undefined
+        editing: undefined
+      ensureNick()
+      return
     Session.set
       nick: undefined
       canEdit: undefined
@@ -166,13 +173,11 @@ Template.header_loginmute.events
     if Session.equals('currentPage', 'chat')
       ensureNick -> # login again immediately
         share.chat.joinRoom Session.get('type'), Session.get('id')
-  "click .bb-protect, click .bb-unprotect": (event, template) ->
-    target = event.currentTarget
+  "click .bb-unprotect": (event, template) ->
     ensureNick ->
-      canEdit = $(target).attr('data-canEdit') is 'true'
-      Session.set
-        canEdit: (canEdit or undefined)
-        editing: undefined # abort current edit, whatever it is
+      share.Router.navigate "/edit", {trigger: true}
+  "click .bb-protect": (event, template) ->
+    share.Router.navigate "/", {trigger: true}
 
 ############## breadcrumbs #######################
 Template.header_breadcrumbs.helpers
@@ -275,6 +280,9 @@ Template.header_nickmodal.helpers
 
 Template.header_nickmodal_contents.helpers
   nick: -> Session.get "nick" or ''
+  dismissable: ->
+    return true if Session.equals 'currentPage', 'chat'
+    not ((Session.equals 'currentPage', 'blackboard') and Session.get 'canEdit')
 Template.header_nickmodal_contents.onCreated ->
   # we'd need to subscribe to 'all-nicks' here if we didn't have a permanent
   # subscription to it (in main.coffee)

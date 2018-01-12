@@ -202,9 +202,9 @@
 
 <template name="header_nickmodal_contents">
     <div class="modal-header">
-      {{#unless currentPageEquals "chat"}}
+      {{#if dismissable}}
       <button type="button" class="close" data-dismiss="modal">&times;</button>
-      {{/unless}}
+      {{/if}}
       <h3>Pick a Nick Name</h3>
     </div>
     <div class="modal-body">

@@ -134,6 +134,7 @@ addEventListener 'storage', (event) ->
 BlackboardRouter = Backbone.Router.extend
   routes:
     "": "BlackboardPage"
+    "edit": "EditPage"
     "rounds/:round": "RoundPage"
     "puzzles/:puzzle": "PuzzlePage"
     "roundgroups/:roundgroup": "RoundGroupPage"
@@ -147,6 +148,16 @@ BlackboardRouter = Backbone.Router.extend
 
   BlackboardPage: ->
     this.Page("blackboard", "general", "0")
+    Session.set
+      canEdit: undefined
+      editing: undefined
+
+  EditPage: ->
+    this.Page("blackboard", "general", "0")
+    Session.set
+      canEdit: true
+      editing: undefined
+    share.ensureNick()
 
   RoundPage: (id) ->
     this.Page("round", "rounds", id)
