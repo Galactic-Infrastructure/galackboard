@@ -2,8 +2,6 @@
 'use strict'
 model = share.model # import
 
-Useful = share.Useful
-
 # Log messages?
 DEBUG = !Meteor.isProduction
 
@@ -221,4 +219,3 @@ Meteor.startup ->
     room_name: 'general/0'
     action: true
     bot_ignore: true
-    useless: true
