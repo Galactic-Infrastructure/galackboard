@@ -50,24 +50,33 @@ messagesForPage = (p, opts={}) ->
     timestamp: cond
   , opts
 
-isFollowup = (former, latter) ->
-  return false unless former?.classList?.contains("media")
-  return false unless latter.classList.contains("media")
-  return false unless former.dataset.nick == latter.dataset.nick
-  if former.classList.contains("bb-message-pm")
-    return false unless latter.classList.contains("bb-message-pm")
-    return false unless former.dataset.pmTo == latter.dataset.pmTo
+# compare to: computeMessageFollowup in lib/model.coffee
+computeMessageFollowup = (prev, curr) ->
+  return false unless prev?.classList?.contains("media")
+  return false unless prev.dataset.nick == curr.dataset.nick
+  for c in ['bb-message-pm','bb-message-action','bb-message-system','bb-oplog']
+    return false unless prev.classList.contains(c) is curr.classList.contains(c)
+  return false unless prev.dataset.pmTo == curr.dataset.pmTo
   return true
 
-effectFollowup = (former, latter) ->
-  console.log former, latter unless Meteor.isProduction
-  return unless latter?.classList?
-  if isFollowup(former, latter)
-    console.log "#{latter} is followup of #{former}" unless Meteor.isProduction
-    latter.classList.add("bb-message-followup")
+assignMessageFollowup = (curr, prev) ->
+  return prev unless curr instanceof Element
+  return curr unless curr.classList.contains('media')
+  if prev is undefined
+    prev = curr.previousElementSibling
+  if prev?
+    prev = prev.previousElementSibling unless prev instanceof Element
+  if computeMessageFollowup(prev, curr)
+    curr.classList.add("bb-message-followup")
   else
-    console.log "#{latter} is not followup of #{former}" unless Meteor.isProduction
-    latter.classList.remove("bb-message-followup")
+    curr.classList.remove("bb-message-followup")
+  return curr
+
+assignMessageFollowupList = (nodeList) ->
+  prev = if nodeList.length > 0 then nodeList[0].previousElementSibling
+  for n in nodeList when n instanceof Element
+    prev = assignMessageFollowup n, prev
+  return prev
 
 # Globals
 instachat = {}
@@ -77,20 +86,13 @@ instachat["scrolledToBottom"]        = true
 instachat["mutationObserver"] = new MutationObserver (recs, obs) ->
   for rec in recs
     console.log rec unless Meteor.isProduction
-    someElement = false
-    check = (e) -> someElement = true if e instanceof Element
-    check node for node in rec.addedNodes
-    check node for node in rec.removedNodes
-    continue unless someElement
-    prevEl = rec.previousSibling
-    unless prevEl instanceof Element
-      prevEl = prevEl?.previousElementSibling
-    for node, i in rec.addedNodes
-      if node instanceof Element
-        effectFollowup prevEl, node
-        prevEl = node
-    effectFollowup prevEl, prevEl?.nextElementSibling
-    
+    # previous element's followup status can't be affected by changes after it;
+    assignMessageFollowupList rec.addedNodes
+    nextEl = rec.nextSibling
+    if nextEl? and not (nextEl instanceof Element)
+      nextEl = nextEl.nextElementSibling
+    assignMessageFollowup nextEl
+  return
 
 # Favicon instance, used for notifications
 # (first add host to path)
@@ -98,7 +100,7 @@ favicon = badge: (-> false), reset: (-> false)
 Meteor.startup ->
   favicon = share.chat.favicon = new Favico
     animation: 'slide'
-    fontFamily: 'Droid Sans'
+    fontFamily: 'Noto Sans'
     fontStyle: '700'
 
 Template.chat.helpers
@@ -106,6 +108,10 @@ Template.chat.helpers
     type = Session.get 'type'
     type is 'general' or \
       (model.collection(type)?.findOne Session.get("id"))?
+  object: ->
+    type = Session.get 'type'
+    type isnt 'general' and \
+      (model.collection(type)?.findOne Session.get("id"))
   solved: ->
     type = Session.get 'type'
     type isnt 'general' and \
@@ -119,6 +125,11 @@ nickEmail = (nick) ->
   n = model.Nicks.findOne canon: cn
   return model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"
 
+nickEmail = (nick) ->
+  cn = model.canonical(nick)
+  n = model.Nicks.findOne canon: cn
+  return model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"  
+
 # Template Binding
 Template.messages.helpers
   room_name: -> Session.get('room_name')
@@ -127,8 +138,14 @@ Template.messages.helpers
             Template.instance().subscriptionsReady()
   isLastRead: (ts) -> Session.equals('lastread', +ts)
   usefulEnough: (m) ->
-    not Session.get('nobot') or m.nick is Session.get('nick') or not (\
-        m.useless or (m.anyUselessResponses and not m.anyUsefulResponses)) 
+    # test Session.get('nobot') last to get a fine-grained dependency
+    # on the `nobot` session variable only for 'useless' messages
+    m.nick is Session.get('nick') or m.to is Session.get('nick') or \
+        m.useful or \
+        (m.nick isnt 'via twitter' and m.nick isnt 'codexbot' and \
+            not m.useless_cmd) or \
+        doesMentionNick(m) or \
+        (not Session.equals('nobot', true))
   prevTimestamp: ->
     p = pageForTimestamp Session.get('room_name'), +Session.get('timestamp')
     return unless p?.from
@@ -148,7 +165,6 @@ Template.messages.helpers
       transform: (m) ->
         _id: m._id
         message: m
-        isBot: m.nick is 'codexbot' and m.to is null
 
   email: -> nickEmail this.message.nick
   body: ->
@@ -343,14 +359,10 @@ scrollMessagesView = ->
     else
       $.cookie btn, true, {expires: 365, path: '/'}
 
+    if btn is 'nobot'
+      touchSelfScroll() # ignore scroll event generated by CSS relayout
+      maybeScrollMessagesView()
     Session.set btn, !!$.cookie btn
-Tracker.autorun ->
-  if Session.equals('nobot', true)
-    document.documentElement.classList.add('bb-nobot')
-  else
-    document.documentElement.classList.remove('bb-nobot')
-  touchSelfScroll() # ignore scroll event generated by CSS relayout
-  maybeScrollMessagesView()
 
 # ensure that we stay stuck to bottom even after images load
 imageScrollHack = window.imageScrollHack = ->
@@ -457,6 +469,9 @@ Template.messages_input.submit = (message) ->
       while rest
         n = model.Nicks.findOne canon: model.canonical(to)
         break if n
+        if to is 'bot' # allow 'bot' as a shorthand for 'codexbot'
+          to = 'codexbot'
+          continue
         [extra, rest] = rest.split(/\s+([^]*)/, 2)
         to += ' ' + extra
       if n
@@ -486,23 +501,28 @@ Template.messages_input.events
       $message = $ event.currentTarget
       message = $message.val()
       if message
+        re = new RegExp "^#{regex_escape message}", "i"
         for present in whos_here_helper().fetch()
           n = model.Nicks.findOne(canon: present.nick)
           realname = if n then model.getTag(n, 'Real Name')
-          re = new RegExp "^#{message}", "i"
           if re.test present.nick
-            $message.val "#{present.nick}: "
+            return $message.val "#{present.nick}: "
           else if realname and re.test realname
-            $message.val "#{realname}: "
+            return $message.val "#{realname}: "
           else if re.test "@#{present.nick}"
-            $message.val "@#{present.nick} "
+            return $message.val "@#{present.nick} "
           else if realname and re.test "@#{realname}"
-            $message.val "@#{realname} "
+            return $message.val "@#{realname} "
           else if re.test("/m #{present.nick}") or \
                   re.test("/msg #{present.nick}") or \
                   realname and (re.test("/m #{realname}") or \
                                 re.test("/msg #{realname}"))
-            $message.val "/msg #{present.nick} "
+            return $message.val "/msg #{present.nick} "
+        if re.test('bot')
+          return $message.val 'codexbot '
+        if re.test('/m bot') or re.test('/msg bot')
+          return $message.val '/msg codexbot '
+
     # implicit submit on enter (but not shift-enter or ctrl-enter)
     return unless event.which is 13 and not (event.shiftKey or event.ctrlKey)
     event.preventDefault() # prevent insertion of enter

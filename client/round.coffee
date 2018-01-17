@@ -11,6 +11,7 @@ Template.round.helpers
                   (group?.rounds or []).indexOf(round?._id)
     r.puzzles = ((model.Puzzles.findOne(p) or {_id:p}) \
       for p in (round?.puzzles or []))
+    r.stuck = model.isStuck round
     return r
   tag: (name) ->
     return (model.getTag this, name) or ''

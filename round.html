@@ -10,10 +10,9 @@
   <table class="table"><tbody>{{! tables for layout, oh my }}
     <tr><td>
 {{#unless round.solved}}
-  {{> puzzle_callin_modal}}
-  {{#with round}}{{> puzzle_summon_button}}{{/with}}
+  {{#with round}}{{> puzzle_callin_modal}}{{> puzzle_summon_modal}}{{/with}}
 {{/unless}}
-<h1 class="{{#if stuck round}}bb-status-stuck{{/if}}">Round <small>{{round.name}}
+<h1 class="{{#if stuck}}bb-status-stuck{{/if}}">Round <small>{{round.name}}
   {{#if round.link}}(<a href="{{round.link}}" target="_blank">puzzle link <i class="icon-share-alt"></i></a>){{/if}}
 </small></h1>
 

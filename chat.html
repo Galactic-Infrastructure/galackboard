@@ -7,10 +7,10 @@
   <div class="bb-chat-callin {{#if solved}}solved{{/if}}">
     {{#if solved}}Solved
     {{else}}
-      {{> puzzle_callin_modal}}
-        {{#with puzzle}}
-          {{> puzzle_summon_button}}
-        {{/with}}
+      {{#with object}}
+        {{> puzzle_callin_modal}}
+        {{> puzzle_summon_modal}}
+      {{/with}}
     {{/if}}
   </div>
   {{/if}}
@@ -63,9 +63,9 @@
     {{else if timestamp}}
       <p align="center">Start of chat log.</p>
     {{/if}}{{/if}}
-    {{#each messages}}{{#if usefulEnough message}}{{scrollHack}}
+    {{#each messages}}{{scrollHack}}
       {{#if message.presence}}
-<div class="bb-message-presence {{message.presence}}" title="{{body}}" data-nick="{{message.nick}}">
+<div class="bb-message-presence {{message.presence}}" title={{body}}>
   {{gravatar id=email image="wavatar" size=14 }}{{message.nick}}
 </div>
       {{else if message.system}}
@@ -73,26 +73,28 @@
    <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
      {{body}}
 </div>
-      {{else if message.action}}
+      {{else if usefulEnough message}}
+        {{# if message.action}}
 <div class="bb-message-action" data-nick="{{message.nick}}">
    <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
      <i class="icon-hand-right"></i>
      <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span> {{body}}
 </div>
-      {{else}}
-<div class="media{{#if message.to}} bb-message-pm{{/if}}{{#if isBot}} bb-is-bot{{/if}}" data-nick="{{message.nick}}" data-pm-to="{{message.to}}">
+        {{else}}
+<div class="media{{#if message.to}} bb-message-pm{{/if}}" data-nick="{{message.nick}}" data-pm-to="{{message.to}}">
   {{gravatar id=email image="wavatar" size=48 classes="media-object pull-left img-rounded" }}
   <div class="media-body bb-message-body">
     <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
     <h5 class="media-heading"><span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span>
-    {{#if message.to}}
+          {{#if message.to}}
     <small>(Private message to {{nickOrName message.to}})</small>
-    {{/if}}
+          {{/if}}
     </h5>
     {{body}}
   </div>
 </div>
-      {{/if}}{{/if}}
+        {{/if}}
+      {{/if}}
       {{#if isLastRead message.timestamp}}
 <div class="bb-message-last-read">read</div>
       {{/if}}

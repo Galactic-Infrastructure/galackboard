@@ -11,6 +11,7 @@ Template.puzzle.helpers
     r.puzzle_num = 1 + (round?.puzzles or []).indexOf(puzzle?._id)
     r.round_num = 1 + group?.round_start + \
                   (group?.rounds or []).indexOf(round?._id)
+    r.stuck = model.isStuck puzzle
     return r
 
 Template.puzzle.onCreated ->
@@ -69,22 +70,44 @@ Template.puzzle.events
 Template.puzzle_correct_answer.helpers
   tag: (name) -> (model.getTag this, name) or ''
 
-Template.puzzle_summon_button.helpers
-  stuck: -> (model.getTag this, 'stuck')?
+Template.puzzle_summon_modal.helpers
+  stuck: -> model.isStuck this
 
-Template.puzzle_summon_button.events
+Template.puzzle_summon_modal.events
   "click .bb-summon-btn.stuck": (event, template) ->
     share.ensureNick =>
-      Meteor.call 'unsummon',
-        who: Session.get 'nick'
-        type: Session.get 'type'
-        object: Session.get 'id'
+      share.confirmationDialog
+        message: 'Are you sure you want to cancel this request for help?'
+        ok_button: "Yes, this #{model.pretty_collection(Session.get 'type')} is no longer stuck"
+        no_button: 'Nevermind, this is still STUCK'
+        ok: ->
+          Meteor.call 'unsummon',
+            who: Session.get 'nick'
+            type: Session.get 'type'
+            object: Session.get 'id'
   "click .bb-summon-btn.unstuck": (event, template) ->
     share.ensureNick =>
-      Meteor.call 'summon',
-        who: Session.get 'nick'
-        type: Session.get 'type'
-        object: Session.get 'id'
+      template.$('.stuck-at').val('at start')
+      template.$('.stuck-need').val('ideas')
+      template.$('.stuck-other').val('')
+      template.$('.bb-callin-submit').focus()
+      template.$('.modal').modal show: true
+  "click .bb-summon-submit, submit form": (event, template) ->
+    event.preventDefault() # don't reload page
+    at = template.$('.stuck-at').val()
+    need = template.$('.stuck-need').val()
+    other = template.$('.stuck-other').val()
+    how = "Stuck #{at}"
+    if need isnt 'other'
+        how += ", need #{need}"
+    if other isnt ''
+        how += ": #{other}"
+    Meteor.call 'summon',
+      who: Session.get 'nick'
+      type: Session.get 'type'
+      object: Session.get 'id'
+      how: how
+    template.$('.modal').modal 'hide'
 
 Template.puzzle_callin_modal.events
   "click .bb-callin-btn": (event, template) ->
@@ -93,7 +116,7 @@ Template.puzzle_callin_modal.events
       template.$('input:checked').val([])
       template.$('.modal').modal show: true
       template.$('input:text').focus()
-  "click .bb-callin-submit": (event, template) ->
+  "click .bb-callin-submit, submit form": (event, template) ->
     event.preventDefault() # don't reload page
     answer = template.$('.bb-callin-answer').val()
     return unless answer
