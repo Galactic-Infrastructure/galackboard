@@ -170,12 +170,6 @@ Template.nick_presence.helpers
     n = share.model.Nicks.findOne canon: cn
     return share.model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"
 
-Template.nick_presence.helpers
-  email: ->
-    cn = share.model.canonical(this.nick)
-    n = share.model.Nicks.findOne canon: cn
-    return share.model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"
-
 share.find_bbedit = (event) ->
   edit = $(event.currentTarget).closest('*[data-bbedit]').attr('data-bbedit')
   return edit.split('/')
