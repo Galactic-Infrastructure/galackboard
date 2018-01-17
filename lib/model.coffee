@@ -616,58 +616,58 @@ spread_id_to_link = (id) ->
     return true
 
   setTagInternal = (args) ->
-      check args, ObjectWith
-        type: ValidType
-        object: IdOrObject
-        name: NonEmptyString
-        value: Match.Any
-        who: NonEmptyString
-        now: Number
-      id = args.object._id or args.object
-      now = args.now
-      canon = canonical(args.name)
-      loop
-        tags = collection(args.type).findOne(id).tags
-        # remove existing value for tag, if present
-        ntags = (tag for tag in tags when tag.canon isnt canon)
-        # add new tag, but keep tags sorted
-        ntags.push
-          name:args.name
-          canon:canon
-          value:args.value
-          touched: now
-          touched_by: canonical(args.who)
-        ntags.sort (a, b) -> (a?.canon or "").localeCompare (b?.canon or "")
-        # update the tag set only if there wasn't a race
-        numchanged = collection(args.type).update { _id: id, tags: tags }, $set:
-          tags: ntags
-          touched: now
-          touched_by: canonical(args.who)
-        # try again if this update failed due to a race (server only)
-        break unless Meteor.isServer and numchanged is 0
-      return true
+    check args, ObjectWith
+      type: ValidType
+      object: IdOrObject
+      name: NonEmptyString
+      value: Match.Any
+      who: NonEmptyString
+      now: Number
+    id = args.object._id or args.object
+    now = args.now
+    canon = canonical(args.name)
+    loop
+      tags = collection(args.type).findOne(id).tags
+      # remove existing value for tag, if present
+      ntags = (tag for tag in tags when tag.canon isnt canon)
+      # add new tag, but keep tags sorted
+      ntags.push
+        name:args.name
+        canon:canon
+        value:args.value
+        touched: now
+        touched_by: canonical(args.who)
+      ntags.sort (a, b) -> (a?.canon or "").localeCompare (b?.canon or "")
+      # update the tag set only if there wasn't a race
+      numchanged = collection(args.type).update { _id: id, tags: tags }, $set:
+        tags: ntags
+        touched: now
+        touched_by: canonical(args.who)
+      # try again if this update failed due to a race (server only)
+      break unless Meteor.isServer and numchanged is 0
+    return true
 
   deleteTagInternal = (args) ->
-      check args, ObjectWith
-        type: ValidType
-        object: IdOrObject
-        name: NonEmptyString
-        who: NonEmptyString
-        now: Number
-      id = args.object._id or args.object
-      now = args.now
-      canon = canonical(args.name)
-      loop
-        tags = collection(args.type).findOne(id).tags
-        ntags = (tag for tag in tags when tag.canon isnt canon)
-        # update the tag set only if there wasn't a race
-        numchanged = collection(args.type).update { _id: id, tags: tags }, $set:
-          tags: ntags
-          touched: now
-          touched_by: canonical(args.who)
-        # try again if this update failed due to a race (server only)
-        break unless Meteor.isServer and numchanged is 0
-      return true
+    check args, ObjectWith
+      type: ValidType
+      object: IdOrObject
+      name: NonEmptyString
+      who: NonEmptyString
+      now: Number
+    id = args.object._id or args.object
+    now = args.now
+    canon = canonical(args.name)
+    loop
+      tags = collection(args.type).findOne(id).tags
+      ntags = (tag for tag in tags when tag.canon isnt canon)
+      # update the tag set only if there wasn't a race
+      numchanged = collection(args.type).update { _id: id, tags: tags }, $set:
+        tags: ntags
+        touched: now
+        touched_by: canonical(args.who)
+      # try again if this update failed due to a race (server only)
+      break unless Meteor.isServer and numchanged is 0
+    return true
 
   newDriveFolder = (type, id, name) ->
     check type, NonEmptyString
@@ -1473,7 +1473,7 @@ spread_id_to_link = (id) ->
       target = collection(args.type).findOne(id)
       throw new Meteor.Error(400, "bad target") unless target
       collection(args.type).update id, $push:
-         incorrectAnswers:
+        incorrectAnswers:
           answer: args.answer
           timestamp: UTCNow()
           who: args.who
