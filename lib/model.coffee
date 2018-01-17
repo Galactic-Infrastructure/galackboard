@@ -1567,7 +1567,6 @@ share.model =
   pretty_collection: pretty_collection
   getTag: getTag
   isStuck: isStuck
-  followupStyle: followupStyle
   canonical: canonical
   oplog: oplog
   drive_id_to_link: drive_id_to_link
