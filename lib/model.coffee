@@ -1568,7 +1568,6 @@ share.model =
   getTag: getTag
   isStuck: isStuck
   canonical: canonical
-  oplog: oplog
   drive_id_to_link: drive_id_to_link
   spread_id_to_link: spread_id_to_link
   UTCNow: UTCNow
