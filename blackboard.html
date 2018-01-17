@@ -227,10 +227,10 @@
       </td>
     {{#unless compactMode}}
       <td class="puzzle-status {{#unless round.solved}}bb-editable{{/unless}}"
-        data-bbedit="tags/{{round._id}}/stuck/value">
-      {{#if editing "tags" round._id "stuck" "value"}}
-        <input type="text" id="tags-{{round._id}}-stuck-value"
-               value="{{tag "stuck"}}"
+        data-bbedit="tags/{{round._id}}/status/value">
+      {{#if editing "tags" round._id "status" "value"}}
+        <input type="text" id="tags-{{round._id}}-status-value"
+               value="{{tag "status"}}"
                class="input-block-level" autofocus />
       {{else}}
         {{#unless round.solved}}
@@ -243,7 +243,7 @@
           {{/if}}
         {{/if}}
         {{/unless}}
-        {{tag "stuck"}}
+        {{tag "status"}}
       {{/if}}
       </td>
     {{#unless canEdit}}
@@ -361,10 +361,10 @@
     </td>
     {{#unless compactMode}}
     <td class="puzzle-status {{#unless puzzle.solved}}bb-editable{{/unless}}"
-        data-bbedit="tags/{{puzzle._id}}/stuck/value">
-      {{#if editing "tags" puzzle._id "stuck" "value"}}
-        <input type="text" id="tags-{{puzzle._id}}-stuck-value"
-               value="{{tag "stuck"}}"
+        data-bbedit="tags/{{puzzle._id}}/status/value">
+      {{#if editing "tags" puzzle._id "status" "value"}}
+        <input type="text" id="tags-{{puzzle._id}}-status-value"
+               value="{{tag "status"}}"
                class="input-block-level" autofocus />
       {{else}}
         {{#unless puzzle.solved}}
@@ -377,7 +377,7 @@
           {{/if}}
         {{/if}}
         {{/unless}}
-        {{tag "stuck"}}
+        {{tag "status"}}
       {{/if}}
     </td>
     {{#unless canEdit}}
