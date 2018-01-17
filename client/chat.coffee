@@ -123,11 +123,6 @@ Template.chat.helpers
 nickEmail = (nick) ->
   cn = model.canonical(nick)
   n = model.Nicks.findOne canon: cn
-  return model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"
-
-nickEmail = (nick) ->
-  cn = model.canonical(nick)
-  n = model.Nicks.findOne canon: cn
   return model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"  
 
 # Template Binding
