@@ -56,7 +56,7 @@ body.has-emojis {
       font-family: "Noto Sans", sans-serif;
   }
 }
-.bb-puzzleround, .bb-chat-messages {
+.bb-chat-messages {
   padding-top: 40px; /* allow space for breadcrumbs in navbar */
 }
 .bb-puzzleround {
@@ -68,6 +68,9 @@ body.has-emojis {
     height: 500px;
     border-top: 1px solid #ccc;
   }
+  h2 {
+    color: #AAA;
+  }
   .answer > span:first-child {
     /* Vertically align answer timestamps */
     display: inline-block; min-width: 120px;
@@ -77,7 +80,7 @@ body.has-emojis {
     font-size: .65em;
     text-transform: none;
   }
-  .bb-callin-btn, .bb-addquip-btn, .bb-summon-btn {
+  .bb-addquip-btn {
     float: right; margin-top: 4px; margin-right: 3px;
   }
   .bb-status-stuck {
@@ -421,8 +424,11 @@ body.has-emojis {
 html.fullHeight {
 
   &, body, #bb-body, #bb-content, .bb-puzzleround,
-  .bb-splitter, .bb-splitter > .bb-top-content, .bb-splitter iframe {
+  .bb-splitter, .bb-splitter > .bb-right-content, .bb-splitter iframe {
     height: 100%;
+  }
+  .bb-splitter > .bb-left-content, .bb-splitter iframe {
+    width: 100%;
   }
   #bb-body, #bb-content, .bb-puzzleround,
   .bb-splitter, .bb-splitter > div, .bb-splitter iframe,
@@ -432,66 +438,71 @@ html.fullHeight {
     position: relative; /* establish positioning context */
     width: 100%;
     padding-left: 0px; padding-right: 0px;
-    .bb-splitter { /* horizontal */
+    .bb-splitter { /* vertical */
        position: relative;
-       &, & > div { width:100%; }
+       display: flex;
+       flex-direction: row;
+       &, & > div { height:100%; }
        /* top padding here also anchors the margin in the embedded <h1>
           element and fixes an odd-looking 10px shift */
-       padding-top: 6px; /* for slider (shifted to center) */
-       padding-bottom: 500px; /* for bottom pane */
-       & > .bb-top-content {
-         margin-top: -6px; /* shift extra space to bottom */
-       }
-       .bb-top-content, .bb-bottom-header {
+       padding-right: 300px; /* for right pane */
+       .bb-left-header {
          padding-left: 2px; padding-right: 2px;
        }
        .bb-splitter-handle {
-         background: #ccc url('/img/hgrabber.gif') no-repeat center;
+         background: #ccc url('/img/vgrabber.gif') no-repeat center;
          &:hover { background-color: #aaa; }
        }
        & > .bb-splitter-handle {
-         height: 6px;
-         cursor: n-resize;
+         width: 6px;
+         cursor: ew-resize;
        }
        &.active {
          & > .bb-splitter-handle { background-color: #e88; }
-         .bb-top-content, .bb-bottom-content { pointer-events: none; }
+         .bb-left-content, .bb-right-content { pointer-events: none; }
        }
-       & > .bb-bottom-content {
-         position: absolute;
-         height: 500px;
-         left: 0; bottom: 0;
-         .bb-bottom-header {
-           position: absolute; width: 235px; height: 20px; top: 0; right: 140px;
+       & > .bb-left-content {
+         left: 0; top: 0;
+         .bb-left-header {
+           position: absolute; right: 100%; writing-mode: vertical-lr; top:10px;
          }
          iframe {
            padding-top: 0px; /* was 26px, but we're chosing to overlap header */
            border-top: none;
          }
        }
-       /* vertical splitter in top half */
-       & > .bb-top-content {
-         position: relative;
-         padding-right: 306px; /* for right-hand pane */
-         & > .bb-top-left-content, & > .bb-top-right-content {
+       /* horizontal splitter in right half */
+       & > .bb-right-content {
+         position: absolute;
+         right: 0px;
+         width: 300px;
+         padding-bottom: 306px; /* for bottom pane */
+         & > .bb-top-right-content, & > .bb-bottom-right-content {
+           width: 100%;
            height: 100%;
            overflow: auto;
          }
+         & > .bb-top-right-content {
+           table:not(.table-bordered) {
+             tr > td:first-child { text-align: right }
+             td.rightanswer, td.wronganswer { font-weight: bold }
+           }
+         }
          & > .bb-splitter-handle {
-           width: 6px;
-           background-image: url('/img/vgrabber.gif');
-           cursor: w-resize;
+           height: 6px;
+           background-image: url('/img/hgrabber.gif');
+           cursor: ns-resize;
            position: absolute;
-           top: 0; bottom: 0;
-           right: 300px;
+           left: 0; right: 0;
+           bottom: 300px;
          }
          &.active {
            & > .bb-splitter-handle { background-color: #e88; }
-           .bb-top-left-content, .bb-top-right-content { pointer-events: none; }
+           .bb-top-right-content, .bb-bottom-right-content { pointer-events: none; }
          }
-         & > .bb-top-right-content {
+         & > .bb-bottom-right-content {
            position: absolute;
-           width: 300px; right: 0; top: 0;
+           height: 300px; right: 0; bottom: 0;
            /* chat stylin' */
            background: url('/img/grid_noise.png');
            background-attachment: fixed;
