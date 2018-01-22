@@ -147,6 +147,10 @@
      <button title="{{volumeTitle}}" class="mute btn btn-small btn-inverse">
       <span class="{{volumeIcon}} icon-white"></span>
      </button>
+     <button data-original-title="{{connectStatus.status}}{{#if connectStatus.retryTime}} until {{pretty_ts connectStatus.retryTime}}{{/if}}"
+             title="connecting" class="{{connectStatus.status}} btn btn-small btn-inverse">
+       <span class="statuslight"></span>
+     </button>
     </div>
    </div>
   </div>
