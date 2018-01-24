@@ -367,6 +367,89 @@ Template.blackboard_puzzle.helpers
   nCols: nCols
   stuck: share.model.isStuck
 
+PUZZLE_MIME_TYPE = 'application/prs.codex-puzzle'
+
+dragdata = null
+
+Template.blackboard_puzzle.events
+  'dragend tr.puzzle': (event, template) ->
+    dragdata = null
+  'dragstart tr.puzzle': (event, template) ->
+    event = event.originalEvent
+    rect = event.target.getBoundingClientRect()
+    unless Meteor.isProduction
+      console.log "event Y #{event.clientY} rect #{JSON.stringify rect}"
+      console.log @puzzle._id
+    dragdata =
+      id: @puzzle._id
+      fromTop: event.clientY - rect.top
+      fromBottom: rect.bottom - event.clientY
+    dt = event.dataTransfer
+    dt.setData PUZZLE_MIME_TYPE, dragdata.id
+    dt.effectAllowed = 'move'
+  'dragover tr.puzzle': (event, template) ->
+    event = event.originalEvent
+    return unless event.dataTransfer.types.includes PUZZLE_MIME_TYPE
+    myId = @puzzle._id
+    if dragdata.id is myId
+      event.preventDefault()  # Drop okay
+      return  # ... but nothing to do
+    parent = share.model.Rounds.findOne {puzzles: dragdata.id}
+    console.log "itsparent #{parent._id}" unless Meteor.isProduction
+    # Can't drop into another round for now.
+    return unless parent._id is (share.model.Rounds.findOne {puzzles: myId})._id
+    event.preventDefault()
+    myIndex = parent.puzzles.indexOf myId
+    itsIndex = parent.puzzles.indexOf dragdata.id
+    diff = itsIndex - myIndex
+    rect = event.target.getBoundingClientRect()
+    clientY = event.clientY
+    args =
+      round: parent
+      puzzle: dragdata.id
+    if clientY - rect.top < dragdata.fromTop
+      return if diff == -1
+      args.before = myId
+    else if rect.bottom - clientY < dragdata.fromBottom
+      return if diff == 1
+      args.after = myId
+    else if diff > 1
+      args.after = myId
+    else if diff < -1
+      args.before = myId
+    else
+      return
+    Meteor.call 'addPuzzleToRound', args
+
+Template.blackboard_round.events
+  'dragover tr.meta': (event, template) ->
+    event = event.originalEvent
+    return unless event.dataTransfer.types.includes PUZZLE_MIME_TYPE
+    return unless @round._id is (share.model.Rounds.findOne {puzzles: dragdata.id})._id
+    event.preventDefault()
+    puzzles = @round.puzzles
+    return unless puzzles.length
+    firstPuzzle = puzzles[0]
+    return if firstPuzzle is dragdata.id
+    Meteor.call 'addPuzzleToRound',
+      round: @round
+      puzzle: dragdata.id
+      before: firstPuzzle
+  'dragover tr.roundfooter': (event, template) ->
+    event = event.originalEvent
+    return unless event.dataTransfer.types.includes PUZZLE_MIME_TYPE
+    return unless @round._id is (share.model.Rounds.findOne {puzzles: dragdata.id})._id
+    event.preventDefault()
+    puzzles = @round.puzzles
+    len = puzzles.length
+    return unless len
+    lastpuzzle = puzzles[len-1]
+    return if lastpuzzle is dragdata.id
+    Meteor.call 'addPuzzleToRound',
+      round: @round
+      puzzle: dragdata.id
+      after: lastpuzzle
+
 tagHelper = (id) ->
   isRoundGroup = ('rounds' of this)
   { id: id, name: t.name, canon: t.canon, value: t.value } \
