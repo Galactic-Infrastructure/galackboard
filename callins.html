@@ -38,13 +38,13 @@
 
 <template name="callin_row">
         <tr data-bbedit="{{_id}}">
-            <td>{{link id=target title="Chat room" chat=true icon="icon-comment" class="pull-right"}}{{link target}}{{#if hunt_link type target}}
-            <br/><small>&nbsp;↦&nbsp;<a href="{{hunt_link type target}}"
+            <td>{{link id=target title="Chat room" chat=true icon="icon-comment" class="pull-right"}}{{link target}}{{#if hunt_link}}
+            <br/><small>&nbsp;↦&nbsp;<a href="{{hunt_link}}"
                     target="_blank">on&nbsp;hunt&nbsp;site</a></small>
-            {{/if}}</td>
-            <td><div class="answer">{{answer}}</div>{{#if backsolve}}(backsolve){{/if}}{{#if provided}}(provided){{/if}}</td>
+            {{/if}}{{#if solved}}<div class="dupe">Already Solved</div>{{/if}}</td>
+            <td><div class="answer">{{answer}}</div>{{#if backsolve}}(backsolve){{/if}}{{#if provided}}(provided){{/if}}{{#if alreadyTried}}<div class="dupe">Already Tried</div>{{/if}}</td>
             <td>{{pretty_ts this.created}}</td>
-            <td>{{#with lastAttempt type target}}{{pretty_ts timestamp}} <small>({{pretty_ts timestamp=timestamp style="brief duration"}})</small>{{else}}-{{/with}}</td>
+            <td>{{#with lastAttempt}}{{pretty_ts timestamp}} <small>({{pretty_ts timestamp=timestamp style="brief duration"}})</small>{{else}}-{{/with}}</td>
             {{#if sessionNick}}
             <td><input type="checkbox" class="bb-submitted-to-hq" checked={{submitted_to_hq}}></td>
             <td class="btn-group">
