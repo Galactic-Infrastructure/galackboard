@@ -37,7 +37,7 @@ Meteor.startup ->
     return ctx.getImageData(x, y, 1, 1)
   reddot = checkEmoji '\uD83D\uDD34', 16, 16
   dancing = checkEmoji '\uD83D\uDD7A', 12, 16 # unicode 9.0
-  if reddot[0] > reddot[1] and dancing[0] > 0
+  if reddot.data[0] > reddot.data[1] and dancing.data[0] + dancing.data[1] + dancing.data[2] > 0
     console.log 'has unicode 9 color emojis'
     document.body.classList.add 'has-emojis'
 
