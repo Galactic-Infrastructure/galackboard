@@ -180,6 +180,11 @@ Template.blackboard.onRendered ->
   $('#bb-tables .bb-puzzle .puzzle-name > a').tooltip placement: 'left'
   if Session.get 'canEdit'
    share.ensureNick()
+  @autorun () ->
+    editing = Session.get 'editing'
+    return unless editing?
+    Meteor.defer () ->
+      $("##{editing.split('/').join '-'}").focus()
 
  
 doBoolean = (name, newVal) ->

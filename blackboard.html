@@ -88,7 +88,7 @@
     {{#if editing "roundgroups" _id "title"}}
       <input type="text" id="roundgroups-{{_id}}-title"
              value="{{name}}"
-             class="input-block-level" autofocus />
+             class="input-block-level" />
     {{else}}
       {{#if canEdit}}
         <i class="bb-delete-icon icon-remove pull-left"
@@ -170,7 +170,7 @@
   {{#if editing "rounds" round._id "title"}}
       <input type="text" id="rounds-{{round._id}}-title"
              value="{{round.name}}"
-             class="input-block-level" autofocus />
+             class="input-block-level" />
   {{else}}
     {{#if canEdit}}
       <i class="bb-delete-icon icon-remove pull-left"
@@ -212,7 +212,7 @@
       {{#if editing "tags" round._id "answer" "value"}}
         <input type="text" id="tags-{{round._id}}-answer-value"
                value="{{tag "answer"}}"
-               class="input-block-level" autofocus />
+               class="input-block-level" />
       {{else}}
         {{#if canEdit}}
           <i class="bb-edit-icon icon-pencil pull-right"
@@ -231,7 +231,7 @@
       {{#if editing "tags" round._id "status" "value"}}
         <input type="text" id="tags-{{round._id}}-status-value"
                value="{{tag "status"}}"
-               class="input-block-level" autofocus />
+               class="input-block-level" />
       {{else}}
         {{#unless round.solved}}
         {{#if canEdit}}
@@ -308,7 +308,7 @@
       {{#if editing "puzzles" puzzle._id "title"}}
         <input type="text" id="puzzles-{{puzzle._id}}-title"
                value="{{puzzle.name}}"
-               class="input-block-level" autofocus />
+               class="input-block-level" />
       {{else}}
         {{#if canEdit}}
           <i class="bb-delete-icon icon-remove pull-left"
@@ -344,7 +344,7 @@
       {{#if editing "tags" puzzle._id "answer" "value"}}
         <input type="text" id="tags-{{puzzle._id}}-answer-value"
                value="{{tag "answer"}}"
-               class="input-block-level" autofocus />
+               class="input-block-level" />
       {{else}}
         {{#if canEdit}}
           <i class="bb-edit-icon icon-pencil pull-right"
@@ -365,7 +365,7 @@
       {{#if editing "tags" puzzle._id "status" "value"}}
         <input type="text" id="tags-{{puzzle._id}}-status-value"
                value="{{tag "status"}}"
-               class="input-block-level" autofocus />
+               class="input-block-level" />
       {{else}}
         {{#unless puzzle.solved}}
         {{#if canEdit}}
@@ -409,7 +409,7 @@
       {{#if editing "tags" id canon "name"}}
         <input type="text" id="tags-{{id}}-{{canon}}-name"
                value="{{name}}"
-               class="input-block-level" autofocus />
+               class="input-block-level" />
       {{else}}
         {{#if canEdit}}
           <i class="bb-edit-icon icon-pencil pull-left"
@@ -423,7 +423,7 @@
       {{#if editing "tags" id canon "value"}}
         <input type="text" id="tags-{{id}}-{{canon}}-value"
                value="{{value}}"
-               class="input-block-level" autofocus />
+               class="input-block-level" />
       {{else if canEdit}}
         <i class="bb-delete-icon icon-remove pull-left"
            title="Delete this tag and value"></i>
@@ -447,7 +447,7 @@
             {{#if editing "tags" id canon "name"}}
               <input type="text" id="tags-{{id}}-{{canon}}-name"
                      value="{{name}}"
-                     class="input-block-level" autofocus />
+                     class="input-block-level" />
             {{else}}
               {{#if canEdit}}
                 <i class="bb-edit-icon icon-pencil pull-left"
@@ -461,7 +461,7 @@
             {{#if editing "tags" id canon "value"}}
               <input type="text" id="tags-{{id}}-{{canon}}-value"
                      value="{{value}}"
-                     class="input-block-level" autofocus />
+                     class="input-block-level" />
             {{else if canEdit}}
               <i class="bb-delete-icon icon-remove pull-left"
                  title="Delete this tag and value"></i>
@@ -486,7 +486,7 @@
             {{#if editing "link" _id}}
               <input type="text" id="link-{{_id}}"
                      value="{{./link}}"
-                     class="input-block-level" autofocus />
+                     class="input-block-level" />
             {{else if canEdit}}
               <i class="bb-edit-icon icon-pencil pull-right"
                  title="Change the value of the hunt site link"></i>
