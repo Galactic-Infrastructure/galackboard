@@ -286,7 +286,7 @@ Template.header_nickmodal.helpers
 Template.header_nickmodal_contents.helpers
   nick: -> Session.get "nick" or ''
   dismissable: ->
-    return true if Session.equals 'currentPage', 'chat'
+    return false if Session.equals 'currentPage', 'chat'
     not ((Session.equals 'currentPage', 'blackboard') and Session.get 'canEdit')
 Template.header_nickmodal_contents.onCreated ->
   # we'd need to subscribe to 'all-nicks' here if we didn't have a permanent
