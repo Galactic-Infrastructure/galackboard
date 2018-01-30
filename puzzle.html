@@ -65,16 +65,22 @@
     </div>
   </div> {{! end right of splitter }}
 </div>
+{{#with puzzle}}
+{{> puzzle_summon_modal}}
+{{> puzzle_callin_modal}}
+{{/with}}
 {{/with}}
 </div>
 </template>
 
-<template name="puzzle_summon_modal">
+<template name="puzzle_summon_button">
 <button class="btn {{#if currentPageEquals "chat"}}btn-small{{/if}} bb-summon-btn {{#if stuck}}stuck{{else}}unstuck{{/if}} btn-inverse">
 {{#unless currentPageEquals "chat"}}<i class="icon-white icon-{{#if stuck}}exclama{{else}}ques{{/if}}tion-sign"></i>{{/unless}}
 {{#if stuck}}Clear STUCK status{{else}}Flag as STUCK{{/if}}
 </button>
-<div class="modal">
+</template>
+<template name="puzzle_summon_modal">
+<div class="modal" id="summon_modal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3>Call in the cavalry on a STUCK puzzle</h3>
@@ -132,13 +138,15 @@
 </div>
 </template>
 
-<template name="puzzle_callin_modal">
+<template name="puzzle_callin_button">
 <button class="btn {{#if currentPageEquals "chat"}}btn-small{{/if}} bb-callin-btn btn-inverse">
 {{! TODO: after bootstrap upgrade, change icon to earphone }}
 {{#unless currentPageEquals "chat"}}<i class="icon-white icon-share"></i>{{/unless}}
 Request Call-In
 </button>
-<div class="modal">
+</template>
+<template name="puzzle_callin_modal">
+<div class="modal" id="callin_modal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3>Request an answer call-in</h3>

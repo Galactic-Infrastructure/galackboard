@@ -70,10 +70,10 @@ Template.puzzle.onDestroyed ->
 Template.puzzle.events
   "mousedown .bb-splitter-handle": (e,t) -> share.Splitter.handleEvent(e,t)
 
-Template.puzzle_summon_modal.helpers
+Template.puzzle_summon_button.helpers
   stuck: -> model.isStuck this
 
-Template.puzzle_summon_modal.events
+Template.puzzle_summon_button.events
   "click .bb-summon-btn.stuck": (event, template) ->
     share.ensureNick =>
       share.confirmationDialog
@@ -87,11 +87,12 @@ Template.puzzle_summon_modal.events
             object: Session.get 'id'
   "click .bb-summon-btn.unstuck": (event, template) ->
     share.ensureNick =>
-      template.$('.stuck-at').val('at start')
-      template.$('.stuck-need').val('ideas')
-      template.$('.stuck-other').val('')
-      template.$('.bb-callin-submit').focus()
-      template.$('.modal').modal show: true
+      $('#summon_modal .stuck-at').val('at start')
+      $('#summon_modal .stuck-need').val('ideas')
+      $('#summon_modal .stuck-other').val('')
+      $('#summon_modal .bb-callin-submit').focus()
+      $('#summon_modal').modal show: true
+Template.puzzle_summon_modal.events
   "click .bb-summon-submit, submit form": (event, template) ->
     event.preventDefault() # don't reload page
     at = template.$('.stuck-at').val()
@@ -109,13 +110,14 @@ Template.puzzle_summon_modal.events
       how: how
     template.$('.modal').modal 'hide'
 
-Template.puzzle_callin_modal.events
+Template.puzzle_callin_button.events
   "click .bb-callin-btn": (event, template) ->
     share.ensureNick =>
-      template.$('input:text').val('')
-      template.$('input:checked').val([])
-      template.$('.modal').modal show: true
-      template.$('input:text').focus()
+      $('#callin_modal input:text').val('')
+      $('#callin_modal input:checked').val([])
+      $('#callin_modal').modal show: true
+      $('#callin_mdal input:text').focus()
+Template.puzzle_callin_modal.events
   "click .bb-callin-submit, submit form": (event, template) ->
     event.preventDefault() # don't reload page
     answer = template.$('.bb-callin-answer').val()
