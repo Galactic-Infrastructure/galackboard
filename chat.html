@@ -2,8 +2,7 @@
 
   {{> messages}}
 
-  {{#if ready}}
-  {{#if puzzle}}
+  {{#if object}}
     {{#with object}}
       {{> puzzle_callin_modal}}
       {{> puzzle_summon_modal}}
@@ -17,7 +16,6 @@
       {{/with}}
     {{/if}}
   </div>
-  {{/if}}
   {{/if}}
   <div class="navbar navbar-inverse navbar-fixed-bottom bb-chat-footer">
     <div class="navbar-inner">
