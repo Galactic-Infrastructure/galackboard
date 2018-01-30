@@ -123,19 +123,19 @@ Template.registerHelper 'pretty_ts', (args) ->
 ############## log in/protect/mute panel ####################
 Template.header_loginmute.helpers
   volumeIcon: ->
-    if Session.get "mute" then "icon-volume-off" else "icon-volume-up"
+    if 'true' is reactiveLocalStorage.getItem 'mute' then 'icon-volume-off' else 'icon-volume-up'
   volumeTitle: ->
-    if Session.get "mute" then "Muted" else "Click to mute"
+    if 'true' is reactiveLocalStorage.getItem 'mute' then 'Muted' else 'Click to mute'
   botIcon: ->
-    if Session.get "nobot" then "icon-bot-off" else "icon-bot-on"
+    if 'true' is reactiveLocalStorage.getItem 'nobot' then 'icon-bot-off' else 'icon-bot-on'
   connectStatus: Meteor.status
   botTitle: ->
-    if Session.get "nobot"
+    if 'true' is reactiveLocalStorage.getItem 'nobot'
       "Codexbot promises not to bother you"
     else
       "Codexbot is feeling chatty!"
   sessionNick: ->
-    nick = Session.get 'nick'
+    nick = reactiveLocalStorage.getItem 'nick'
     return nick unless nick
     n = model.Nicks.findOne canon: model.canonical(nick)
     cn = n?.canon or model.canonical(nick)
@@ -159,21 +159,7 @@ Template.header_loginmute.events
   "click .bb-logout": (event, template) ->
     event.preventDefault()
     share.chat.cleanupChat() if Session.equals('currentPage', 'chat')
-    $.removeCookie 'nick', {path:'/'}
-    if (Session.get 'canEdit') and Session.equals 'currentPage', 'blackboard'
-      # Don't clear canEdit, as it makes the login box undismissable.
-      Session.set
-        nick: undefined
-        editing: undefined
-      ensureNick()
-      return
-    Session.set
-      nick: undefined
-      canEdit: undefined
-      editing: undefined
-    if Session.equals('currentPage', 'chat')
-      ensureNick -> # login again immediately
-        share.chat.joinRoom Session.get('type'), Session.get('id')
+    reactiveLocalStorage.removeItem 'nick'
   "click .bb-unprotect": (event, template) ->
     ensureNick ->
       share.Router.navigate "/edit", {trigger: true}
@@ -232,7 +218,7 @@ Template.header_breadcrumbs.events
       Meteor.call 'newMessage',
         body: message
         bodyIsHtml: true
-        nick: Session.get 'nick'
+        nick: reactiveLocalStorage.getItem 'nick'
         action: true
         room_name: Session.get('type')+'/'+Session.get('id')
 
@@ -283,11 +269,21 @@ uploadToDriveFolder = share.uploadToDriveFolder = (folder, callback) ->
 Template.header_nickmodal.helpers
   nickModalVisible: -> Session.get 'nickModalVisible'
 
+dismissable = ->
+  return false if Session.equals 'currentPage', 'chat'
+  return false is Session.equals 'currentPage', 'callins'
+  not ((Session.equals 'currentPage', 'blackboard') and Session.get 'canEdit')
+
+Template.header_nickmodal.onCreated ->
+  @autorun ->
+    hasNick = (reactiveLocalStorage.getItem 'nick')?
+    if hasNick
+      $('#nickPickModal').modal 'hide'
+    else if not dismissable() and not Session.equals 'nickModalVisible', true
+      Session.set 'nickModalVisible', true
+
 Template.header_nickmodal_contents.helpers
-  nick: -> Session.get "nick" or ''
-  dismissable: ->
-    return false if Session.equals 'currentPage', 'chat'
-    not ((Session.equals 'currentPage', 'blackboard') and Session.get 'canEdit')
+  dismissable: dismissable
 Template.header_nickmodal_contents.onCreated ->
   # we'd need to subscribe to 'all-nicks' here if we didn't have a permanent
   # subscription to it (in main.coffee)
@@ -322,7 +318,7 @@ Template.header_nickmodal_contents.onRendered ->
   $('#nickSuccess').val('false')
   $('#nickPickModal').modal keyboard: false, backdrop:"static"
   $('#nickInput').select()
-  firstNick = Session.get 'nick' or ''
+  firstNick = (reactiveLocalStorage.getItem 'nick') or ''
   $('#nickInput').val firstNick
   this.update firstNick, force:true
   $('#nickInput').typeahead
@@ -354,8 +350,7 @@ $(document).on 'submit', '#nickPick', ->
     $warning.html("Nickname must be between 1 and 20 characters long!")
     $warningGroup.addClass('error')
   else
-    $.cookie "nick", nick, {expires: 365, path: '/'}
-    Session.set "nick", nick
+    reactiveLocalStorage.setItem 'nick', nick
     realname = $('#nickRealname').val()
     gravatar = $('#nickEmail').val()
     Meteor.call 'newNick', {name: nick}, (error,n) ->
@@ -380,10 +375,7 @@ changeNick = (cb) ->
   Session.set 'nickModalVisible', true
 
 ensureNick = share.ensureNick = (cb=(->)) ->
-  if Session.get 'nick'
-    cb()
-  else if $.cookie('nick')
-    Session.set 'nick', $.cookie('nick')
+  if reactiveLocalStorage.getItem 'nick'
     cb()
   else
     changeNick cb
@@ -472,7 +464,7 @@ Template.header_lastchats.onCreated ->
     return unless p? # wait until page info is loaded
     messages = if p.archived then "oldmessages" else "messages"
     # use autorun to ensure subscription changes if/when nick does
-    nick = (Session.get 'nick') or null
+    nick = (reactiveLocalStorage.getItem 'nick') or null
     if nick? and not settings.BB_DISABLE_PM
       this.subscribe "#{messages}-in-range-nick", nick, p.room_name, p.from, p.to
     this.subscribe "#{messages}-in-range", p.room_name, p.from, p.to

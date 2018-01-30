@@ -23,11 +23,11 @@ Template.registerHelper 'typeEquals', (arg) ->
   # register a more precise dependency on the value of type
   Session.equals 'type', arg
 Template.registerHelper 'canEdit', () ->
-  (Session.get 'nick') and (Session.get 'canEdit') and \
+  (reactiveLocalStorage.getItem 'nick') and (Session.get 'canEdit') and \
   (Session.equals 'currentPage', 'blackboard')
 Template.registerHelper 'editing', (args..., options) ->
   canEdit = options?.hash?.canEdit or (Session.get 'canEdit')
-  return false unless (Session.get 'nick') and canEdit
+  return false unless (reactiveLocalStorage.getItem 'nick') and canEdit
   return Session.equals 'editing', args.join('/')
 
 Template.registerHelper 'linkify', (contents) ->
@@ -36,6 +36,8 @@ Template.registerHelper 'linkify', (contents) ->
 
 Template.registerHelper 'compactHeader', () ->
   (Session.equals 'currentPage', 'chat')
+
+Template.registerHelper 'nick', -> reactiveLocalStorage.getItem 'nick'
 
 # subscribe to the all-names feed all the time
 Meteor.subscribe 'all-names'
@@ -46,9 +48,7 @@ if settings.BB_SUB_ALL
   Meteor.subscribe 'all-roundsandpuzzles'
 # we also always subscribe to the last-pages feed; see chat.coffee
 
-notificationDeps = {}
-
-keystring = (k) -> "notification_#{k}"
+keystring = (k) -> "notification.stream.#{k}"
 
 # Chrome for Android only lets you use Notifications via
 # ServiceWorkerRegistration, not directly with the Notification class.
@@ -63,30 +63,26 @@ notificationDefaults =
   'new-puzzles': true
   stuck: false
 
+countDependency = new Tracker.Dependency
+
 share.notification =
   count: () ->
-    notificationDeps['@count'] ?= new Tracker.Dependency
-    notificationDeps['@count'].depend()
+    countDependency.depend()
     i = 0
     for stream, def of notificationDefaults
-      if localStorage.getItem(keystring stream) is "true"
+      if reactiveLocalStorage.getItem(keystring stream) is "true"
         i += 1
     return i
   set: (k, v) ->
     ks = keystring k
     v = notificationDefaults[k] if v is undefined
-    was = localStorage.getItem(ks)
-    localStorage.setItem(ks, v)
-    notificationDeps[ks] ?= new Tracker.Dependency
-    notificationDeps[ks].changed()
+    was = reactiveLocalStorage.getItem ks
+    reactiveLocalStorage.setItem ks, v
     if was isnt v
-      notificationDeps['@count'] ?= new Tracker.Dependency
-      notificationDeps['@count'].changed()
+      countDependency.changed()
   get: (k) ->
     ks = keystring k
-    notificationDeps[ks] ?= new Tracker.Dependency
-    notificationDeps[ks].depend()
-    v = localStorage.getItem(ks)
+    v = reactiveLocalStorage.getItem ks
     return unless v?
     v is "true"
   # On android chrome, we clobber this with a version that uses the
@@ -172,7 +168,6 @@ BlackboardRouter = Backbone.Router.extend
     Session.set
       canEdit: true
       editing: undefined
-    share.ensureNick()
 
   RoundPage: (id) ->
     this.Page("round", "rounds", id)

@@ -38,3 +38,4 @@ shell-server@0.3.0
 babel-runtime@1.1.1
 dynamic-import@0.2.0
 ecmascript
+mdj:reactive-storage

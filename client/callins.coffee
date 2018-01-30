@@ -42,7 +42,6 @@ Template.callins.helpers
 
 Template.callins.onRendered ->
   $("title").text("Answer queue")
-  share.ensureNick()
 
 Template.callins.events
   "click .bb-addquip-btn": (event, template) ->
@@ -52,21 +51,20 @@ Template.callins_quip.events
   "click .bb-quip-next": (event, template) ->
     Meteor.call 'useQuip',
       id: @_id
-      who: Session.get('nick')
+      who: reactiveLocalStorage.getItem 'nick'
   "click .bb-quip-punt": (event, template) ->
     Meteor.call 'useQuip',
       id: @_id
-      who: Session.get('nick')
+      who: reactiveLocalStorage.getItem 'nick'
       punted: true
   "click .bb-quip-remove": (event, template) ->
     Meteor.call 'removeQuip',
       id: @_id
-      who: Session.get('nick')
+      who: reactiveLocalStorage.getItem 'nick'
 
 Template.callin_row.onCreated ->
 
 Template.callin_row.helpers
-  sessionNick: -> Session.get 'nick'
   lastAttempt: ->
     return null unless @puzzle? and @puzzle.incorrectAnswers?.length > 0
     attempts = @puzzle.incorrectAnswers[..]
@@ -83,17 +81,17 @@ Template.callin_row.events
   "click .bb-callin-correct": (event, template) ->
      Meteor.call 'correctCallIn',
        id: @_id
-       who: Session.get('nick')
+       who: reactiveLocalStorage.getItem 'nick'
 
   "click .bb-callin-incorrect": (event, template) ->
      Meteor.call 'incorrectCallIn',
        id: @_id
-       who: Session.get('nick')
+       who: reactiveLocalStorage.getItem 'nick'
 
   "click .bb-callin-cancel": (event, template) ->
      Meteor.call 'cancelCallIn',
        id: @_id
-       who: Session.get('nick')
+       who: reactiveLocalStorage.getItem 'nick'
 
   "change .bb-submitted-to-hq": (event, template) ->
      checked = !!event.currentTarget.checked
@@ -101,4 +99,4 @@ Template.callin_row.events
        type: 'callins'
        object: @_id
        fields: submitted_to_hq: checked
-       who: Session.get('nick')
+       who: reactiveLocalStorage.getItem 'nick'

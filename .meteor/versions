@@ -49,6 +49,7 @@ launch-screen@1.1.1
 less@2.7.11
 livedata@1.0.18
 logging@1.1.19
+mdj:reactive-storage@1.0.1
 meteor@1.8.2
 meteor-base@1.2.0
 minifier-css@1.2.16

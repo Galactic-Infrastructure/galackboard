@@ -22,7 +22,7 @@ Meteor.startup ->
       return unless doc.target? # 'no recent puzzle was solved'
       return if doc.target is oldDoc.target # answer changed, not really new
       console.log 'that was easy', doc, oldDoc
-      unless Session.get 'mute'
+      if 'true' isnt reactiveLocalStorage.getItem 'mute'
         blackboard.newAnswerSound?.play?()
   # see if we've got native emoji support, and add the 'has-emojis' class
   # if so; inspired by
@@ -64,18 +64,16 @@ okCancelEvents = share.okCancelEvents = (selector, callbacks) ->
   events
 
 ######### general properties of the blackboard page ###########
-['sortReverse','hideSolved','hideRoundsSolvedMeta','hideStatus','compactMode'].forEach (name) ->
-  Session.setDefault name, $.cookie(name)
 compactMode = ->
-  editing = (Session.get 'nick') and (Session.get 'canEdit')
-  (Session.get 'compactMode') and not editing
+  editing = (reactiveLocalStorage.getItem 'nick') and (Session.get 'canEdit')
+  ('true' is reactiveLocalStorage.getItem 'compactMode') and not editing
 nCols = -> if compactMode() then 2 else \
-  (if ((Session.get 'nick') and (Session.get 'canEdit')) then 3 else 5)
+  (if ((reactiveLocalStorage.getItem 'nick') and (Session.get 'canEdit')) then 3 else 5)
 Template.blackboard.helpers
-  sortReverse: -> Session.get 'sortReverse'
-  hideSolved: -> Session.get 'hideSolved'
-  hideRoundsSolvedMeta: -> Session.get 'hideRoundsSolvedMeta'
-  hideStatus: -> Session.get 'hideStatus'
+  sortReverse: -> 'true' is reactiveLocalStorage.getItem 'sortReverse'
+  hideSolved: -> 'true' is reactiveLocalStorage.getItem 'hideSolved'
+  hideRoundsSolvedMeta: -> 'true' is reactiveLocalStorage.getItem 'hideRoundsSolvedMeta'
+  hideStatus: -> 'true' is reactiveLocalStorage.getItem 'hideStatus'
   compactMode: compactMode
   nCols: nCols
 
@@ -122,7 +120,7 @@ Template.blackboard.events
 ############## groups, rounds, and puzzles ####################
 Template.blackboard.helpers
   roundgroups: ->
-    dir = if Session.get 'sortReverse' then 'desc' else 'asc'
+    dir = if 'true' is reactiveLocalStorage.getItem 'sortReverse' then 'desc' else 'asc'
     model.RoundGroups.find {}, sort: [["created", dir]]
   # the following is a map() instead of a direct find() to preserve order
   rounds: ->
@@ -135,13 +133,13 @@ Template.blackboard.helpers
       num_solved: (p for p in (model.Rounds.findOne(id)?.puzzles or []) when \
                    model.Puzzles.findOne(p)?.solved?).length
     } for id, index in this.rounds)
-    r.reverse() if Session.get 'sortReverse'
+    r.reverse() if 'true' is reactiveLocalStorage.getItem 'sortReverse'
     return r
   stuck: share.model.isStuck
 
 Template.blackboard_status_grid.helpers
   roundgroups: ->
-    dir = if Session.get 'sortReverse' then 'desc' else 'asc'
+    dir = if 'true' is reactiveLocalStorage.getItem 'sortReverse' then 'desc' else 'asc'
     model.RoundGroups.find {}, sort: [["created", dir]]
   # the following is a map() instead of a direct find() to preserve order
   rounds: ->
@@ -178,18 +176,14 @@ Template.blackboard.onRendered ->
   #  page title
   $("title").text("Codex Ogg Puzzle Blackboard")
   $('#bb-tables .bb-puzzle .puzzle-name > a').tooltip placement: 'left'
-  if Session.get 'canEdit'
-   share.ensureNick()
   @autorun () ->
     editing = Session.get 'editing'
     return unless editing?
     Meteor.defer () ->
       $("##{editing.split('/').join '-'}").focus()
 
- 
 doBoolean = (name, newVal) ->
-  Session.set name, newVal
-  $.cookie name, (newVal or ''),  {expires: 365, path: '/'}
+  reactiveLocalStorage.setItem name, newVal
 Template.blackboard.events
   "click .bb-sort-order button": (event, template) ->
     reverse = $(event.currentTarget).attr('data-sortReverse') is 'true'
@@ -201,14 +195,14 @@ Template.blackboard.events
   "change .bb-compact-mode input": (event, template) ->
     doBoolean 'compactMode', event.target.checked
   "click .bb-hide-status": (event, template) ->
-    doBoolean 'hideStatus', !(Session.get 'hideStatus')
+    doBoolean 'hideStatus', ('true' isnt reactiveLocalStorage.getItem 'hideStatus')
   "click .bb-add-round-group": (event, template) ->
     alertify.prompt "Name of new round group:", (e,str) ->
       return unless e # bail if cancelled
-      Meteor.call 'newRoundGroup', { name: str, who: Session.get('nick') }
+      Meteor.call 'newRoundGroup', { name: str, who: reactiveLocalStorage.getItem 'nick' }
   "click .bb-roundgroup-buttons .bb-add-round": (event, template) ->
     [type, id, rest...] = share.find_bbedit(event)
-    who = Session.get('nick')
+    who = reactiveLocalStorage.getItem 'nick'
     alertify.prompt "Name of new round:", (e,str) ->
       return unless e # bail if cancelled
       Meteor.call 'newRound', { name: str, who: who }, (error,r)->
@@ -216,7 +210,7 @@ Template.blackboard.events
         Meteor.call 'addRoundToGroup', {round: r._id, group: id, who: who}
   "click .bb-round-buttons .bb-add-puzzle": (event, template) ->
     [type, id, rest...] = share.find_bbedit(event)
-    who = Session.get('nick')
+    who = reactiveLocalStorage.getItem 'nick'
     alertify.prompt "Name of new puzzle:", (e,str) ->
       return unless e # bail if cancelled
       Meteor.call 'newPuzzle', { name: str, who: who }, (error,p)->
@@ -224,7 +218,7 @@ Template.blackboard.events
         Meteor.call 'addPuzzleToRound', {puzzle: p._id, round: id, who: who}
   "click .bb-add-tag": (event, template) ->
     [type, id, rest...] = share.find_bbedit(event)
-    who = Session.get('nick')
+    who = reactiveLocalStorage.getItem 'nick'
     alertify.prompt "Name of new tag:", (e,str) ->
       return unless e # bail if cancelled
       Meteor.call 'setTag', {type:type, object:id, name:str, value:'', who:who}
@@ -232,9 +226,9 @@ Template.blackboard.events
     [type, id, rest...] = share.find_bbedit(event)
     up = event.currentTarget.classList.contains('bb-move-up')
     # flip direction if sort order is inverted
-    up = (!up) if (Session.get 'sortReverse') and type isnt 'puzzles'
+    up = (!up) if ('true' is reactiveLocalStorage.getItem 'sortReverse') and type isnt 'puzzles'
     method = if up then 'moveUp' else 'moveDown'
-    Meteor.call method, {type:type, id:id, who:Session.get('nick')}
+    Meteor.call method, {type:type, id:id, who:reactiveLocalStorage.getItem 'nick'}
   "click .bb-canEdit .bb-delete-icon": (event, template) ->
     event.stopPropagation() # keep .bb-editable from being processed!
     [type, id, rest...] = share.find_bbedit(event)
@@ -277,21 +271,21 @@ processBlackboardEdit =
     processBlackboardEdit["roundgroups_#{field}"]?(text, id)
   puzzles_title: (text, id) ->
     if text is null # delete puzzle
-      Meteor.call 'deletePuzzle', {id:id, who:Session.get('nick')}
+      Meteor.call 'deletePuzzle', {id:id, who:reactiveLocalStorage.getItem 'nick'}
     else
-      Meteor.call 'renamePuzzle', {id:id, name:text, who:Session.get('nick')}
+      Meteor.call 'renamePuzzle', {id:id, name:text, who:reactiveLocalStorage.getItem 'nick'}
   rounds_title: (text, id) ->
     if text is null # delete round
-      Meteor.call 'deleteRound', {id:id, who:Session.get('nick')}
+      Meteor.call 'deleteRound', {id:id, who:reactiveLocalStorage.getItem 'nick'}
     else
-      Meteor.call 'renameRound', {id:id, name:text, who:Session.get('nick')}
+      Meteor.call 'renameRound', {id:id, name:text, who:reactiveLocalStorage.getItem 'nick'}
   roundgroups_title: (text, id) ->
     if text is null # delete roundgroup
-      Meteor.call 'deleteRoundGroup', {id:id, who:Session.get('nick')}
+      Meteor.call 'deleteRoundGroup', {id:id, who:reactiveLocalStorage.getItem 'nick'}
     else
-      Meteor.call 'renameRoundGroup', {id:id,name:text,who:Session.get('nick')}
+      Meteor.call 'renameRoundGroup', {id:id,name:text,who:reactiveLocalStorage.getItem 'nick'}
   tags_name: (text, id, canon) ->
-    who = Session.get('nick')
+    who = reactiveLocalStorage.getItem 'nick'
     n = model.Names.findOne(id)
     if text is null # delete tag
       return Meteor.call 'deleteTag', {type:n.type, object:id, name:canon, who:who}
@@ -312,23 +306,23 @@ processBlackboardEdit =
           canon: model.canonical(special)
           value: ''
     # set tag (overwriting previous value)
-    Meteor.call 'setTag', {type:n.type, object:id, name:t.name, value:text, who:Session.get('nick')}
+    Meteor.call 'setTag', {type:n.type, object:id, name:t.name, value:text, who:reactiveLocalStorage.getItem 'nick'}
   link: (text, id) ->
     n = model.Names.findOne(id)
     Meteor.call 'setField',
       type: n.type
       object: id
-      who: Session.get 'nick'
+      who: reactiveLocalStorage.getItem 'nick'
       fields: link: text
 
 Template.blackboard_round.helpers
   hasPuzzles: -> (this.round?.puzzles?.length > 0)
   showRound: ->
-    return false if (Session.get 'hideRoundsSolvedMeta') and (this.round?.solved?)
-    return (!Session.get 'hideSolved') or (!this.round?.solved?) or
+    return false if ('true' is reactiveLocalStorage.getItem 'hideRoundsSolvedMeta') and (this.round?.solved?)
+    return ('true' isnt reactiveLocalStorage.getItem 'hideSolved') or (!this.round?.solved?) or
     ((model.Puzzles.findOne(id) for id, index in this.round?.puzzles ? []).
       filter (p) -> !p?.solved?).length > 0
-  showMeta: -> (!Session.get 'hideSolved') or (!this.round?.solved?)
+  showMeta: -> ('true' isnt reactiveLocalStorage.getItem 'hideSolved') or (!this.round?.solved?)
   # the following is a map() instead of a direct find() to preserve order
   puzzles: ->
     p = ({
@@ -337,8 +331,8 @@ Template.blackboard_round.helpers
       puzzle: model.Puzzles.findOne(id) or { _id: id }
       rXpY: "r#{this.round_num}p#{1+index}"
     } for id, index in this.round.puzzles)
-    editing = (Session.get 'nick') and (Session.get 'canEdit')
-    hideSolved = Session.get 'hideSolved'
+    editing = (reactiveLocalStorage.getItem 'nick') and (Session.get 'canEdit')
+    hideSolved = 'true' is reactiveLocalStorage.getItem 'hideSolved'
     return p if editing or !hideSolved
     p.filter (pp) ->  !pp.puzzle.solved?
   tag: (name) ->
