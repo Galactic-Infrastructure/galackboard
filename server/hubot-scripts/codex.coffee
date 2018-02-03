@@ -182,7 +182,9 @@ share.hubot.codex = (robot) ->
       round: round.object._id
       puzzle: puzzle._id
       who: who
-    msg.reply useful: true, "Okay, I added #{puzzle.name} to #{round.object.name}."
+    puzz_url = Meteor._relativeToSiteRootUrl "/puzzles/#{puzzle._id}"
+    round_url = Meteor._relativeToSiteRootUrl "/rounds/#{round.object._id}"
+    msg.reply {useful: true, bodyIsHtml: true}, "Okay, I added <a class='puzzles-link' href='#{UI._escape puzz_url}'>#{UI._escape puzzle.name}</a> to <a class='rounds-link' href='#{UI._escape round_url}'>#{UI._escape round.object.name}</a>."
     msg.finish()
 
 # deletePuzzle
@@ -232,7 +234,9 @@ share.hubot.codex = (robot) ->
     unless res
       msg.reply useful: true, "Something went wrong (couldn't add round to group)"
       return
-    msg.reply useful: true, "Okay, I created round \"#{rname}\" in #{group.object.name}."
+    round_url = Meteor._relativeToSiteRootUrl "/rounds/#{round._id}"
+    group_url = Meteor._relativeToSiteRootUrl "/roundgroups/#{group.object._id}"
+    msg.reply {useful: true, bodyIsHtml: true}, "Okay, I created round <a class='rounds-link' href='#{UI._escape round_url}'>#{UI._escape rname}</a> in <a class='roundgroups-link' href='#{UI._escape group_url}'>#{UI._escape group.object.name}</a>."
     msg.finish()
 
 # deleteRound
