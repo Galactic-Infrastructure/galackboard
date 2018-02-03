@@ -24,7 +24,6 @@
           {{#if puzzle.link}}(<a href="{{puzzle.link}}" target="_blank">link<i class="icon-share-alt"></i></a>){{/if}}
         </h2>
       </div>
-
       {{#with puzzle}}
         <table><tbody>
         {{#if solved}}
@@ -40,6 +39,7 @@
         {{/each}}
         </tbody></table>
       {{/with}}
+      {{> starred_messages canModify=nick}}
       {{#if puzzles}}
       <table class="bb-round-answers table table-bordered table-condensed"><tbody>
         <tr><th>Puzzle in round</th><th>Answer</th></tr>

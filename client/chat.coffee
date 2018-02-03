@@ -119,6 +119,45 @@ nickEmail = (nick) ->
   n = model.Nicks.findOne canon: cn
   return model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"  
 
+Template.starred_messages.onCreated ->
+  this.autorun =>
+    this.subscribe 'starred-messages', Session.get 'room_name'
+
+Template.starred_messages.helpers
+  messages: ->
+    # It would be nice to write a concatenation cursor, but it seems overkill
+    # for the number of starred messages we're ever likely to have.
+    r = []
+    for coll in [ model.OldMessages, model.Messages ]
+      c = coll.find {room_name: (Session.get 'room_name'), starred: true },
+        sort: [['timestamp', 'asc']]
+        transform: messageTransform
+      r.push c.fetch()...
+    r
+
+Template.media_message.events
+  'click .bb-message-star.starred': (event, template) ->
+    return unless $(event.target).closest('.can-modify-star').size() > 0
+    Meteor.call 'setStarred', this._id, false
+  'click .bb-message-star:not(.starred)': (event, template) ->
+    return unless $(event.target).closest('.can-modify-star').size() > 0
+    Meteor.call 'setStarred', this._id, true
+
+
+messageTransform = (m) ->
+  _id: m._id
+  message: m
+  email: nickEmail m.nick
+  body: ->
+    body = m.body or ''
+    unless m.bodyIsHtml
+      body = UI._escape body
+      body = body.replace /\n|\r\n?/g, '<br/>'
+      body = convertURLsToLinksAndImages body, m._id
+      if doesMentionNick m
+        body = highlightNick body, m.bodyIsHtml
+    new Spacebars.SafeString(body)
+
 # Template Binding
 Template.messages.helpers
   room_name: -> Session.get('room_name')
@@ -148,25 +187,15 @@ Template.messages.helpers
     "/chat/#{p.room_name}/#{p.to}"
   messages: ->
     room_name = Session.get 'room_name'
-    nick = model.canonical((reactiveLocalStorage.getItem 'nick') or '')
+    # I will go out on a limb and say we need this because transform uses
+    # doesMentionNick and transforms aren't usually reactive, so we need to
+    # recompute them if you log in as someone else.
+    reactiveLocalStorage.getItem 'nick'
     p = pageForTimestamp room_name, +Session.get('timestamp')
     return messagesForPage p,
       sort: [['timestamp','asc']]
-      transform: (m) ->
-        _id: m._id
-        message: m
-
-  email: -> nickEmail this.message.nick
-  body: ->
-    body = this.message.body or ''
-    unless this.message.bodyIsHtml
-      body = UI._escape(body)
-      body = body.replace(/\n|\r\n?/g, '<br/>')
-      body = convertURLsToLinksAndImages(body, this.message._id)
-    if doesMentionNick(this.message)
-      body = highlightNick(body, this.message.bodyIsHtml)
-    new Spacebars.SafeString(body)
-
+      transform: messageTransform
+      
 selfScroll = null
 
 touchSelfScroll = ->

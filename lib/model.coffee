@@ -282,6 +282,7 @@ if DO_BATCH_PROCESSING
 #   presence: optional string ('join'/'part' for presence-change only)
 #   bot_ignore: optional boolean (true for messages from e.g. email or twitter)
 #   to:   destination of pm (optional)
+#   starred: boolean. Pins this message to the top of the puzzle page or blackboard.
 #   room_name: "<type>/<id>", ie "puzzle/1", "round/1".
 #                             "general/0" for main chat.
 #                             "oplog/0" for the operation log.
@@ -306,6 +307,7 @@ if DO_BATCH_PROCESSING
     M._ensureIndex {nick:1, room_name:1, timestamp:-1}, {}
     M._ensureIndex {room_name:1, timestamp:-1}, {}
     M._ensureIndex {room_name:1, timestamp:1}, {}
+    M._ensureIndex {room_name:1, starred: -1, timestamp: 1}, {}
 
 # Pages -- paging metadata for Messages collection
 #   from: timestamp (first page has from==0)
@@ -1100,6 +1102,26 @@ spread_id_to_link = (id) ->
           timestamp: newMsg.timestamp
       newMsg._id = Messages.insert newMsg
       return newMsg
+
+    setStarred: (id, starred) ->
+      check id, NonEmptyString
+      check starred, Boolean
+      # Entirely premature optimization: if starring a message, assume it's
+      # recent; if unstarring, assume it's old.
+      if starred
+        colls = [ Messages, OldMessages]
+      else
+        colls = [ OldMessages, Messages ]
+      for coll in colls
+        num = coll.update (
+          _id: id
+          to: null
+          system: $in: [false, null]
+          action: $in: [false, null]
+          oplog: $in: [false, null]
+          presence: null
+        ), $set: {starred: starred or null}
+        return if num > 0
 
     updateLastRead: (args) ->
       check args, ObjectWith
