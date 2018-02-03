@@ -39,7 +39,7 @@
         {{/each}}
         </tbody></table>
       {{/with}}
-      {{> starred_messages canModify=nick}}
+      {{> starred_messages canModify=mynick}}
       {{#if puzzles}}
       <table class="bb-round-answers table table-bordered table-condensed"><tbody>
         <tr><th>Puzzle in round</th><th>Answer</th></tr>
@@ -133,7 +133,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal">Cancel</button>
-    {{#if nick}}
+    {{#if mynick}}
       <button class="btn btn-primary bb-summon-submit">Send in the call for help!</button>
     {{else}}
       <button class="btn btn-primary" disabled>Must be logged in</button>
@@ -171,7 +171,7 @@ Request Call-In
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal">Cancel</button>
-    {{#if nick}}
+    {{#if mynick}}
       <button class="btn btn-primary bb-callin-submit">Request Call-in</button>
     {{else}}
       <button class="btn btn-primary" disabled>Must be logged in</button>

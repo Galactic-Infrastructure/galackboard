@@ -37,7 +37,7 @@ Template.registerHelper 'linkify', (contents) ->
 Template.registerHelper 'compactHeader', () ->
   (Session.equals 'currentPage', 'chat')
 
-Template.registerHelper 'nick', -> reactiveLocalStorage.getItem 'nick'
+Template.registerHelper 'mynick', -> reactiveLocalStorage.getItem 'nick'
 
 # subscribe to the all-names feed all the time
 Meteor.subscribe 'all-names'

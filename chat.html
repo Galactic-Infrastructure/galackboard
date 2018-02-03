@@ -46,7 +46,7 @@
 </template>
 
 <template name="messages_input">
-      {{#if nick}}
+      {{#if mynick}}
       <form id="messageForm" class="navbar-form">
         <textarea id="messageInput" class="input-block-level" rows="1"
                placeholder="Type your message and press enter..."
@@ -86,7 +86,7 @@
 </template>
 
 <template name="messages">
-  <div id="messages" class="row-fluid bb-chat-messages {{#if nick}}can-modify-star{{/if}}">
+  <div id="messages" class="row-fluid bb-chat-messages {{#if mynick}}can-modify-star{{/if}}">
     {{#if ready}}{{#if prevTimestamp}}
       <p align="center">
         <a href="{{prevTimestamp}}" class="chat-link">See earlier messages</a>
