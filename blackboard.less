@@ -56,6 +56,48 @@ body.has-emojis {
       font-family: "Noto Sans", sans-serif;
   }
 }
+.bb-menu-button {
+  position: fixed;
+  bottom: 0px;
+  left:0px;
+  z-index: 1030;
+}
+.bb-menu-drawer {
+  &.fade {
+    opacity: 1;
+  }
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  overflow-y: auto;
+  background-color: white;
+  width: 256px;
+  left: -256px;
+  z-index: 1050;
+  transition: left 0.25s ease-in-out;
+  border-right: 1px solid black;
+  &.in {
+    left: 0px;
+  }
+  ul {
+    margin-left: 5px;
+    li {
+      display: block;
+      a {
+        display: block;
+        &.bb-wiki { text-align: center; }
+      }
+      /* Chevrons */
+      .icon-chevron-right {
+        float: right;
+        margin-top: 2px;
+        margin-right: -6px;
+        opacity: .25;
+      }
+    }
+  }
+}
+
 .bb-chat-messages {
   padding-top: 40px; /* allow space for breadcrumbs in navbar */
 }
@@ -634,7 +676,6 @@ html.fullHeight {
   body {
     padding-top: 0;
   }
-
   #roomName { width:85px; } /* narrow room name input */
   .bb-omit-when-narrow, .puzzle-working, .puzzle-update { display: none; }
   .bb-buttonbar .bb-login { float: right }

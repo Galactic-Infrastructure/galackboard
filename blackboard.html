@@ -1,3 +1,22 @@
+<template name="blackboard_menu_drawer">
+<div class="bb-menu-button">
+<button class="btn btn-inverse btn-small">
+<i class="icon-white icon-list"></i>
+</button>
+</div>
+<div class="bb-menu-drawer fade">
+  <ul class="nav nav-list bb-sidenav">
+    {{#each roundgroups}}
+    <li class="nav-header">{{name}}</li>
+    {{#each rounds}}
+    <li><a title="r{{round_num}}" href="#r{{round._id}}"><i class="icon-chevron-right"></i>
+    {{round.name}}</a></li>
+    {{/each}}
+    {{/each}}
+  </ul>
+</div>
+</template>
+
 <template name="blackboard">
 
 <!-- puzzles w/ index -->
