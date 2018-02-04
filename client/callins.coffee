@@ -42,6 +42,10 @@ Template.callins.helpers
 
 Template.callins.onRendered ->
   $("title").text("Answer queue")
+  this.clipboard = new Clipboard '.copy-and-go'
+
+Template.callins.onDestroyed ->
+  this.clipboard.destroy()
 
 Template.callins.events
   "click .bb-addquip-btn": (event, template) ->
@@ -61,8 +65,6 @@ Template.callins_quip.events
     Meteor.call 'removeQuip',
       id: @_id
       who: reactiveLocalStorage.getItem 'nick'
-
-Template.callin_row.onCreated ->
 
 Template.callin_row.helpers
   lastAttempt: ->
@@ -100,3 +102,11 @@ Template.callin_row.events
        object: @_id
        fields: submitted_to_hq: checked
        who: reactiveLocalStorage.getItem 'nick'
+
+  "click .copy-and-go": (event, template) ->
+     Meteor.call 'setField',
+       type: 'callins'
+       object: @_id
+       fields: submitted_to_hq: true
+       who: reactiveLocalStorage.getItem 'nick'
+
