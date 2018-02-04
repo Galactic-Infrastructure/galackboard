@@ -137,7 +137,7 @@ Template.blackboard.helpers
     return r
   stuck: share.model.isStuck
 
-common_helpers =
+Template.blackboard_status_grid.helpers
   roundgroups: ->
     dir = if 'true' is reactiveLocalStorage.getItem 'sortReverse' then 'desc' else 'asc'
     model.RoundGroups.find {}, sort: [["created", dir]]
@@ -162,10 +162,7 @@ common_helpers =
     return p
   stuck: share.model.isStuck
 
-Template.blackboard_status_grid.helpers common_helpers
-Template.blackboard_menu_drawer.helpers common_helpers
-
-Template.blackboard_menu_drawer.events
+Template.blackboard.events
   "click .bb-menu-button .btn": (event, template) ->
     template.$('.bb-menu-drawer').modal 'show'
   "click a[href^=#]": (event, template) ->
