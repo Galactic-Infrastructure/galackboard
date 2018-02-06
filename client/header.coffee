@@ -39,7 +39,7 @@ Template.registerHelper 'link', (args) ->
   link += '</a>'
   return new Spacebars.SafeString(link)
 
-$(document).on 'click', 'a.puzzles-link, a.rounds-link, a.chat-link, a.home-link, a.oplogs-link, a.quips-link', (event) ->
+$(document).on 'click', 'a.puzzles-link, a.rounds-link, a.chat-link, a.home-link, a.oplogs-link, a.quips-link, a.callins-link, a.facts-link', (event) ->
   return unless event.button is 0 # check right-click
   return if event.ctrlKey or event.shiftKey or event.altKey # check alt/ctrl/shift clicks
   return if /^https?:/.test($(event.currentTarget).attr('href'))
@@ -171,7 +171,62 @@ Template.header_loginmute.events
     Meteor.reconnect()
 
 ############## breadcrumbs #######################
+Tracker.autorun ->
+  breadcrumbs = Session.get 'breadcrumbs'
+  currentpage = Session.get 'currentPage'
+  currenttype = Session.get 'type'
+  currentid = Session.get 'id'
+  # Regenerate breadcrumbs
+  base = [{page: 'blackboard', type: 'general', id: '0'}]
+  if currenttype is 'puzzles'
+    round = model.Rounds.findOne puzzles: currentid
+    if round?
+      base.push {page: 'round', type: 'rounds', id: round._id}
+    base.push {page: 'puzzle', type: 'puzzles', id: currentid}
+  else if currenttype is 'rounds'
+    base.push {page: 'round', type: 'rounds', id: currentid}
+  else if currentpage isnt 'chat' and currentpage isnt 'blackboard'
+    base.push {page: currentpage, type: currenttype, id: currentid}
+  # If the new breadcrumbs are a prefix of the old ones, keep the old ones.
+  if breadcrumbs? and base.length <= breadcrumbs.length
+    return if do ->
+      for crumb, i in base
+        oldcrumb = breadcrumbs[i]
+        if crumb.page isnt oldcrumb.page or crumb.type isnt oldcrumb.type or crumb.id isnt oldcrumb.id
+          return false
+      return true
+  Session.set 'breadcrumbs', base
+
+Template.header_breadcrumb_chat.helpers
+  inThisRoom: ->
+    return false unless Session.equals 'currentPage', 'chat'
+    return false unless Session.equals 'type', @type
+    Session.equals 'id', @id
+
+Template.header_breadcrumb_round.onCreated ->
+  @autorun =>
+    @subscribe 'round-by-id', Template.currentData().id
+Template.header_breadcrumb_round.helpers
+  round: ->
+    model.Rounds.findOne @id if @id
+
+Template.header_breadcrumb_puzzle.onCreated ->
+  @autorun =>
+    @subscribe 'puzzle-by-id', Template.currentData().id
+    @subscribe 'round-for-puzzle', Template.currentData().id
+Template.header_breadcrumb_puzzle.helpers
+  puzzle: ->
+    model.Puzzles.findOne @id if @id
+
+Template.header_breadcrumb_quip.onCreated ->
+  @autorun => @subscribe 'quips'
+Template.header_breadcrumb_quip.helpers ->
+  idIsNew: -> 'new' is @id
+  quip: ->  model.Quips.findOne @id unless @id is 'new'
+
 Template.header_breadcrumbs.helpers
+  breadcrumbs: -> Session.get 'breadcrumbs'
+  crumb_template: -> "header_breadcrumb_#{this.page}"
   round: ->
     if Session.equals('type', 'puzzles')
       model.Rounds.findOne puzzles: Session.get("id")
