@@ -137,10 +137,6 @@ Meteor.startup ->
   Session.set 'notifications', Notification.permission
   setupNotifications() if Notification.permission is 'granted'
 
-addEventListener 'storage', (event) ->
-  return unless event.storageArea is localStorage
-  notificationDeps[event.key]?.changed()
-
 # Router
 BlackboardRouter = Backbone.Router.extend
   routes:
