@@ -77,6 +77,14 @@ Template.registerHelper 'gravatar', (args) ->
   html = $('<div>').append( g.eq(0).clone() ).html()
   return new Spacebars.SafeString(html)
 
+today_fmt = Intl.DateTimeFormat navigator.language,
+  hour: 'numeric'
+  minute: 'numeric'
+past_fmt = Intl.DateTimeFormat navigator.language,
+  hour: 'numeric'
+  minute: 'numeric'
+  weekday: 'short'
+
 # timestamps
 Template.registerHelper 'pretty_ts', (args) ->
   args = keyword_or_positional 'timestamp', args
@@ -85,14 +93,11 @@ Template.registerHelper 'pretty_ts', (args) ->
   style = (args.style or "time")
   switch (style)
     when "time"
-      d = new Date(timestamp)
-      hrs = d.getHours()
-      ampm = if hrs < 12 then 'AM' else 'PM'
-      hrs = 12 if hrs is 0
-      hrs = (hrs-12) if hrs > 12
-      min = d.getMinutes()
-      min = if min < 10 then "0" + min else min
-      hrs + ":" + min + ' ' + ampm
+      diff = (Session.get('currentTime') or model.UTCNow()) - timestamp
+      d = new Date timestamp
+      if diff > 86400000
+        return past_fmt.format d
+      today_fmt.format d
     when "duration", "brief_duration", "brief duration"
       brief = (style isnt 'duration')
       duration = (Session.get('currentTime') or model.UTCNow()) - timestamp
