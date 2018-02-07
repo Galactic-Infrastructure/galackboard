@@ -2,7 +2,7 @@
 <div class="row-fluid bb-puzzleround">
  <!-- this is a puzzle page -->
 {{#with data}}
-<div class="bb-splitter">
+<div class="bb-splitter" style="padding-right: {{hsize}}px">
   <div class="bb-left-content">{{! start left of splitter }}
   {{#if puzzle.spreadsheet}}
     <div class="bb-left-header">
@@ -15,8 +15,8 @@
     <p>No spreadsheet.</p>
   {{/if}}
   </div>{{! end left of splitter }}
-  <div class="bb-splitter-handle"></div>
-  <div class="bb-right-content">{{! start right of splitter }}
+  <div class="bb-splitter-handle" style="right: {{hsize}}px"></div>
+  <div class="bb-right-content" style="width: {{hsize}}px; padding-bottom: {{vsizePlusHandle}}px">{{! start right of splitter }}
     <div class="bb-top-right-content">{{! start top right splitter }}
       <div class="{{#if stuck}}bb-status-stuck{{else if puzzle.solved}}bb-status-solved{{/if}}">
         <h1>{{puzzle.name}}</h1>
@@ -49,8 +49,8 @@
       </tbody></table>
       {{/if}}
     </div>
-    <div class="bb-splitter-handle"></div>
-    <div class="bb-bottom-right-content">{{! start bottom right splitter }}
+    <div class="bb-splitter-handle" style="bottom: {{vsize}}px"></div>
+    <div class="bb-bottom-right-content" style="height: {{vsize}}px">{{! start bottom right splitter }}
       <div class="bb-message-container">
         {{> messages }}
       </div>

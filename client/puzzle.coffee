@@ -27,6 +27,9 @@ Template.puzzle.helpers
     r.stuck = model.isStuck puzzle
     r.capType = capType r.type
     return r
+  vsize: -> share.Splitter.vsize.get()
+  vsizePlusHandle: -> +share.Splitter.vsize.get() + 6
+  hsize: -> share.Splitter.hsize.get()
 
 Template.puzzle.onCreated ->
   $('html').addClass('fullHeight')
@@ -58,11 +61,6 @@ Template.puzzle.onCreated ->
 
 Template.puzzle.onRendered ->
   $('html').addClass('fullHeight')
-  share.Splitter.hsize.set()
-# XXX we originally did this every time anything in the template was changed:
-#  share.Splitter.vsize.set() unless share.Splitter.vsize.manualResized
-# with the new `onRendered` callback semantics this isn't possible.  Maybe we
-# don't really need it?
 Template.puzzle.onDestroyed ->
   $('html').removeClass('fullHeight')
   share.chat.cleanupChat()
