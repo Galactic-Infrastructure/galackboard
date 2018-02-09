@@ -195,6 +195,7 @@ BlackboardRouter = Backbone.Router.extend
     this.Page("facts", "general", "0")
 
   LoadTestPage: (which) ->
+    return if Meteor.isProduction
     # redirect to one of the 'real' pages, so that client has the
     # proper subscriptions, etc; plus launch a background process
     # to perform database mutations
