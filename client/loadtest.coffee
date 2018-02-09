@@ -89,7 +89,7 @@ saySomething = (room_name) ->
 addPuzzles = (data) ->
   Meteor.setTimeout addPuzzles.bind(null, data),
     (15 + 10*Random.fraction()) * 1000 # 15-25 seconds
-  [who,name] = [reactiveLocalStorage.getItem 'nick', Random.hexString(16)]
+  [who,name] = [reactiveLocalStorage.getItem('nick'), Random.hexString(16)]
   [followup,removeit] = [null,null]
   cb = (err,o) ->
     return if err?
