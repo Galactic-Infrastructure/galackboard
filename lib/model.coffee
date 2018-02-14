@@ -489,7 +489,9 @@ canonical = (s) ->
 drive_id_to_link = (id) ->
   "https://docs.google.com/folder/d/#{id}/edit"
 spread_id_to_link = (id) ->
-  "https://docs.google.com/spreadsheet/ccc?key=#{id}"
+  "https://docs.google.com/spreadsheets/d/#{id}/edit"
+doc_id_to_link = (id) ->
+  "https://docs.google.com/document/d/#{id}/edit"
 
 (->
   # private helpers, not exported
@@ -681,14 +683,16 @@ spread_id_to_link = (id) ->
     collection(type).update id, { $set:
       drive: res.id
       spreadsheet: res.spreadId
+      doc: res.docId
     }
 
-  renameDriveFolder = (new_name, drive, spreadsheet) ->
+  renameDriveFolder = (new_name, drive, spreadsheet, doc) ->
     check new_name, NonEmptyString
     check drive, NonEmptyString
     check spreadsheet, Match.Optional(NonEmptyString)
+    check doc, Match.Optional(NonEmptyString)
     return unless Meteor.isServer
-    share.drive.renamePuzzle(new_name, drive, spreadsheet)
+    share.drive.renamePuzzle(new_name, drive, spreadsheet, doc)
 
   deleteDriveFolder = (drive) ->
     check drive, NonEmptyString
@@ -807,9 +811,10 @@ spread_id_to_link = (id) ->
       r = Rounds.findOne(args.id)
       drive = r?.drive
       spreadsheet = r?.spreadsheet
+      doc = r?.doc
       result = renameObject "rounds", args
       # rename google drive folder
-      renameDriveFolder args.name, drive, spreadsheet if (result and drive?)
+      renameDriveFolder args.name, drive, (spreadsheet if (result and drive?)), doc if (result and drive?)
       return result
     deleteRound: (args) ->
       check args, ObjectWith
@@ -823,12 +828,13 @@ spread_id_to_link = (id) ->
       # get drive ID (racy)
       drive = old?.drive
       spreadsheet = old?.spreadsheet
+      doc = old?.doc
       # remove round itself
       r = deleteObject "rounds", args
       # remove from all roundgroups
       RoundGroups.update { rounds: rid },{ $pull: rounds: rid },{ multi: true }
       # delete google drive folder and all contents, recursively
-      deleteDriveFolder drive, spreadsheet if drive?
+      deleteDriveFolder drive, (spreadsheet if drive?), doc if drive?
       # XXX: delete chat room logs?
       return r
 
@@ -842,6 +848,7 @@ spread_id_to_link = (id) ->
         solved_by: null
         drive: args.drive or null
         spreadsheet: args.spreadsheet or null
+        doc: args.doc or null
         link: args.link or link
       # create google drive folder (server only)
       newDriveFolder "puzzles", p._id, p.name
@@ -855,9 +862,10 @@ spread_id_to_link = (id) ->
       p = Puzzles.findOne(args.id)
       drive = p?.drive
       spreadsheet = p?.spreadsheet
+      doc = p?.doc
       result = renameObject "puzzles", args
       # rename google drive folder
-      renameDriveFolder args.name, drive, spreadsheet if (result and drive?)
+      renameDriveFolder args.name, drive, (spreadsheet if (result and drive?)), doc if (result and drive?)
       return result
     deletePuzzle: (args) ->
       check args, ObjectWith
@@ -868,12 +876,13 @@ spread_id_to_link = (id) ->
       old = Puzzles.findOne(args.id)
       drive = old?.drive
       spreadsheet = old?.spreadsheet
+      doc = old?.doc
       # remove puzzle itself
       r = deleteObject "puzzles", args
       # remove from all rounds
       Rounds.update { puzzles: pid },{ $pull: puzzles: pid },{ multi: true }
       # delete google drive folder
-      deleteDriveFolder drive, spreadsheet if drive?
+      deleteDriveFolder drive, (spreadsheet if drive?), doc if drive?
       # XXX: delete chat room logs?
       return r
 
@@ -1598,4 +1607,5 @@ share.model =
   canonical: canonical
   drive_id_to_link: drive_id_to_link
   spread_id_to_link: spread_id_to_link
+  doc_id_to_link: doc_id_to_link
   UTCNow: UTCNow
