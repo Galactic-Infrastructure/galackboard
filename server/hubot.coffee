@@ -69,15 +69,6 @@ sendHelper = Meteor.bindEnvironment (robot, envelope, strings, map) ->
 tweakStrings = (strings, f) -> strings.map (obj) ->
   if typeof(obj) == 'string' then f(obj) else obj
 
-mentionize = (f) ->
-  (str) ->
-    if typeof(str) == 'function'
-      return str
-    else if str instanceof Useful
-      return str
-    else
-      return f(str)
-
 class BlackboardAdapter extends Hubot.Adapter
   # Public: Raw method for sending data back to the chat source. Extend this.
   #
