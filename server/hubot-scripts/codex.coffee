@@ -334,7 +334,7 @@ share.hubot.codex = (robot) ->
     if msg.match[1]?
       target = Meteor.call 'getByName', name: msg.match[1]
       if not target?
-        msg.reply new share.Useful, "I don't know what \"#{msg.match[1]}\" is."
+        msg.reply useful: true, "I don't know what \"#{msg.match[1]}\" is."
         return msg.finish()
     else
       target = objectFromRoom msg
@@ -345,7 +345,7 @@ share.hubot.codex = (robot) ->
       value: msg.match[2]
       who: msg.envelope.user.id
     if result?
-      msg.reply new share.Useful, result
+      msg.reply useful: true, result
       return msg.finish()
     if msg.envelope.room isnt "general/0" and \
        msg.envelope.room isnt "#{target.type}/#{target.object._id}"
@@ -357,7 +357,7 @@ share.hubot.codex = (robot) ->
     if msg.match[1]?
       target = Meteor.call 'getByName', name: msg.match[1]
       if not target?
-        msg.reply new share.Useful, "I don't know what \"#{msg.match[1]}\" is."
+        msg.reply useful: true, "I don't know what \"#{msg.match[1]}\" is."
         return msg.finish()
     else
       target = objectFromRoom msg
@@ -367,11 +367,11 @@ share.hubot.codex = (robot) ->
       object: target.object._id
       who: msg.envelope.user.id
     if result?
-      msg.reply new share.Useful, result
+      msg.reply useful: true, result
       return msg.finish()
     if msg.envelope.room isnt "general/0" and \
        msg.envelope.room isnt "#{target.type}/#{target.object._id}"
-      msg.reply new share.Useful, "Call for help cancelled"
+      msg.reply useful: true, "Call for help cancelled"
     msg.finish()
 
   robot.commands.push 'bot announce <message>'
