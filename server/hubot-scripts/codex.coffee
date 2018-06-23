@@ -70,7 +70,7 @@ share.hubot.codex = (robot) ->
       answer: answer
       who: who
     unless res
-      msg.reply useful: true, msg.random ["I knew that!","Not news to me.","Already known."]
+      msg.reply useful: true, msg.random ["I knew that!","Not news to me.","Already known.", "It is known.", "So say we all."]
       return
     solution_banter = [
       "Huzzah!"
