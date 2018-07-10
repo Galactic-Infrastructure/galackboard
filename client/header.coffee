@@ -238,7 +238,7 @@ Template.header_breadcrumb_puzzle.helpers
 
 Template.header_breadcrumb_quip.onCreated ->
   @autorun => @subscribe 'quips'
-Template.header_breadcrumb_quip.helpers ->
+Template.header_breadcrumb_quip.helpers
   idIsNew: -> 'new' is @id
   quip: ->  model.Quips.findOne @id unless @id is 'new'
 
