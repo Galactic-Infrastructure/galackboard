@@ -189,7 +189,7 @@ ensure = (name, folder, settings) ->
       media:
         mimeType: settings.uploadMimeType
         body: settings.uploadTemplate
-    ensurePermissions(doc.id)
+  ensurePermissions(doc.id)
   return doc
 
 createPuzzle = (name) ->
