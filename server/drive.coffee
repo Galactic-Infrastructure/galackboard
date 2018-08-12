@@ -29,6 +29,7 @@ do ->
     api = Gapi.apis.drive('v2')
     Gapi.registerAuth jwt
     share.drive = new Drive api
+    console.log "Google Drive authorized and activated"
   catch error
     console.warn "Error trying to retrieve drive API:", error
     console.warn "Google Drive integration disabled."
