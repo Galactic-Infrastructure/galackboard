@@ -15,10 +15,10 @@ describe 'getTag', ->
     chai.assert.isUndefined tags.getTag {tags: yo: {name: 'Yo', value: 'ho ho'}}, 'foo'
 
   it 'accepts matching tags', ->
-    chai.assert.equal tags.getTag({tags: yo: {name: 'Yo', canon: 'yo', value: 'ho ho'}}, 'yo'), 'ho ho'
+    chai.assert.equal tags.getTag({tags: yo: {name: 'Yo', value: 'ho ho'}}, 'yo'), 'ho ho'
 
   it 'canonicalizes tags', ->
-    chai.assert.equal tags.getTag({tags: yo: {name: 'Yo', canon: 'yo', value: 'ho ho'}}, 'yO'), 'ho ho'
+    chai.assert.equal tags.getTag({tags: yo: {name: 'Yo', value: 'ho ho'}}, 'yO'), 'ho ho'
 
 describe 'isStuck', ->
   it 'accepts missing object', ->
@@ -31,7 +31,7 @@ describe 'isStuck', ->
     chai.assert.isFalse tags.isStuck {tags: {}}
 
   it 'ignores other tags', ->
-    chai.assert.isFalse tags.isStuck {tags: yo: {name: 'Yo', canon: 'yo', value: 'ho ho'}}
+    chai.assert.isFalse tags.isStuck {tags: yo: {name: 'Yo', value: 'ho ho'}}
 
   it 'ignores nonstuck status', ->
     chai.assert.isFalse tags.isStuck {tags: status: {name: 'Status', value: 'making progress'}}
