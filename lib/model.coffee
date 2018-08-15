@@ -832,18 +832,11 @@ doc_id_to_link = (id) ->
         nick: NonEmptyString
         room_name: NonEmptyString
         timestamp: Number
-      try
-        LastRead.upsert
-          nick: canonical(args.nick)
-          room_name: args.room_name
-          timestamp: $lt: args.timestamp
-        , $set:
-          timestamp: args.timestamp
-      catch e
-        # ignore duplicate key errors; they are harmless and occur when we
-        # try to move the LastRead.timestamp backwards.
-        return false if isDuplicateError e
-        throw e
+      LastRead.upsert
+        nick: canonical args.nick
+        room_name: args.room_name
+      , $max:
+        timestamp: args.timestamp
 
     setPresence: (args) ->
       check args, ObjectWith
