@@ -765,17 +765,17 @@ doc_id_to_link = (id) ->
         lng: Number
         timestamp: Match.Optional(Number)
       return if this.isSimulation # server side only
-      n = Nicks.findOne canon: canonical(args.nick)
-      throw new Meteor.Error(400, "bad nick: #{args.nick}") unless n?
       # the server transfers updates from priv_located* to located* at
       # a throttled rate to prevent N^2 blow up.
       # priv_located_order implements a FIFO queue for updates, but
       # you don't lose your place if you're already in the queue
       timestamp = UTCNow()
-      Nicks.update n._id, $set:
-        priv_located: args.timestamp ? timestamp
-        priv_located_at: { lat: args.lat, lng: args.lng }
-        priv_located_order: n.priv_located_order ? timestamp
+      n = Nicks.update {canon: canonical args.nick},
+        $set:
+          priv_located: args.timestamp ? timestamp
+          priv_located_at: { lat: args.lat, lng: args.lng }
+        $min: priv_located_order: timestamp
+      throw new Meteor.Error(400, "bad nick: #{args.nick}") unless n > 0
 
     newMessage: (args) ->
       check args, Object
