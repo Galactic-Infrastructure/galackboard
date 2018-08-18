@@ -26,7 +26,20 @@ currentViewIs = (puzzle, view) ->
   return view is possible[0]
 
 Template.puzzle_info.helpers
-   tag: (name) -> (model.getTag this, name) or ''
+  tag: (name) -> (model.getTag this, name) or ''
+  caresabout: ->
+    cared = model.getTag @puzzle, "Cares About"
+    (
+      name: tag
+      canon: model.canonical tag
+    ) for tag in cared?.split(',') or []
+  unsetcaredabout: ->
+    return [] if @type is 'rounds'
+    tag for tag in @round?.tags.cares_about?.value.split(',') or [] when not model.getTag @puzzle, tag
+  metatags: ->
+    return [] if @type is 'rounds'
+    tag for canon, tag of @round?.tags when /^meta /i.test tag.name
+
 
 Template.puzzle.helpers
   data: ->
