@@ -265,15 +265,7 @@
       </td>
     {{#unless canEdit}}
     <td class="puzzle-working">
-      <div class="{{#if lotsOfPeople whos_working.count}}bb-lots{{/if}}">
-      <span class="bb-short">
-      {{ whos_working.count }} people
-      ({{local_working}}<i class="icon-map-marker"></i>)
-      </span>
-      <span class="bb-long">
       {{#each whos_working}}{{> nick_presence }} {{/each}}
-      </span>
-      </div>
     </td>
     <td class="puzzle-update">
       {{#if round.solved}}solved {{pretty_ts timestamp=round.solved style="brief duration"}}
@@ -399,15 +391,7 @@
     </td>
     {{#unless canEdit}}
     <td class="puzzle-working">
-      <div class="{{#if lotsOfPeople whos_working.count}}bb-lots{{/if}}">
-      <span class="bb-short">
-      {{ whos_working.count }} people
-      ({{local_working}}<i class="icon-map-marker"></i>)
-      </span>
-      <span class="bb-long">
       {{#each whos_working}}{{> nick_presence }} {{/each}}
-      </span>
-      </div>
     </td>
     <td class="puzzle-update">
       {{#if puzzle.solved}}solved {{pretty_ts timestamp=puzzle.solved style="brief duration"}}
