@@ -74,7 +74,7 @@ CODEXBOT_LOCATIONS = [
   'having fun!'
   "Your Plastic Pal Who's Fun to Be With."
   'fond of memes'
-  'waiting for you humans to find to coin already'
+  'waiting for you humans to find the coin already'
   'muttering about his precious'
 ]
 
