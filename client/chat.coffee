@@ -1,4 +1,7 @@
 'use strict'
+
+import { nickEmail } from './imports/nickEmail.coffee'
+
 model = share.model # import
 settings = share.settings # import
 
@@ -113,11 +116,6 @@ Template.chat.helpers
     type = Session.get 'type'
     type isnt 'general' and \
       (model.collection(type)?.findOne Session.get("id"))?.solved
-
-nickEmail = (nick) ->
-  cn = model.canonical(nick)
-  n = model.Nicks.findOne canon: cn
-  return model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"  
 
 Template.starred_messages.onCreated ->
   this.autorun =>
@@ -701,7 +699,6 @@ share.chat =
   cleanupChat: cleanupChat
   hideMessageAlert: hideMessageAlert
   joinRoom: joinRoom
-  nickEmail: nickEmail
   # pagination helpers
   pageForTimestamp: pageForTimestamp
   messagesForPage: messagesForPage

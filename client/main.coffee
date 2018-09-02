@@ -1,4 +1,7 @@
 'use strict'
+
+import { nickEmail } from './imports/nickEmail.coffee'
+
 settings = share.settings # import
 chat = share.chat # import
 
@@ -119,7 +122,7 @@ Meteor.startup ->
     added: (id, msg) ->
       return unless Notification.permission is 'granted'
       return unless share.notification.get(msg.stream)
-      gravatar = $.gravatar chat.nickEmail(msg.nick),
+      gravatar = $.gravatar nickEmail(msg.nick),
         image: 'wavatar'
         size: 192
         secure: true

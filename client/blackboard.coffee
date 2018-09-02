@@ -1,4 +1,7 @@
 'use strict'
+
+import { nickEmail } from './imports/nickEmail.coffee'
+
 model = share.model # import
 settings = share.settings # import
 
@@ -173,10 +176,7 @@ Template.blackboard.events
       offset: { top: -110 }
 
 Template.nick_presence.helpers
-  email: ->
-    cn = share.model.canonical(this.nick)
-    n = share.model.Nicks.findOne canon: cn
-    return share.model.getTag(n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"
+  email: -> nickEmail @nick
 
 share.find_bbedit = (event) ->
   edit = $(event.currentTarget).closest('*[data-bbedit]').attr('data-bbedit')

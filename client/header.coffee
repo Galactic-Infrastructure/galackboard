@@ -1,4 +1,7 @@
 'use strict'
+
+import { emailFromNickObject } from './imports/nickEmail.coffee'
+
 model = share.model # import
 settings = share.settings # import
 
@@ -151,7 +154,7 @@ Template.header_loginmute.helpers
       name: n?.name or nick
       canon: cn
       realname: model.getTag n, 'Real Name'
-      gravatar: (model.getTag n, 'Gravatar') or "#{cn}@#{settings.DEFAULT_HOST}"
+      gravatar: emailFromNickObject n
     }
 
 Template.header_loginmute.onRendered ->
