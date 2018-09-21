@@ -2,6 +2,8 @@
 
 # Will access contents via share
 import '../model.coffee'
+# Test only works on server side; move to /server if you add client tests.
+import '../../server/000servercall.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -19,29 +21,15 @@ describe 'addIncorrectAnswer', ->
 
   beforeEach ->
     resetDatabase()
-    
-  it 'fails on non-puzzle', ->
-    id = model.Nicks.insert
-      name: 'Torgen'
-      canon: 'torgen'
-      tags: answer: {name: 'Answer', value: 'knock knock', touched: 1, touched_by: 'torgen'}
-    chai.assert.throws ->
-      Meteor.call 'addIncorrectAnswer',
-        type: 'nicks'
-        target: id
-        who: 'cjb'
-        answer: 'foo'
-    , Match.Error
 
   ['roundgroups', 'rounds', 'puzzles'].forEach (type) =>
     describe "on #{model.pretty_collection(type)}", ->
       it 'fails when it doesn\'t exist', ->
         chai.assert.throws ->
-          Meteor.call 'newCallIn',
+          Meteor.callAs 'addIncorrectAnswer', 'torgen',
             type: type
             target: 'something'
             answer: 'precipitate'
-            who: 'torgen'
         , Meteor.Error
       
       describe 'which exists', ->
@@ -65,38 +53,48 @@ describe 'addIncorrectAnswer', ->
             answer: 'flimflam'
             created: 4
             created_by: 'cjb'
-          Meteor.call 'addIncorrectAnswer',
-            type: type
-            target: id
-            who: 'cjb'
-            answer: 'flimflam'
+        
+        it 'fails without login', ->
+          chai.assert.throws ->
+            Meteor.call 'addIncorrectAnswer',
+              type: type
+              target: id
+              answer: 'flimflam'
+          , Match.Error
+            
+        describe 'when logged in', ->
+          beforeEach ->
+            Meteor.callAs 'addIncorrectAnswer', 'cjb',
+              type: type
+              target: id
+              answer: 'flimflam'
 
-        it 'appends answer', ->
-          doc = model.collection(type).findOne id
-          chai.assert.lengthOf doc.incorrectAnswers, 2
-          chai.assert.include doc.incorrectAnswers[1],
-            answer: 'flimflam'
-            who: 'cjb'
-            timestamp: 7
-            backsolve: false
-            provided: false
+          it 'appends answer', ->
+            doc = model.collection(type).findOne id
+            chai.assert.lengthOf doc.incorrectAnswers, 2
+            chai.assert.include doc.incorrectAnswers[1],
+              answer: 'flimflam'
+              who: 'cjb'
+              timestamp: 7
+              backsolve: false
+              provided: false
 
-        it 'doesn\'t touch', ->
-          doc = model.collection(type).findOne id
-          chai.assert.include doc,
-            touched: 2
-            touched_by: 'torgen'
+          it 'doesn\'t touch', ->
+            doc = model.collection(type).findOne id
+            chai.assert.include doc,
+              touched: 2
+              touched_by: 'torgen'
 
-        it 'oplogs', ->
-          o = model.Messages.find(room_name: 'oplog/0').fetch()
-          chai.assert.lengthOf o, 1
-          chai.assert.include o[0],
-            type: type
-            id: id
-            stream: 'callins'
-            nick: 'cjb'
-          # oplog is lowercase
-          chai.assert.include o[0].body, 'flimflam', 'message'
+          it 'oplogs', ->
+            o = model.Messages.find(room_name: 'oplog/0').fetch()
+            chai.assert.lengthOf o, 1
+            chai.assert.include o[0],
+              type: type
+              id: id
+              stream: 'callins'
+              nick: 'cjb'
+            # oplog is lowercase
+            chai.assert.include o[0].body, 'flimflam', 'message'
 
-        it 'deletes callin', ->
-          chai.assert.lengthOf model.CallIns.find().fetch(), 0
+          it 'deletes callin', ->
+            chai.assert.lengthOf model.CallIns.find().fetch(), 0
