@@ -1,6 +1,7 @@
 'use strict'
 
 import { nickEmail } from './imports/nickEmail.coffee'
+import puzzleColor, { cssColorToHex, hexToCssColor } from './imports/objectColor.coffee'
 
 model = share.model # import
 settings = share.settings # import
@@ -204,6 +205,8 @@ Template.blackboard.events
     doBoolean 'hideRoundsSolvedMeta', event.target.checked
   "change .bb-compact-mode input": (event, template) ->
     doBoolean 'compactMode', event.target.checked
+  "change .bb-boring-mode input": (event, template) ->
+    doBoolean 'boringMode', event.target.checked
   "click .bb-hide-status": (event, template) ->
     doBoolean 'hideStatus', ('true' isnt reactiveLocalStorage.getItem 'hideStatus')
   "click .bb-add-round-group": (event, template) ->
@@ -257,7 +260,15 @@ Template.blackboard.events
     # note that we rely on 'blur' on old field (which triggers ok or cancel)
     # happening before 'click' on new field
     Session.set 'editing', share.find_bbedit(event).join('/')
-Template.blackboard.events okCancelEvents('.bb-editable input',
+  'click input[type=color]': (event, template) ->
+    event.stopPropagation()
+  'input input[type=color]': (event, template) ->
+    edit = $(event.currentTarget).closest('*[data-bbedit]').attr('data-bbedit')
+    [type, id, rest...] = edit.split('/')
+    # strip leading/trailing whitespace from text (cancel if text is empty)
+    text = hexToCssColor event.currentTarget.value.replace /^\s+|\s+$/, ''
+    processBlackboardEdit[type]?(text, id, rest...) if text
+Template.blackboard.events okCancelEvents('.bb-editable input[type=text]',
   ok: (text, evt) ->
     # find the data-bbedit specification for this field
     edit = $(evt.currentTarget).closest('*[data-bbedit]').attr('data-bbedit')
@@ -323,6 +334,7 @@ processBlackboardEdit =
 
 Template.blackboard_round.helpers
   hasPuzzles: -> (this.round?.puzzles?.length > 0)
+  color: -> puzzleColor @round if @round?
   showRound: ->
     return false if ('true' is reactiveLocalStorage.getItem 'hideRoundsSolvedMeta') and (this.round?.solved?)
     return ('true' isnt reactiveLocalStorage.getItem 'hideSolved') or (!this.round?.solved?) or
@@ -459,8 +471,10 @@ tagHelper = (id) ->
       (Session.equals('currentPage', 'puzzle') or \
         Session.equals('currentPage', 'round'))))
 
-Template.blackboard_tags.helpers { tags: tagHelper }
-Template.blackboard_puzzle_tags.helpers { tags: tagHelper }
+Template.blackboard_tags.helpers tags: tagHelper
+Template.blackboard_puzzle_tags.helpers
+  tags: tagHelper
+  hexify: (v) -> cssColorToHex v
 Template.puzzle_info.helpers { tags: tagHelper }
 
 # Subscribe to all group, round, and puzzle information
