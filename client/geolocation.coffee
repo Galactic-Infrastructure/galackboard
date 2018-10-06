@@ -48,6 +48,7 @@ Tracker.autorun ->
   nick = Meteor.userId()
   return unless nick?
   pos = Geolocation.latLng(enableHighAccuracy:false)
+  return unless pos?
   geojson =
     type: 'Point'
     coordinates: [pos.lng, pos.lat]
