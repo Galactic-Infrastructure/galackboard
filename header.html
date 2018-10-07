@@ -47,18 +47,18 @@
 </template>
 
 <template name="header_breadcrumb_round">
-  <li class="{{#if active}}active{{else}}bb-omit-when-narrow{{/if}}">
+  <li class="{{#if active}}active{{/if}}">
     <a href="/rounds/{{id}}" class="rounds-link">
-      <i class="fas fa-folder-open"></i> Round: {{round.name}}
+      <i class="fas fa-folder-open"></i><span class="bb-omit-when-narrow"> Round:</span> {{round.name}}
     </a>
     {{> header_breadcrumb_extra_links round}}
   </li>
 </template>
 
 <template name="header_breadcrumb_puzzle">
-  <li class="{{#if active}}active{{else}}bb-omit-when-narrow{{/if}}">
+  <li class="{{#if active}}active{{/if}}">
     <a href="/puzzles/{{id}}" class="puzzles-link">
-      <i class="fas fa-book"></i> Puzzle: {{puzzle.name}}
+      <i class="fas fa-book"></i><span class="bb-omit-when-narrow"> Puzzle:</span> {{puzzle.name}}
     </a>
     {{> header_breadcrumb_extra_links puzzle}}
   </li>
@@ -150,7 +150,7 @@
       <a class="btn btn-small btn-inverse dropdown-toggle"
          data-toggle="dropdown" href="#">
        {{#if sessionNick.gravatar}}
-       {{gravatar id=sessionNick.gravatar size=20 image="wavatar"}}
+       {{gravatar id=sessionNick.gravatar size=18 image="wavatar"}}
        {{else}}
        <i class="fas fa-user"></i>
        {{/if}}
