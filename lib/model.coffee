@@ -1,7 +1,7 @@
 'use strict'
 
 import canonical from './imports/canonical.coffee'
-import { ArrayMembers, NumberInRange, NonEmptyString, IdOrObject, ObjectWith } from './imports/match.coffee'
+import { ArrayMembers, ArrayWithLength, NumberInRange, NonEmptyString, IdOrObject, ObjectWith } from './imports/match.coffee'
 import { getTag, isStuck, canonicalTags } from './imports/tags.coffee'
 
 # Blackboard -- data model
@@ -126,6 +126,15 @@ Quips = BBCollection.quips = new Mongo.Collection "quips"
 if Meteor.isServer
   Quips._ensureIndex {last_used: 1}, {}
 
+# Polls are:
+#   _id: mongodb id
+#   created: timestamp of creation
+#   created_by: userId of creator
+#   question: "poll question"
+#   options: list of {canon: "canonical text", option: "original text"}
+#   votes: document where keys are canonical user names and values are {canon: "canonical text" timestamp: timestamp of vote}
+Polls = BBCollection.polls = new Mongo.Collection "polls"
+
 # Users are:
 #   _id: canonical nickname
 #   located: timestamp
@@ -154,6 +163,7 @@ if Meteor.isServer
 #   presence: optional string ('join'/'part' for presence-change only)
 #   bot_ignore: optional boolean (true for messages from e.g. email or twitter)
 #   to:   destination of pm (optional)
+#   poll: _id of poll (optional)
 #   starred: boolean. Pins this message to the top of the puzzle page or blackboard.
 #   room_name: "<type>/<id>", ie "puzzle/1", "round/1".
 #                             "general/0" for main chat.
@@ -771,6 +781,7 @@ doc_id_to_link = (id) ->
         system: args.system or false
         action: args.action or false
         to: canonical(args.to or "") or null
+        poll: args.poll or null
         room_name: args.room_name or "general/0"
         timestamp: UTCNow()
         useful: args.useful or false
@@ -1228,6 +1239,42 @@ doc_id_to_link = (id) ->
       oplog "Deleted answer for", args.type, id, @userId
       return true
 
+    newPoll: (room, question, options) ->
+      console.log arguments
+      check @userId, NonEmptyString
+      check room, NonEmptyString
+      check question, NonEmptyString
+      check options, ArrayWithLength(NonEmptyString, {min: 2, max: 5})
+      canonOpts = new Set
+      opts = for opt in options
+        copt = canonical opt
+        continue if canonOpts.has copt
+        canonOpts.add copt
+        {canon: copt, option: opt}
+      id = Polls.insert
+        created: UTCNow()
+        created_by: @userId
+        question: question
+        options: opts
+        votes: {}
+      Meteor.call 'newMessage',
+        body: question
+        room_name: room
+        poll: id
+      id
+
+    vote: (poll, option) ->
+      check @userId, NonEmptyString
+      check poll, NonEmptyString
+      check option, NonEmptyString
+      # This atomically checks that the poll exists and the option is valid,
+      # then replaces any existing vote the user made.
+      Polls.update
+        _id: poll
+        'options.canon': option
+      ,
+        $set: "votes.#{@userId}": {canon: option, timestamp: UTCNow()}
+
     getRinghuntersFolder: ->
       check @userId, NonEmptyString
       return unless Meteor.isServer
@@ -1256,6 +1303,7 @@ share.model =
   # collection types
   CallIns: CallIns
   Quips: Quips
+  Polls: Polls
   Names: Names
   LastAnswer: LastAnswer
   RoundGroups: RoundGroups
