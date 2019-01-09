@@ -399,7 +399,7 @@ scrollMessagesView = ->
   touchSelfScroll()
   instachat.scrolledToBottom = true
   # first try using html5, then fallback to jquery
-  last = document?.querySelector?('.bb-chat-messages > *:last-child')
+  last = document?.querySelector?('#messages > *:last-child')
   if last?.scrollIntoView?
     last.scrollIntoView()
   else
