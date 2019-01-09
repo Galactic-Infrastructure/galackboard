@@ -225,7 +225,7 @@ BlackboardRouter = Backbone.Router.extend
     Session.set "timestamp", timestamp
 
   CallInPage: ->
-    this.Page("callins", "general", "0")
+    this.Page("callins", "callins", "0")
 
   QuipPage: (id) ->
     this.Page("quip", "quips", id)

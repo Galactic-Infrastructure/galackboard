@@ -656,7 +656,7 @@ updateNotice = do ->
     [lastUnread, lastMention] = [unread, mention]
 
 Tracker.autorun ->
-  pageWithChat = /^(chat|puzzle|round)$/.test Session.get('currentPage')
+  pageWithChat = /^(chat|puzzle|round|callins)$/.test Session.get('currentPage')
   nick = Meteor.userId() or ''
   room_name = Session.get 'room_name'
   unless pageWithChat and nick and room_name
