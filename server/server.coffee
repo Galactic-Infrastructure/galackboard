@@ -112,22 +112,25 @@ for messages in [ 'messages', 'oldmessages' ]
     # paged messages.  client is responsible for giving a reasonable
     # range, which is a bit of an issue.  Once limit is supported in oplog
     # we could probably add a limit here to be a little safer.
-    Meteor.publish "#{messages}-in-range-to-me", loginRequired (room_name, from, to=0) ->
+    Meteor.publish "#{messages}-in-range", loginRequired (room_name, from, to=0) ->
       cond = $gte: +from, $lt: +to
       delete cond.$lt if cond.$lt is 0
       model.collection(messages).find
-        room_name: room_name
-        timestamp: cond
-        to: $in: [null, @userId]
-
-    # You can see all messages from you, whoever they're to.
-    Meteor.publish "#{messages}-in-range-from-me", loginRequired (room_name, from, to=0) ->
-      cond = $gte: +from, $lt: +to
-      delete cond.$lt if cond.$lt is 0
-      model.collection(messages).find
-        room_name: room_name
-        timestamp: cond
-        nick: @userId
+        # Don't factor the common query parameters out of this $or without
+        # profiling the query. It's done this way because MongoDB didn't
+        # understand the distributive property.
+        $or: [
+          {
+            room_name: room_name
+            timestamp: cond
+            to: $in: [null, @userId]
+          },
+          {
+            room_name: room_name
+            timestamp: cond
+            nick: @userId
+          }
+        ]
 
 Meteor.publish 'starred-messages', loginRequired (room_name) ->
   for messages in [ model.OldMessages, model.Messages ]

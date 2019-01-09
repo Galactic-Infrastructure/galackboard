@@ -121,7 +121,7 @@ Meteor.startup ->
     p = share.chat.pageForTimestamp 'oplog/0', 0, {subscribe:true}
     return unless p? # wait until page info is loaded
     messages = if p.archived then "oldmessages" else "messages"
-    Meteor.subscribe "#{messages}-in-range-to-me", p.room_name, p.from, p.to
+    Meteor.subscribe "#{messages}-in-range", p.room_name, p.from, p.to
   share.model.Messages.find({room_name: 'oplog/0', timestamp: $gte: now}).observeChanges
     added: (id, msg) ->
       return unless Notification.permission is 'granted'

@@ -264,14 +264,10 @@ Template.messages.onCreated ->
     if p.next? # subscribe to the 'next' page
       this.subscribe 'page-by-id', p.next
     # load messages for this page
-    ready = 0
     onReady = ->
-      if (++ready) is 2
-        instachat.ready = true
-        Session.set 'chatReady', true
-    this.subscribe "#{messages}-in-range-to-me", p.room_name, p.from, p.to,
-      onReady: onReady
-    this.subscribe "#{messages}-in-range-from-me", p.room_name, p.from, p.to,
+      instachat.ready = true
+      Session.set 'chatReady', true
+    this.subscribe "#{messages}-in-range", p.room_name, p.from, p.to,
       onReady: onReady
     Tracker.onInvalidate invalidator
 

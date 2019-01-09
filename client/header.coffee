@@ -451,7 +451,7 @@ Template.header_lastupdates.onCreated ->
     p = share.chat.pageForTimestamp 'oplog/0', 0, {subscribe:this}
     return unless p? # wait until page info is loaded
     messages = if p.archived then "oldmessages" else "messages"
-    this.subscribe "#{messages}-in-range-to-me", p.room_name, p.from, p.to
+    this.subscribe "#{messages}-in-range", p.room_name, p.from, p.to
 # add tooltip to 'more' links
 do ->
   for t in ['header_lastupdates', 'header_lastchats']
@@ -478,5 +478,4 @@ Template.header_lastchats.onCreated ->
     p = share.chat.pageForTimestamp 'general/0', 0, {subscribe:this}
     return unless p? # wait until page info is loaded
     messages = if p.archived then "oldmessages" else "messages"
-    this.subscribe "#{messages}-in-range-to-me", p.room_name, p.from, p.to
-    this.subscribe "#{messages}-in-range-from-me", p.room_name, p.from, p.to
+    this.subscribe "#{messages}-in-range", p.room_name, p.from, p.to
