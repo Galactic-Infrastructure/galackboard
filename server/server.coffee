@@ -200,4 +200,4 @@ Meteor.publish 'poll', loginRequired (id) ->
   model.Polls.find _id: id
 
 ## Publish the 'facts' collection to all users
-#Facts.setUserIdFilter -> true
+Facts.setUserIdFilter -> true
