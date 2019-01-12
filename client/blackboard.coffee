@@ -492,5 +492,3 @@ Meteor.startup ->
   Meteor.setInterval ->
     Session.set "currentTime", model.UTCNow()
   , 60*1000
-
-addEventListener 'storage', (event) -> console.log event.storageArea[event.key], event
