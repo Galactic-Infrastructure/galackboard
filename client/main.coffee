@@ -179,10 +179,8 @@ BlackboardRouter = Backbone.Router.extend
     "": "BlackboardPage"
     "edit": "EditPage"
     "rounds/:round": "RoundPage"
-    "rounds/:round/:view": "RoundPage"
     "puzzles/:puzzle": "PuzzlePage"
     "puzzles/:puzzle/:view": "PuzzlePage"
-    "roundgroups/:roundgroup": "RoundGroupPage"
     "chat/:type/:id": "ChatPage"
     "chat/:type/:id/:timestamp": "ChatPage"
     "oplogs/:timestamp": "OpLogPage"
@@ -205,20 +203,14 @@ BlackboardRouter = Backbone.Router.extend
         canEdit: true
         editing: undefined
 
-  RoundPage: (id, view=null) ->
-    this.Page("round", "rounds", id)
-    Session.set
-      timestamp: 0
-      view: view
-
   PuzzlePage: (id, view=null) ->
     this.Page("puzzle", "puzzles", id)
     Session.set
       timestamp: 0
       view: view
 
-  RoundGroupPage: (id) ->
-    this.goToChat "roundgroups", id, 0
+  RoundPage: (id) ->
+    this.goToChat "rounds", id, 0
 
   ChatPage: (type,id,timestamp=0) ->
     id = "0" if type is "general"
@@ -226,7 +218,7 @@ BlackboardRouter = Backbone.Router.extend
     Session.set "timestamp", +timestamp
 
   OpLogPage: (timestamp) ->
-    this.Page("oplog", "general", "0")
+    this.Page("oplog", "oplog", "0")
     Session.set "timestamp", timestamp
 
   CallInPage: ->
@@ -236,7 +228,7 @@ BlackboardRouter = Backbone.Router.extend
     this.Page("quip", "quips", id)
 
   FactsPage: ->
-    this.Page("facts", "general", "0")
+    this.Page("facts", "facts", "0")
 
   LoadTestPage: (which) ->
     return if Meteor.isProduction
