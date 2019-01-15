@@ -3,8 +3,10 @@
 import { nickEmail } from './imports/nickEmail.coffee'
 import abbrev from '../lib/imports/abbrev.coffee'
 import { reactiveLocalStorage } from './imports/storage.coffee'
+import embeddable from './imports/embeddable.coffee'
 
 settings = share.settings # import
+model = share.model
 chat = share.chat # import
 
 # "Top level" templates:
@@ -49,11 +51,10 @@ Template.registerHelper 'mynick', -> Meteor.user()?.nickname
 
 Template.registerHelper 'boringMode', -> 'true' is reactiveLocalStorage.getItem 'boringMode'
 
-Template.registerHelper 'embeddable', (link) ->
-  return false unless link
-  return false if window.location.protocol is 'https:' and not link.startsWith 'https:'
-  true
+Template.registerHelper 'embeddable', embeddable
 
+# subscribe to the dynamic settings all the time.
+Meteor.subscribe 'settings'
 # subscribe to the all-names feed all the time
 Meteor.subscribe 'all-names'
 # subscribe to all nicks all the time
