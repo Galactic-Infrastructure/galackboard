@@ -136,7 +136,7 @@ Meteor.startup ->
       onReady: -> suppress = false
   share.model.Messages.find({room_name: 'oplog/0', timestamp: $gte: now}).observeChanges
     added: (id, msg) ->
-      return unless Notification.permission is 'granted'
+      return unless Notification?.permission is 'granted'
       return unless share.notification.get(msg.stream)
       return if suppress
       gravatar = $.gravatar nickEmail(msg.nick),
@@ -151,7 +151,7 @@ Meteor.startup ->
         body: body
         tag: id
         icon: gravatar[0].src
-  if not Notification
+  unless Notification?
     Session.set 'notifications', 'denied'
     return
   Session.set 'notifications', Notification.permission
