@@ -539,10 +539,11 @@ html.fullHeight {
        position: relative;
        display: flex;
        flex-direction: row;
+       padding-right: var(--right-column);
+       @media (max-width: 767px) {
+         padding-right: initial;
+       }
        &, & > div { height:100%; }
-       /* top padding here also anchors the margin in the embedded <h1>
-          element and fixes an odd-looking 10px shift */
-       padding-right: 300px; /* for right pane */
        .bb-left-header {
          padding-left: 2px; padding-right: 2px;
        }
@@ -553,18 +554,24 @@ html.fullHeight {
        & > .bb-splitter-handle {
          width: 6px;
          cursor: ew-resize;
+         right: var(--right-column);
+         @media (max-width: 767px) {
+           display: none;
+         }
        }
        &.active {
          & > .bb-splitter-handle { background-color: #e88; }
          .bb-left-content, .bb-right-content { pointer-events: none; }
        }
-       & > .bb-left-content {
+       & > .bb-left-content { 
+         overflow-y: auto;
          left: 0; top: 0;
          .bb-left-header {
            position: absolute; right: 100%; writing-mode: vertical-lr; top:10px;
          }
          iframe {
            padding-top: 5px; /* was 26px, but we're chosing to overlap header */
+           margin-bottom: -5px;
            border-top: none;
          }
        }
@@ -576,6 +583,10 @@ html.fullHeight {
        & > .bb-right-content {
          position: absolute;
          right: 0px;
+         width: var(--right-column);
+         @media (max-width: 767px) {
+           display: none;
+         }
          & > .bb-top-right-content, & > .bb-bottom-right-content {
            width: 100%;
            height: 100%;

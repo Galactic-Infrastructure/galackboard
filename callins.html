@@ -1,6 +1,6 @@
 <template name="callins">
 <div class="row-fluid bb-puzzleround bb-callins">
-  <div class="bb-splitter" style="padding-right: {{hsize}}px">
+  <div class="bb-splitter" style="--right-column: {{hsize}}px">
     <div class="bb-left-content">{{! start left of splitter }}
       {{> starred_messages canModify=mynick}}
       <section class="bb-callin-queue">
@@ -37,8 +37,8 @@
         {{/if}}
       </section>
     </div>{{! end left of splitter }}
-    <div class="bb-splitter-handle" style="right: {{hsize}}px"></div>
-    <div class="bb-right-content" style="width: {{hsize}}px">{{! start right of splitter }}
+    <div class="bb-splitter-handle"></div>
+    <div class="bb-right-content">{{! start right of splitter }}
       <div class="bb-bottom-right-content">{{! start bottom right splitter }}
         <div class="bb-message-container">
           {{> messages }}
@@ -71,11 +71,11 @@
     <td>{{#with lastAttempt}}{{pretty_ts timestamp}} <small>({{pretty_ts timestamp=timestamp style="brief duration"}})</small>{{else}}-{{/with}}</td>
     {{#if mynick}}
     <td><input type="checkbox" class="bb-submitted-to-hq" checked={{submitted_to_hq}}></td>
-    <td class="btn-group">
+    <td><div class="btn-group">
       <button class="btn btn-success bb-callin-correct">Correct</button>
       <button class="btn btn-danger bb-callin-incorrect">Incorrect</button>
       <button class="btn btn-warning bb-callin-cancel">Cancel</button>
-    </td>
+    </div></td>
     {{else}}
     <td class="text-warning">Log in to resolve answers in queue.</td>
     {{/if}}

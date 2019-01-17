@@ -420,13 +420,13 @@ $(window).scroll (event) ->
   return unless Session.equals('currentPage', 'chat')
   return if instachat.bottomObserver
   #console.log if selfScroll? then 'Self scroll' else 'External scroll'
-  return maybeScrollMessagesView() if selfScroll?
+  return if selfScroll?
   # set to false, just in case older browser doesn't have scroll properties
   instachat.scrolledToBottom = false
   [body, html] = [document.body, document.documentElement]
   return unless html?.scrollTop? and html?.scrollHeight?
   return unless html?.clientHeight?
-  SLOP=20
+  SLOP=80
   [scrollPos, scrollMax] = [body.scrollTop+html.clientHeight, body.scrollHeight]
   atBottom = (scrollPos+SLOP >= scrollMax)
   # firefox says that the HTML element is scrolling, not the body element...
