@@ -139,10 +139,11 @@ Template.header_loginmute.helpers
     if 'true' is reactiveLocalStorage.getItem 'nobot' then 'icon-bot-off' else 'icon-bot-on'
   connectStatus: Meteor.status
   botTitle: ->
+    botName = botuser()?.nickname or 'The bot'
     if 'true' is reactiveLocalStorage.getItem 'nobot'
-      "#{botuser().nickname} promises not to bother you"
+      "#{botName} promises not to bother you"
     else
-      "#{botuser().nickname} is feeling chatty!"
+      "#{botName} is feeling chatty!"
   sessionNick: -> # TODO(torgen): replace with currentUser
     user = Meteor.user()
     return unless user?
