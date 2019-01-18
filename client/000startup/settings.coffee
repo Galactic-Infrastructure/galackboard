@@ -15,6 +15,8 @@ settings.TEAM_NAME = server.teamName ? 'Codex'
 
 settings.GENERAL_ROOM_NAME = server.chatName ? 'Ringhunters'
 
+settings.WHOSE_GITHUB = server.whoseGitHub ? 'cjb'
+
 # -- Performance settings --
 
 # make fewer people subscribe to ringhunters chat.

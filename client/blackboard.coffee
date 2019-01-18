@@ -88,6 +88,7 @@ Template.blackboard.helpers
   hideSolved: -> 'true' is reactiveLocalStorage.getItem 'hideSolved'
   hideSolvedMeta: -> 'true' is reactiveLocalStorage.getItem 'hideSolvedMeta'
   hideStatus: -> 'true' is reactiveLocalStorage.getItem 'hideStatus'
+  whoseGitHub: -> settings.WHOSE_GITHUB
 
 # Notifications
 notificationStreams = [
