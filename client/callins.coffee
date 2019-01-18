@@ -1,4 +1,7 @@
 'use strict'
+
+import { nickEmail } from './imports/nickEmail.coffee'
+
 model = share.model # import
 settings = share.settings # import
 
@@ -82,6 +85,7 @@ Template.callin_row.helpers
     for wrong in @puzzle?.incorrectAnswers
       return true if wrong.answer is @answer
     return false
+  nickEmail: -> nickEmail @
 
 Template.callin_row.events
   "click .bb-callin-correct": (event, template) ->
@@ -94,15 +98,19 @@ Template.callin_row.events
      Meteor.call 'cancelCallIn', id: @_id
 
   "change .bb-submitted-to-hq": (event, template) ->
-     checked = !!event.currentTarget.checked
-     Meteor.call 'setField',
-       type: 'callins'
-       object: @_id
-       fields: submitted_to_hq: checked
+    checked = !!event.currentTarget.checked
+    Meteor.call 'setField',
+      type: 'callins'
+      object: @_id
+      fields:
+        submitted_to_hq: checked
+        submitted_by: if checked then Meteor.userId() else null
 
   "click .copy-and-go": (event, template) ->
-     Meteor.call 'setField',
-       type: 'callins'
-       object: @_id
-       fields: submitted_to_hq: true
+    Meteor.call 'setField',
+      type: 'callins'
+      object: @_id
+      fields:
+        submitted_to_hq: true
+        submitted_by: Meteor.userId()
 

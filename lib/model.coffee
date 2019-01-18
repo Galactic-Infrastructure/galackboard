@@ -104,6 +104,7 @@ if Meteor.isServer
 #   created: timestamp
 #   created_by: canon of Nick
 #   submitted_to_hq: true/false
+#   submitted_by: canon of Nick
 #   backsolve: true/false
 #   provided: true/false
 CallIns = BBCollection.callins = new Mongo.Collection "callins"
