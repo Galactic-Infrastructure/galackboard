@@ -314,7 +314,7 @@ moveBeforePrevious = (match, rel, event, template) ->
   prevRow = row.prev(match)
   return unless prevRow.length is 1
   args = {}
-  args[rel] = nextRow[0].dataset.puzzleId
+  args[rel] = prevRow[0].dataset.puzzleId
   Meteor.call 'moveWithinRound', row[0]?.dataset.puzzleId, Template.parentData()._id, args
 
 moveAfterNext = (match, rel, event, template) ->
