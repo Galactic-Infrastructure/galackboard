@@ -146,10 +146,14 @@ meta_helper = ->
     }
   return r
 unassigned_helper = ->
-  for id, index in this.puzzles
+  p = for id, index in this.puzzles
     puzzle = model.Puzzles.findOne({_id: id, feedsInto: {$size: 0}, puzzles: {$exists: false}})
     continue unless puzzle?
     { _id: id, puzzle: puzzle }
+  editing = Meteor.userId() and (Session.get 'canEdit')
+  hideSolved = 'true' is reactiveLocalStorage.getItem 'hideSolved'
+  return p if editing or !hideSolved
+  p.filter (pp) -> !pp.puzzle.solved?
 
 ############## groups, rounds, and puzzles ####################
 Template.blackboard.helpers
