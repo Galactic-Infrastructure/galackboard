@@ -1,6 +1,8 @@
 [Service]
 Type=oneshot
 ExecStart=/bin/sh -c "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+
+[Unit]
 Before=mongod.service
 
 [Install]
