@@ -239,14 +239,20 @@ body.has-emojis {
 #bb-right-sidebar {
   position: fixed;
   right: 14px;
+  bottom: 0px;
+  top: @navbar-height + 10px;
+  display: flex;
+  flex-direction: column;
 
   & > div { position: relative; }
 
   .bb-hide-status {
     position: absolute;
     margin-top: 0;
+    top: 10px;
     left: -21px;
     right: auto;
+    z-index: 1;
     @media(max-width: 980px) {
       left: -14px;
     }
@@ -260,6 +266,7 @@ body.has-emojis {
     margin-top: 10px;
     margin-left: -7px;
     margin-right: -7px;
+    overflow-y: auto;
     @media(max-width: 980px) {
       margin-left: 0px;
       margin-right: 0px;
@@ -707,7 +714,10 @@ html.fullHeight {
   }
   #bb-right-sidebar {
     /* unfix right sidebar */
-    position: static;
+    position: relative;
+    bottom: initial;
+    top: initial;
+    right: initial;
   }
   /* fixup fullHeight stuff */
   html.fullHeight {
