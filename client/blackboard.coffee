@@ -178,6 +178,19 @@ Template.blackboard_status_grid.helpers
     return p
   stuck: share.model.isStuck
 
+Template.blackboard.onRendered ->
+  @escListener = (event) =>
+    return unless event.key.startsWith 'Esc'
+    @$('.bb-menu-drawer').modal 'hide'
+  @$('.bb-menu-drawer').on 'show', => document.addEventListener 'keydown', @escListener
+  @$('.bb-menu-drawer').on 'hide', => document.removeEventListener 'keydown', @escListener
+    
+
+Template.blackboard.onDestroyed ->
+  @$('.bb-menu-drawer').off 'show'
+  @$('.bb-menu-drawer').off 'hide'
+  document.removeEventListener 'keydown', @escListener
+
 Template.blackboard.events
   "click .bb-menu-button .btn": (event, template) ->
     template.$('.bb-menu-drawer').modal 'show'
