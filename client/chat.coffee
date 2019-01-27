@@ -297,6 +297,8 @@ Template.chat_header.helpers
 
 regex_escape = (s) -> s.replace /[$-\/?[-^{|}]/g, '\\$&'
 
+GLOBAL_MENTIONS = /@(channel|everyone)/i
+
 doesMentionNick = (doc, raw_nick=Meteor.userId()) ->
   return false unless raw_nick
   return false unless doc.body?
@@ -312,6 +314,8 @@ doesMentionNick = (doc, raw_nick=Meteor.userId()) ->
   (new RegExp (regex_escape model.canonical nick), "i").test(doc.body) or \
     # case-sensitive match of non-canonicalized nick
     doc.body.indexOf(raw_nick) >= 0 or \
+    # These things are treated as mentions for everyone
+    GLOBAL_MENTIONS.test(doc.body) or \
     # match against full name
     (realname and (new RegExp (regex_escape realname), "i").test(doc.body))
 
