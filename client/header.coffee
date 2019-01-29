@@ -42,7 +42,7 @@ Template.registerHelper 'link', (args) ->
 
 $(document).on 'click', 'a.puzzles-link, a.rounds-link, a.chat-link, a.home-link, a.oplogs-link, a.quips-link, a.callins-link, a.facts-link', (event) ->
   return unless event.button is 0 # check right-click
-  return if event.ctrlKey or event.shiftKey or event.altKey # check alt/ctrl/shift clicks
+  return if event.ctrlKey or event.shiftKey or event.altKey or event.metaKey # check alt/ctrl/shift/command clicks
   return if /^https?:/.test($(event.currentTarget).attr('href'))
   event.preventDefault()
   if $(this).hasClass('bb-pop-out')
