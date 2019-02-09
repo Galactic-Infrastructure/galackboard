@@ -47,6 +47,8 @@ Template.registerHelper 'compactHeader', () ->
 
 Template.registerHelper 'teamName', -> settings.TEAM_NAME
 
+Template.registerHelper 'namePlaceholder', -> settings.NAME_PLACEHOLDER
+
 Template.registerHelper 'mynick', -> Meteor.user()?.nickname
 
 Template.registerHelper 'boringMode', -> 'true' is reactiveLocalStorage.getItem 'boringMode'
