@@ -43,6 +43,7 @@ LastAnswer = BBCollection.last_answer = \
 #   _id: mongodb id
 #   name: string
 #   canon: canonicalized version of name, for searching
+#   link: URL of the round on the hunt site
 #   created: timestamp
 #   created_by: canon of Nick
 #   sort_key: timestamp. Initially created, but can be traded to other rounds.
@@ -68,6 +69,7 @@ if Meteor.isServer
 #   _id: mongodb id
 #   name: string
 #   canon: canonicalized version of name, for searching
+#   link: URL of the puzzle on the hunt site
 #   created: timestamp
 #   created_by: canon of Nick
 #   touched: timestamp
