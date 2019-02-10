@@ -182,7 +182,7 @@ model.Presence.find(present: true).observe
       body: "#{name} joined the room."
       bodyIsHtml: false
       room_name: presence.room_name
-      timestamp: model.UTCNow()
+      timestamp: presence.timestamp
   removed: (presence) ->
     return if initiallySuppressPresence
     return if presence.room_name is 'oplog/0'
