@@ -65,13 +65,6 @@ throttle = (func, wait = 0) ->
       running = true
       Meteor.setTimeout(run, 0)
 
-if Meteor.settings.migrateTags
-  ['rounds', 'puzzles'].forEach (c) ->
-    model.collection(c).find().forEach (o) ->
-      return unless o.tags instanceof Array
-      console.log 'migrating', model.pretty_collection(c), o._id
-      model.collection(c).update o._id, $set: tags: canonicalTags(o.tags, 'codexbot')
-
 # Nicks: synchronize priv_located* with located* at a throttled rate.
 # order by priv_located_order, which we'll clear when we apply the update
 # this ensures nobody gets starved for updates
