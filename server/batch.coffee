@@ -13,9 +13,6 @@ model = share.model
 # how many chats in a page?
 MESSAGE_PAGE = 100
 
-# move pages of messages to oldmessages collection
-MOVE_OLD_PAGES = true
-
 # Initialize settings
 embed =
   name: 'Embed Puzzles'
@@ -95,66 +92,39 @@ do ->
     # also run batch on removed: batch size might not have been big enough
     removed: (id) -> maybeRunBatch()
 
-# Pages
-# ensure old pages have the `archived` field
+# Migrate messages out of OldMessages and create dawns of time.
+# (i.e. ensure any chat room with messages has a sentinel message predating any
+# other message so you know when you have all of them.)
+# TODO by 2020 hunt: remove, as we won't need backward compatibility.
 Meteor.startup ->
-  model.Pages.find(archived: $exists: false).forEach (p) ->
-    model.Pages.update p._id, $set: archived: false
-# move messages to oldmessages collection
-queueMessageArchive = throttle ->
-  p = model.Pages.findOne({archived: false, next: $ne: null}, {sort:[['to','asc']]})
-  return unless p?
-  limit = 2 * MESSAGE_PAGE
-  loop
-    msgs = model.Messages.find({room_name: p.room_name, timestamp: $lt: p.to}, \
-      {sort:[['timestamp','asc']], limit: limit, reactive: false}).fetch()
-    model.OldMessages.upsert(m._id, m) for m in msgs
-    model.Pages.update(p._id, $set: archived: true) if msgs.length < limit
-    model.Messages.remove(m._id) for m in msgs
-    break if msgs.length < limit
-  queueMessageArchive()
-, 60*1000 # no more than once a minute
-# watch messages collection and create pages as necessary
-do ->
-  unpaged = Object.create(null)
-  model.Messages.find({}, sort:[['timestamp','asc']]).observe
-    added: (msg) ->
-      room_name = msg.room_name
-      # don't count pms (so we don't end up with a blank 'page')
-      return if msg.to
-      # add to (conservative) count of unpaged messages
-      # (this message might already be in a page, but we'll catch that below)
-      unpaged[room_name] = (unpaged[room_name] or 0) + 1
-      return if unpaged[room_name] < MESSAGE_PAGE
-      # recompute page parameters before adding a new page
-      # (be safe in case we had out-of-order observations)
-      # find highest existing page
-      p = model.Pages.findOne({room_name: room_name}, {sort:[['to','desc']]})\
-        or { _id: null, room_name: room_name, from: -1, to: 0 }
-      # count the number of unpaged messages
-      m = model.Messages.find(\
-        {room_name: room_name, to: null, timestamp: $gte: p.to}, \
-        {sort:[['timestamp','asc']], limit: MESSAGE_PAGE}).fetch()
-      if m.length < MESSAGE_PAGE
-        # false alarm: reset unpaged message count and continue
-        unpaged[room_name] = m.length
-        return
-      # ok, let's make a new page.  this will include at least all the
-      # messages in m, possibly more (if there are additional messages
-      # added with timestamp == m[m.length-1].timestamp)
-      pid = model.Pages.insert
-        room_name: room_name
-        from: p.to
-        to: 1 + m[m.length-1].timestamp
-        prev: p._id
-        next: null
-        archived: false
-      if p._id?
-        model.Pages.update p._id, $set: next: pid
-      unpaged[room_name] = 0
-      queueMessageArchive() if MOVE_OLD_PAGES
-# migrate messages to old messages collection
-(Meteor.startup queueMessageArchive) if MOVE_OLD_PAGES
+  old = new Mongo.Collection 'oldmessages'
+  count = 0
+  old.find().forEach (doc) ->
+    model.Messages.insert doc
+    old.remove _id: doc._id
+    count++
+  console.log "Migrated #{count} old messages" if count > 0
+  # TODO: if pages exist, create dawns of time
+  pages = new Mongo.Collection 'pages'
+  if pages.findOne()?
+    rawColl = model.Messages.rawCollection()
+    agg = Meteor.wrapAsync rawColl.aggregate, rawColl
+    count = 0
+    aggcsr = agg([$group: {_id: '$room_name', timestamp: $min: '$timestamp'}])
+    toArray = Meteor.wrapAsync aggcsr.toArray, aggcsr
+    toArray().forEach (room) ->
+      dawn = model.Messages.findOne(_id: room._id)
+      return if dawn? and dawn.timestamp <= room.timestamp
+      model.Messages.upsert room._id,
+        timestamp: room.timestamp - 1
+        dawn_of_time: true
+        system: true
+        bot_ignore: true
+        room_name: room._id
+      count++
+    console.log "Created dawn of time for #{count} rooms" if count > 0
+    deleted = pages.remove({})
+    console.log "Deleted #{deleted} pages" if deleted > 0
 
 # Presence
 # ensure old entries are timed out after 2*PRESENCE_KEEPALIVE_MINUTES
