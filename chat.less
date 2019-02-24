@@ -58,22 +58,33 @@
     display: inline-block;
     float: right;
     padding-right: 0.3em;
-    color: lightgrey;
-    &:before {
+    position: relative;
+    &::before, &::after {
       font-family: "Font Awesome 5 Free";
-      content: "\f005 ";
+      content: "\f005";
+      position: absolute;
+      right: 3px;
     }
+    &::before { font-weight: 900; }
+    &::after { font-weight: 400; }
   }
   .starred .bb-message-star {
-    color: palegoldenrod;
-    font-weight: 900;
+    &::after {
+      color: grey;
+    }
+    &::before {
+      color: palegoldenrod;
+    }
   } 
   &.can-modify-star {
-    .bb-message-star {
+    .bb-message-star::after {
       color: black;
     }
-    .starred .bb-message-star {
+    .starred .bb-message-star::before {
       color: gold;
+    }
+    .bb-message:not(.starred) .bb-message-star::before {
+      color: transparent;
     }
   }
   .media {
