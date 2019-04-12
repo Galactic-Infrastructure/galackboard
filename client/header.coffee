@@ -529,7 +529,7 @@ OPLOG_COLLAPSE_LIMIT = 10
 ############## operation log in header ####################
 Template.header_lastupdates.helpers
   lastupdates: ->
-    ologs = model.Messages.find {room_name: "oplog/0"}, \
+    ologs = model.Messages.find {room_name: "oplog/0", dawn_of_time: $ne: true}, \
           {sort: [["timestamp","desc"]], limit: OPLOG_COLLAPSE_LIMIT}
     ologs = ologs.fetch()
     # now look through the entries and collect similar logs
