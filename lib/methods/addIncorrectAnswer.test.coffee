@@ -24,7 +24,7 @@ describe 'addIncorrectAnswer', ->
     
   it 'fails when it doesn\'t exist', ->
     chai.assert.throws ->
-      Meteor.callAs 'newCallIn', 'torgen',
+      Meteor.callAs 'addIncorrectAnswer', 'torgen',
         target: 'something'
         answer: 'precipitate'
     , Meteor.Error
