@@ -1,0 +1,29 @@
+<template name="mechanics">
+  {{! expected data context: list of selected mechanics }}
+  {{! nested element: label for dropdown }}
+  <div class="btn-group bb-mechanics-dropdown">
+    <a class="btn dropdown-toggle btn-inverse pull-left" data-toggle="dropdown" href="#">
+      {{> Template.contentBlock}}
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      {{#each mechanics}}
+      <li><a name="{{canon}}">
+        <label class="checkbox">
+          <input data-mechanic="{{canon}}" type="checkbox" checked="{{isChecked}}">{{name}}
+        </label>
+      </a></li>
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="puzzle_mechanics">
+  {{# mechanics mechanics}}{{nullToZero mechanics.length}} Selected{{/mechanics}}
+</template>
+
+<template name="favorite_mechanics">
+  {{# mechanics currentUser.favorite_mechanics}}
+    {{nullToZero currentUser.favorite_mechanics.length}} Favorite Mechanic{{#if plural currentUser.favorite_mechanics.length}}s{{/if}}
+  {{/mechanics}}
+</template>

@@ -2,6 +2,7 @@
 
 import { nickEmail } from './imports/nickEmail.coffee'
 import abbrev from '../lib/imports/abbrev.coffee'
+import { mechanics } from '../lib/imports/mechanics.coffee'
 import { reactiveLocalStorage } from './imports/storage.coffee'
 import embeddable from './imports/embeddable.coffee'
 
@@ -55,15 +56,22 @@ Template.registerHelper 'boringMode', -> 'true' is reactiveLocalStorage.getItem 
 
 Template.registerHelper 'embeddable', embeddable
 
+Template.registerHelper 'plural', (x) -> x != 1
+
+Template.registerHelper 'nullToZero', (x) -> x ? 0
+
 # subscribe to the dynamic settings all the time.
 Meteor.subscribe 'settings'
 # subscribe to the all-names feed all the time
 Meteor.subscribe 'all-names'
 # subscribe to all nicks all the time
 Meteor.subscribe 'all-nicks'
+# Subscribe to yourself all the time
+Meteor.subscribe 'me'
 # we might subscribe to all-roundsandpuzzles, too.
+allPuzzlesHandle = null
 if settings.BB_SUB_ALL
-  Meteor.subscribe 'all-roundsandpuzzles'
+  allPuzzlesHandle = Meteor.subscribe 'all-roundsandpuzzles'
 
 keystring = (k) -> "notification.stream.#{k}"
 
@@ -77,8 +85,9 @@ notificationDefaults =
   callins: false
   answers: true
   announcements: true
-  'new-puzzles': true
+  'new-puzzles': false
   stuck: false
+  'favorite-mechanics': true
 
 countDependency = new Tracker.Dependency
 
@@ -105,16 +114,21 @@ share.notification =
   # On android chrome, we clobber this with a version that uses the
   # ServiceWorkerRegistration.
   notify: (title, settings) ->
-    new Notification title, settings
+    n = new Notification title, settings
+    if settings.data?.url?
+      n.onclick = -> share.Router.navigate settings.data.url, trigger: true
   ask: ->
     Notification.requestPermission (ok) ->
       Session.set 'notifications', ok
       setupNotifications() if ok is 'granted'
 setupNotifications = ->
   if isAndroidChrome()
-    navigator.serviceWorker.register(Meteor._relativeToSiteRootUrl 'empty.js').then((reg) ->
-      share.notification.notify = (title, settings) ->
-        reg.showNotification title, settings
+    navigator.serviceWorker.register(Meteor._relativeToSiteRootUrl 'sw.js').then((reg) ->
+      navigator.serviceWorker.addEventListener 'message', (msg) ->
+        console.log msg.data unless Meteor.isProduction
+        return unless msg.data.action is 'navigate'
+        share.Router.navigate msg.data.url, trigger: true
+      share.notification.notify = (title, settings) -> reg.showNotification title, settings
       finishSetupNotifications()
     ).catch (error) -> Session.set 'notifications', 'default'
     return
@@ -150,6 +164,22 @@ Meteor.startup ->
         body: body
         tag: id
         icon: gravatar[0].src
+  Tracker.autorun ->
+    return unless allPuzzlesHandle?.ready()
+    return unless Session.equals 'notifications', 'granted'
+    return unless share.notification.get 'favorite-mechanics'
+    myFaves = Meteor.user()?.favorite_mechanics
+    return unless myFaves
+    faveSuppress = true
+    myFaves.forEach (mech) ->
+      share.model.Puzzles.find(mechanics: mech).observeChanges
+        added: (id, puzzle) ->
+          return if faveSuppress
+          share.notification.notify puzzle.name,
+            body: "Mechanic \"#{mechanics[mech].name}\" added to puzzle \"#{puzzle.name}\""
+            tag: "#{id}/#{mech}"
+            data: url: share.Router.urlFor 'puzzles', id
+    faveSuppress = false
   unless Notification?
     Session.set 'notifications', 'denied'
     return

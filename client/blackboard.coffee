@@ -97,6 +97,7 @@ notificationStreams = [
   {name: 'callins', label: "Call-Ins"}
   {name: 'answers', label: "Answers"}
   {name: 'stuck', label: 'Stuck Puzzles'}
+  {name: 'favorite-mechanics', label: 'Favorite Mechanics'}
 ]
 
 notificationStreamsEnabled = ->
@@ -161,7 +162,10 @@ Template.blackboard.helpers
   metas: meta_helper
   unassigned: unassigned_helper
   favorites: ->
-    query = favorites: Meteor.userId()
+    query = $or: [
+      {favorites: Meteor.userId()},
+      mechanics: $in: Meteor.user().favorite_mechanics or []
+    ]
     if not Session.get('canEdit') and 'true' is reactiveLocalStorage.getItem 'hideSolved'
       query.solved = $eq: null
     model.Puzzles.find query

@@ -2,6 +2,7 @@
 
 import canonical from './imports/canonical.coffee'
 import { ArrayMembers, ArrayWithLength, NumberInRange, NonEmptyString, IdOrObject, ObjectWith } from './imports/match.coffee'
+import { IsMechanic } from './imports/mechanics.coffee'
 import { getTag, isStuck, canonicalTags } from './imports/tags.coffee'
 
 # Blackboard -- data model
@@ -85,6 +86,8 @@ if Meteor.isServer
 #   doc: optional google doc id
 #   favorites: list of userids of users who favorited this puzzle.
 #              on the client, either empty/null or contains only you.
+#   mechanics: list of canonical forms of mechanic names from
+#              ./imports/mechanics.coffee.
 #   puzzles: array of puzzle _ids for puzzles that feed into this.
 #            absent if this isn't a meta. empty if it is, but nothing feeds into
 #            it yet.
@@ -151,6 +154,8 @@ Polls = BBCollection.polls = new Mongo.Collection "polls"
 #   real_name (optional)
 #   gravatar (optional email address for avatar)
 #   services: map of provider-specific stuff; hidden on client
+#   favorite_mechanics: list of favorite mechanics in canonical form.
+#     Only served to yourself.
 if Meteor.isServer
   Meteor.users._ensureIndex {priv_located_order: 1},
     partialFilterExpression:
@@ -473,6 +478,7 @@ doc_id_to_link = (id) ->
         round: NonEmptyString
         feedsInto: Match.Optional [NonEmptyString]
         puzzles: Match.Optional [NonEmptyString]
+        mechanics: Match.Optional [IsMechanic]
       throw new Meteor.Error(404, "bad round") unless Rounds.findOne(args.round)?
       puzzle_prefix = Settings.findOne('puzzle_url_prefix')?.value
       link = if puzzle_prefix
@@ -490,6 +496,8 @@ doc_id_to_link = (id) ->
         feedsInto: feedsInto
       if args.puzzles?
         extra.puzzles = args.puzzles
+      if args.mechanics?
+        extra.mechanics = [new Set(args.mechanics)...]
       p = newObject "puzzles", {args..., who: @userId}, extra
       ensureDawnOfTime "puzzles/#{p._id}"
       if args.puzzles?
@@ -806,6 +814,18 @@ doc_id_to_link = (id) ->
           priv_located: args.timestamp ? timestamp
           priv_located_at: args.location
         $min: priv_located_order: timestamp
+      throw new Meteor.Error(400, "bad userId: #{@userId}") unless n > 0
+
+    favoriteMechanic: (mechanic) ->
+      check @userId, NonEmptyString
+      check mechanic, IsMechanic
+      n = Meteor.users.update @userId, $addToSet: favorite_mechanics: mechanic
+      throw new Meteor.Error(400, "bad userId: #{@userId}") unless n > 0
+
+    unfavoriteMechanic: (mechanic) ->
+      check @userId, NonEmptyString
+      check mechanic, IsMechanic
+      n = Meteor.users.update @userId, $pull: favorite_mechanics: mechanic
       throw new Meteor.Error(400, "bad userId: #{@userId}") unless n > 0
 
     newMessage: (args) ->
@@ -1208,6 +1228,28 @@ doc_id_to_link = (id) ->
       num = Puzzles.update puzzle, $pull:
         favorites: @userId
       num > 0
+
+    addMechanic: (puzzle, mechanic) ->
+      check @userId, NonEmptyString
+      check puzzle, NonEmptyString
+      check mechanic, IsMechanic
+      num = Puzzles.update puzzle,
+        $addToSet: mechanics: mechanic
+        $set:
+          touched: UTCNow()
+          touched_by: @userId
+      throw new Meteor.Error(404, "bad puzzle") unless num > 0
+
+    removeMechanic: (puzzle, mechanic) ->
+      check @userId, NonEmptyString
+      check puzzle, NonEmptyString
+      check mechanic, IsMechanic
+      num = Puzzles.update puzzle,
+        $pull: mechanics: mechanic
+        $set:
+          touched: UTCNow()
+          touched_by: @userId
+      throw new Meteor.Error(404, "bad puzzle") unless num > 0
 
     newPoll: (room, question, options) ->
       check @userId, NonEmptyString

@@ -19,6 +19,7 @@ puzzleQuery = (query) ->
       spreadsheet: 1
       doc: 1
       favorites: $elemMatch: $eq: @userId
+      mechanics: 1
       puzzles: 1
       feedsInto: 1
 
@@ -49,6 +50,14 @@ Meteor.publish 'all-nicks', ->
     priv_located_at: 0
     priv_located_order: 0
     services: 0
+    favorite_mechanics: 0
+
+# Login required for this since it returns you.
+Meteor.publish 'me', loginRequired ->
+  Meteor.users.find @userId, fields:
+    services: 0
+    priv_located_order: 0
+
 Meteor.publish 'all-presence', loginRequired ->
   # strip out unnecessary fields from presence (esp timestamp) to avoid wasted
   # updates to clients
