@@ -448,7 +448,7 @@ Template.blackboard_meta.helpers
     return 0 unless 'true' is reactiveLocalStorage.getItem 'hideSolved'
     y = for id, index in @puzzle.puzzles
       x = model.Puzzles.findOne id
-      continue unless x.solved?
+      continue unless x?.solved?
     y.length
 
 
