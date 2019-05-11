@@ -77,8 +77,6 @@ Template.header_breadcrumb_extra_links.helpers
   currentViewIs: (view) -> currentViewIs this, view
 
 Template.puzzle.onCreated ->
-  $('html').addClass('fullHeight')
-  share.chat.startupChat()
   this.autorun =>
     # set page title
     id = Session.get 'id'
@@ -94,15 +92,6 @@ Template.puzzle.onCreated ->
     @subscribe 'puzzle-by-id', id
     @subscribe 'round-for-puzzle', id
     @subscribe 'puzzles-by-meta', id
-
-Template.puzzle.onRendered ->
-  $('html').addClass('fullHeight')
-Template.puzzle.onDestroyed ->
-  $('html').removeClass('fullHeight')
-  share.chat.cleanupChat()
-
-Template.puzzle.events
-  "mousedown .bb-splitter-handle": (e,t) -> share.Splitter.handleEvent(e,t)
 
 Template.puzzle_summon_button.helpers
   stuck: -> model.isStuck this
