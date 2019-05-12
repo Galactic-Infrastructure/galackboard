@@ -1,8 +1,9 @@
 'use strict'
 
 # Drive folder settings
-ROOT_FOLDER_NAME = Meteor.settings.folder or process.env.DRIVE_ROOT_FOLDER or "MIT Mystery Hunt #{new Date().getFullYear()}"
-CODEX_ACCOUNT = Meteor.settings.driveowner or process.env.DRIVE_OWNER_ADDRESS
+DEFAULT_ROOT_FOLDER_NAME = "MIT Mystery Hunt #{new Date().getFullYear()}"
+ROOT_FOLDER_NAME = -> Meteor.settings.folder or process.env.DRIVE_ROOT_FOLDER or DEFAULT_ROOT_FOLDER_NAME
+CODEX_ACCOUNT = -> Meteor.settings.driveowner or process.env.DRIVE_OWNER_ADDRESS
 WORKSHEET_NAME = (name) -> "Worksheet: #{name}"
 DOC_NAME = (name) -> "Notes: #{name}"
 
@@ -25,7 +26,7 @@ samePerm = (p, pp) ->
   else if ('value' of p) and ('value' of pp)
     (p.value is pp.value)
   else  # returned permissions have emailAddress, not value.
-    (p.type is 'user' and p.value is CODEX_ACCOUNT and pp.emailAddress is CODEX_ACCOUNT)
+    (p.type is 'user' and p.value is CODEX_ACCOUNT() and pp.emailAddress is CODEX_ACCOUNT())
 
 userRateExceeded = (error) ->
   return false unless error.code == 403
@@ -62,13 +63,13 @@ ensurePermissions = (drive, id) ->
     role: 'writer'
     type: 'anyone'
   ]
-  if CODEX_ACCOUNT?
+  if CODEX_ACCOUNT()?
     perms.push
       # edit permissions to codex account
       withLink: false
       role: 'writer'
       type: 'user'
-      value: CODEX_ACCOUNT
+      value: CODEX_ACCOUNT()
   resp = apiThrottle drive.permissions, 'list', fileId: id
   perms.forEach (p) ->
     # does this permission already exist?
@@ -191,7 +192,7 @@ rmrfFolder = (drive, id) ->
 
 export class Drive
   constructor: (@drive) ->
-    @rootFolder = (awaitOrEnsureFolder @drive, ROOT_FOLDER_NAME).id
+    @rootFolder = (awaitOrEnsureFolder @drive, ROOT_FOLDER_NAME()).id
     @ringhuntersFolder = (awaitOrEnsureFolder @drive, "#{Meteor.settings?.public?.chatName ? 'Ringhunters'} Uploads", @rootFolder).id
   
   createPuzzle: (name) ->
