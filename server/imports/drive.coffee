@@ -3,7 +3,6 @@
 # Drive folder settings
 ROOT_FOLDER_NAME = Meteor.settings.folder or process.env.DRIVE_ROOT_FOLDER or "MIT Mystery Hunt #{new Date().getFullYear()}"
 CODEX_ACCOUNT = Meteor.settings.driveowner or process.env.DRIVE_OWNER_ADDRESS
-CODEX_HUMAN_NAME = Meteor.settings.drivehumanname or process.env.DRIVE_OWNER_NAME
 WORKSHEET_NAME = (name) -> "Worksheet: #{name}"
 DOC_NAME = (name) -> "Notes: #{name}"
 
@@ -25,8 +24,8 @@ samePerm = (p, pp) ->
     true
   else if ('value' of p) and ('value' of pp)
     (p.value is pp.value)
-  else # hack! google doesn't return the full email address in the permission
-    (p.type is 'user' and p.value is CODEX_ACCOUNT and pp.name is CODEX_HUMAN_NAME)
+  else  # returned permissions have emailAddress, not value.
+    (p.type is 'user' and p.value is CODEX_ACCOUNT and pp.emailAddress is CODEX_ACCOUNT)
 
 userRateExceeded = (error) ->
   return false unless error.code == 403
