@@ -116,7 +116,9 @@ share.notification =
   notify: (title, settings) ->
     n = new Notification title, settings
     if settings.data?.url?
-      n.onclick = -> share.Router.navigate settings.data.url, trigger: true
+      n.onclick = ->
+        share.Router.navigate settings.data.url, trigger: true
+        window.focus()
   ask: ->
     Notification.requestPermission (ok) ->
       Session.set 'notifications', ok
@@ -160,10 +162,16 @@ Meteor.startup ->
       if msg.type and msg.id
         body = "#{body} #{share.model.pretty_collection(msg.type)}
                 #{share.model.collection(msg.type).findOne(msg.id)?.name}"
+      data = undefined
+      if msg.stream is 'callins'
+        data = url: '/callins'
+      else if msg.stream isnt 'announcements'
+        data = url: share.Router.urlFor msg.type, msg.id
       share.notification.notify msg.nick,
         body: body
         tag: id
         icon: gravatar[0].src
+        data: data
   Tracker.autorun ->
     return unless allPuzzlesHandle?.ready()
     return unless Session.equals 'notifications', 'granted'
