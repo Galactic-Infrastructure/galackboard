@@ -1,9 +1,9 @@
 'use strict'
 
 # Drive folder settings
-ROOT_FOLDER_NAME = Meteor.settings.folder or process.env.DRIVE_ROOT_FOLDER or 'MIT Mystery Hunt 2014'
-CODEX_ACCOUNT = Meteor.settings.driveowner or process.env.DRIVE_OWNER_ADDRESS or 'dan@ros.art'
-CODEX_HUMAN_NAME = Meteor.settings.drivehumanname or process.env.DRIVE_OWNER_NAME or 'Dan Rosart'
+ROOT_FOLDER_NAME = Meteor.settings.folder or process.env.DRIVE_ROOT_FOLDER or "MIT Mystery Hunt #{new Date().getFullYear()}"
+CODEX_ACCOUNT = Meteor.settings.driveowner or process.env.DRIVE_OWNER_ADDRESS
+CODEX_HUMAN_NAME = Meteor.settings.drivehumanname or process.env.DRIVE_OWNER_NAME
 WORKSHEET_NAME = (name) -> "Worksheet: #{name}"
 DOC_NAME = (name) -> "Notes: #{name}"
 
@@ -58,17 +58,18 @@ ensurePermissions = (drive, id) ->
   # service acount.  the service account must remain the owner in
   # order to be able to rename the folder
   perms = [
-    # edit permissions to codex account
-    withLink: false
-    role: 'writer'
-    type: 'user'
-    value: CODEX_ACCOUNT
-  ,
     # edit permissions for anyone with link
     withLink: true
     role: 'writer'
     type: 'anyone'
   ]
+  if CODEX_ACCOUNT?
+    perms.push
+      # edit permissions to codex account
+      withLink: false
+      role: 'writer'
+      type: 'user'
+      value: CODEX_ACCOUNT
   resp = apiThrottle drive.permissions, 'list', fileId: id
   perms.forEach (p) ->
     # does this permission already exist?
