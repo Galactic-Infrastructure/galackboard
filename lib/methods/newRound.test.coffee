@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -44,7 +44,7 @@ describe 'newRound', ->
   describe 'when none exists with that name', ->
     id = null
     beforeEach ->
-      id = Meteor.callAs 'newRound', 'torgen',
+      id = callAs 'newRound', 'torgen',
         name: 'Foo'
         link: 'https://puzzlehunt.mit.edu/foo'
       ._id
@@ -72,7 +72,7 @@ describe 'newRound', ->
     model.Settings.insert
       _id: 'round_url_prefix'
       value: 'https://testhuntpleaseign.org/rounds'
-    id = Meteor.callAs 'newRound', 'torgen',
+    id = callAs 'newRound', 'torgen',
       name: 'Foo'
     ._id
     # Round is created, then drive et al are added
@@ -102,7 +102,7 @@ describe 'newRound', ->
         puzzles: ['yoy']
         link: 'https://puzzlehunt.mit.edu/foo'
         tags: {}
-      id2 = Meteor.callAs 'newRound', 'cjb',
+      id2 = callAs 'newRound', 'cjb',
         name: 'Foo'
       ._id
 

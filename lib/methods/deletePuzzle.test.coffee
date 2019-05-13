@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -84,7 +84,7 @@ describe 'deletePuzzle', ->
   describe 'when logged in', ->
     ret = null
     beforeEach ->
-      ret = Meteor.callAs 'deletePuzzle', 'cjb', id
+      ret = callAs 'deletePuzzle', 'cjb', id
 
     it 'oplogs', ->
       chai.assert.lengthOf model.Messages.find({nick: 'cjb', type: 'puzzles', room_name: 'oplog/0'}).fetch(), 1

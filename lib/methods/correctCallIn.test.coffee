@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -53,7 +53,7 @@ describe 'correctCallIn', ->
 
   describe 'when logged in', ->
     beforeEach ->
-      Meteor.callAs 'correctCallIn', 'cjb', callin
+      callAs 'correctCallIn', 'cjb', callin
 
     it 'updates puzzle', ->
       doc = model.Puzzles.findOne puzzle
@@ -114,7 +114,7 @@ describe 'correctCallIn', ->
       feedsInto: []
       puzzles: [puzzle]
     model.Puzzles.update puzzle, $push: feedsInto: meta
-    Meteor.callAs 'correctCallIn', 'cjb', callin
+    callAs 'correctCallIn', 'cjb', callin
     m = model.Messages.find(room_name: "puzzles/#{meta}", dawn_of_time: $ne: true).fetch()
     chai.assert.lengthOf m, 1
     chai.assert.include m[0],

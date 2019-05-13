@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -40,7 +40,7 @@ describe 'setStarred', ->
             , Match.Error
           describe 'when logged in', ->
             it 'succeeds', ->
-              Meteor.callAs 'setStarred', 'cjb', id, set_starred
+              callAs 'setStarred', 'cjb', id, set_starred
               chai.assert.include model.Messages.findOne(id),
                 starred: set_starred or null
   it 'fails on unstarrable', ->
@@ -50,7 +50,7 @@ describe 'setStarred', ->
       action: true
       timestamp: 5
       room_name: 'general/0'
-    Meteor.callAs 'setStarred', 'cjb', id, true
+    callAs 'setStarred', 'cjb', id, true
     chai.assert.notInclude model.Messages.findOne(id),
       starred: null
             

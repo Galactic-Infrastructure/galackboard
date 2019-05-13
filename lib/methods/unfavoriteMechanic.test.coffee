@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -21,7 +21,7 @@ describe 'unfavoriteMechanic', ->
 
   it 'fails when no such user', ->
     chai.assert.throws ->
-      Meteor.callAs 'unfavoriteMechanic', 'cjb', 'cryptic_clues'
+      callAs 'unfavoriteMechanic', 'cjb', 'cryptic_clues'
     , Meteor.Error
 
   describe 'when user has favorite mechanics', ->
@@ -31,16 +31,16 @@ describe 'unfavoriteMechanic', ->
         favorite_mechanics: ['nikoli_variants', 'cryptic_clues']
 
     it 'removes mechanic', ->
-      Meteor.callAs 'unfavoriteMechanic', 'torgen', 'cryptic_clues'
+      callAs 'unfavoriteMechanic', 'torgen', 'cryptic_clues'
       chai.assert.deepEqual Meteor.users.findOne('torgen').favorite_mechanics, ['nikoli_variants']
 
     it 'ignores absent mechanic', ->
-      Meteor.callAs 'unfavoriteMechanic', 'torgen', 'crossword'
+      callAs 'unfavoriteMechanic', 'torgen', 'crossword'
       chai.assert.deepEqual Meteor.users.findOne('torgen').favorite_mechanics, ['nikoli_variants', 'cryptic_clues']
 
     it 'rejects bad mechanic', ->
       chai.assert.throws ->
-        Meteor.callAs 'unfavoriteMechanic', 'torgen', 'minesweeper'
+        callAs 'unfavoriteMechanic', 'torgen', 'minesweeper'
       , Match.Error
 
   describe 'when user has no favorite mechanics', ->
@@ -49,5 +49,5 @@ describe 'unfavoriteMechanic', ->
         _id: 'torgen'
 
     it 'leaves favorite mechanics absent', ->
-      Meteor.callAs 'unfavoriteMechanic', 'torgen', 'cryptic_clues'
+      callAs 'unfavoriteMechanic', 'torgen', 'cryptic_clues'
       chai.assert.isUndefined Meteor.users.findOne('torgen').favorite_mechanics

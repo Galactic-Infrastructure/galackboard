@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -56,7 +56,7 @@ describe 'deleteRound', ->
     describe 'when logged in', ->
       ret = null
       beforeEach ->
-        ret = Meteor.callAs 'deleteRound', 'cjb', id
+        ret = callAs 'deleteRound', 'cjb', id
 
       it 'returns true', ->
         chai.assert.isTrue ret
@@ -79,7 +79,7 @@ describe 'deleteRound', ->
         solved_by: null
         puzzles: ['foo1', 'foo2']
         tags: {}
-      ret = Meteor.callAs 'deleteRound', 'cjb', id
+      ret = callAs 'deleteRound', 'cjb', id
     
     it 'returns false', ->
       chai.assert.isFalse ret

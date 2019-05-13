@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -36,7 +36,7 @@ describe 'summon', ->
         solved: 2
         solved_by: 'cjb'
         tags: answer: {name: 'Answer', value: 'precipitate', touched: 2, touched_by: 'cjb'}
-      ret = Meteor.callAs 'summon', 'torgen', object: id
+      ret = callAs 'summon', 'torgen', object: id
 
     it 'returns an error', ->
       chai.assert.isString ret
@@ -69,7 +69,7 @@ describe 'summon', ->
         solved: null
         solved_by: null
         tags: status: {name: 'Status', value: 'Stuck on you', touched: 2, touched_by: 'cjb'}
-      ret = Meteor.callAs 'summon', 'torgen',
+      ret = callAs 'summon', 'torgen',
         object: id
         how: 'Stuck like glue'
     it 'returns nothing', ->
@@ -101,7 +101,7 @@ describe 'summon', ->
         solved: null
         solved_by: null
         tags: status: {name: 'Status', value: 'everything is fine', touched: 2, touched_by: 'cjb'}
-      ret = Meteor.callAs 'summon', 'torgen',
+      ret = callAs 'summon', 'torgen',
         object: id
         how: 'Stuck like glue'
     it 'returns nothing', ->
@@ -150,7 +150,7 @@ describe 'summon', ->
     describe 'empty how', ->
       ret = null
       beforeEach ->
-        ret = Meteor.callAs 'summon', 'torgen', object: id
+        ret = callAs 'summon', 'torgen', object: id
 
       it 'returns nothing', ->
         chai.assert.isUndefined ret
@@ -179,7 +179,7 @@ describe 'summon', ->
     describe 'how starts with stuck', ->
       ret = null
       beforeEach ->
-        ret = Meteor.callAs 'summon', 'torgen',
+        ret = callAs 'summon', 'torgen',
           object: id
           how: 'stucK like glue'
 
@@ -210,7 +210,7 @@ describe 'summon', ->
     describe 'how starts with other', ->
       ret = null
       beforeEach ->
-        ret = Meteor.callAs 'summon', 'torgen',
+        ret = callAs 'summon', 'torgen',
           object: id
           how: 'no idea'
 

@@ -1,3 +1,4 @@
+'use strict'
 # Watch an email account and announce new mail to general/0 chat.
 
 # The account to watch is given in settings.json, like so:
@@ -12,6 +13,8 @@
 # }
 # To find the proper values for an email address, try the imap-autoconfig
 # package.
+
+import { callAs } from './imports/impersonate.coffee'
 
 watch = Meteor.settings?.watch ? {}
 watch.username ?= process.env.MAILWATCH_USERNAME
@@ -52,11 +55,11 @@ mailListener.on 'mail', (mail) ->
   #  to -- same as from
   #  attachements -- an array of objects with various fields
   console.log 'Mail from HQ arrived:', mail.subject
-  Meteor.callAs 'newMessage', 'thehunt',
+  callAs 'newMessage', 'thehunt',
     action: true
     body: "sent mail: #{mail.subject}"
     bot_ignore: true
-  Meteor.callAs 'newMessage', 'thehunt',
+  callAs 'newMessage', 'thehunt',
     body: mail.html ? mail.text
     bodyIsHtml: mail.html?
     bot_ignore: true

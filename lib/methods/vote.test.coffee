@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -35,16 +35,16 @@ describe 'vote', ->
 
   it 'fails with missing poll', ->
     chai.assert.throws ->
-      Meteor.callAs 'vote', 'torgen', '', 'foo'
+      callAs 'vote', 'torgen', '', 'foo'
     , Match.Error
 
   it 'fails with missing option', ->
     chai.assert.throws ->
-      Meteor.callAs 'vote', 'torgen', 'foo'
+      callAs 'vote', 'torgen', 'foo'
     , Match.Error
 
   it 'no-ops when no such poll', ->
-    Meteor.callAs 'vote', 'torgen', 'foo', 'bar'
+    callAs 'vote', 'torgen', 'foo', 'bar'
     chai.assert.notExists model.Polls.findOne()
 
   it 'no-ops when no such option', ->
@@ -54,7 +54,7 @@ describe 'vote', ->
       created: 2
       created_by: 'cscott'
       votes: metasj: {canon: 'foo', timestamp: 4}
-    Meteor.callAs 'vote', 'torgen', 'foo', 'qux'
+    callAs 'vote', 'torgen', 'foo', 'qux'
     chai.assert.deepEqual model.Polls.findOne(),
       _id: 'foo'
       options: [{canon: 'foo', option: 'Foo'}, {canon: 'bar', option: 'Bar'}]
@@ -69,7 +69,7 @@ describe 'vote', ->
       created: 2
       created_by: 'cscott'
       votes: metasj: {canon: 'foo', timestamp: 4}
-    Meteor.callAs 'vote', 'torgen', 'foo', 'bar'
+    callAs 'vote', 'torgen', 'foo', 'bar'
     chai.assert.deepEqual model.Polls.findOne(),
       _id: 'foo'
       options: [{canon: 'foo', option: 'Foo'}, {canon: 'bar', option: 'Bar'}]
@@ -86,7 +86,7 @@ describe 'vote', ->
       created: 2
       created_by: 'cscott'
       votes: metasj: {canon: 'foo', timestamp: 4}
-    Meteor.callAs 'vote', 'metasj', 'foo', 'bar'
+    callAs 'vote', 'metasj', 'foo', 'bar'
     chai.assert.deepEqual model.Polls.findOne(),
       _id: 'foo'
       options: [{canon: 'foo', option: 'Foo'}, {canon: 'bar', option: 'Bar'}]

@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -46,7 +46,7 @@ describe 'setAnswer', ->
     describe 'when logged in', ->
       ret = null
       beforeEach ->
-        ret = Meteor.callAs 'setAnswer', 'cjb',
+        ret = callAs 'setAnswer', 'cjb',
           target: id
           answer: 'bar'
 
@@ -96,7 +96,7 @@ describe 'setAnswer', ->
         tags:
           answer: {name: 'Answer', value: 'qux', touched: 2, touched_by: 'torgen'}
           technology:{name: 'Technology', value: 'Pottery', touched: 2, touched_by: 'torgen'}
-      ret = Meteor.callAs 'setAnswer', 'cjb',
+      ret = callAs 'setAnswer', 'cjb',
         target: id
         answer: 'bar'
     
@@ -147,7 +147,7 @@ describe 'setAnswer', ->
         tags:
           answer: {name: 'Answer', value: 'bar', touched: 2, touched_by: 'torgen'}
           technology: {name: 'Technology', value: 'Pottery', touched: 2, touched_by: 'torgen'}
-      ret = Meteor.callAs 'setAnswer', 'cjb',
+      ret = callAs 'setAnswer', 'cjb',
         target: id
         answer: 'bar'
 
@@ -183,7 +183,7 @@ describe 'setAnswer', ->
       solved: null
       solved_by: null
       tags: status: {name: 'Status', value: 'stuck', touched: 2, touched_by: 'torgen'}
-    chai.assert.isTrue Meteor.callAs 'setAnswer', 'cjb',
+    chai.assert.isTrue callAs 'setAnswer', 'cjb',
       target: id
       answer: 'bar'
       backsolve: true
@@ -227,7 +227,7 @@ describe 'setAnswer', ->
         submitted_to_hq: false
         backsolve: false
         provided: false
-      Meteor.callAs 'setAnswer', 'cjb',
+      callAs 'setAnswer', 'cjb',
         target: id
         answer: 'bar'
         

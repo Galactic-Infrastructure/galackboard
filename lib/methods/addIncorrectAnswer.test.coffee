@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -24,7 +24,7 @@ describe 'addIncorrectAnswer', ->
     
   it 'fails when it doesn\'t exist', ->
     chai.assert.throws ->
-      Meteor.callAs 'addIncorrectAnswer', 'torgen',
+      callAs 'addIncorrectAnswer', 'torgen',
         target: 'something'
         answer: 'precipitate'
     , Meteor.Error
@@ -59,7 +59,7 @@ describe 'addIncorrectAnswer', ->
         
     describe 'when logged in', ->
       beforeEach ->
-        Meteor.callAs 'addIncorrectAnswer', 'cjb',
+        callAs 'addIncorrectAnswer', 'cjb',
           target: id
           answer: 'flimflam'
 

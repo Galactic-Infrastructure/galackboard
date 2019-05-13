@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -29,31 +29,31 @@ describe 'newPoll', ->
 
   it 'fails with no options', ->
     chai.assert.throws ->
-      Meteor.callAs 'newPoll', 'torgen', 'general/0', 'What up?', []
+      callAs 'newPoll', 'torgen', 'general/0', 'What up?', []
     , Match.Error
 
   it 'fails with one option', ->
     chai.assert.throws ->
-      Meteor.callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['everything']
+      callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['everything']
     , Match.Error
 
   it 'fails with six options', ->
     chai.assert.throws ->
-      Meteor.callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple']
+      callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple']
     , Match.Error
 
   it 'fails with no room', ->
     chai.assert.throws ->
-      Meteor.callAs 'newPoll', 'torgen', '', 'What up?', ['Sky', 'Ceiling', 'Aliens']
+      callAs 'newPoll', 'torgen', '', 'What up?', ['Sky', 'Ceiling', 'Aliens']
     , Match.Error
 
   it 'fails with no question', ->
     chai.assert.throws ->
-      Meteor.callAs 'newPoll', 'torgen', 'general/0', '', ['Sky', 'Ceiling', 'Aliens']
+      callAs 'newPoll', 'torgen', 'general/0', '', ['Sky', 'Ceiling', 'Aliens']
     , Match.Error
 
   it 'canonicalizes options', ->
-    Meteor.callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['Red', 'Orange', 'Yellow', 'Green', 'red']
+    callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['Red', 'Orange', 'Yellow', 'Green', 'red']
     chai.assert.deepInclude model.Polls.findOne(),
       created: 7
       created_by: 'torgen'
@@ -67,7 +67,7 @@ describe 'newPoll', ->
       votes: {}
 
   it 'creates message', ->
-    Meteor.callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['Red', 'Orange', 'Yellow', 'Green', 'Blue']
+    callAs 'newPoll', 'torgen', 'general/0', 'What up?', ['Red', 'Orange', 'Yellow', 'Green', 'Blue']
     p = model.Polls.findOne()._id
     chai.assert.deepInclude model.Messages.findOne(dawn_of_time: $ne: true),
       room_name: 'general/0'

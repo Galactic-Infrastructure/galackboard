@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -34,7 +34,7 @@ describe 'changeSetting', ->
     model.Settings.insert
       _id: 'foo'
       value: 'bar'
-    chai.assert.isTrue Meteor.callAs 'changeSetting', 'torgen', 'Foo', 'qux'
+    chai.assert.isTrue callAs 'changeSetting', 'torgen', 'Foo', 'qux'
     chai.assert.deepEqual model.Settings.findOne('foo'),
       _id: 'foo'
       value: 'qux'
@@ -42,5 +42,5 @@ describe 'changeSetting', ->
       touched_by: 'torgen'
 
   it 'doesn\'t create setting', ->
-    chai.assert.isFalse Meteor.callAs 'changeSetting', 'torgen', 'foo', 'qux'
+    chai.assert.isFalse callAs 'changeSetting', 'torgen', 'foo', 'qux'
     chai.assert.isUndefined model.Settings.findOne 'foo'

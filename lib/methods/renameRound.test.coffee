@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -45,7 +45,7 @@ describe 'renameRound', ->
     describe 'when logged in', ->
       ret = null
       beforeEach ->
-        ret = Meteor.callAs 'renameRound', 'cjb',
+        ret = callAs 'renameRound', 'cjb',
           id: id
           name: 'Bar'
     
@@ -86,7 +86,7 @@ describe 'renameRound', ->
         touched_by: 'cscott'
         link: 'https://puzzlehunt.mit.edu/foo'
         tags: {}
-      ret = Meteor.callAs 'renameRound', 'cjb',
+      ret = callAs 'renameRound', 'cjb',
         id: id1
         name: 'Bar'
 

@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -24,7 +24,7 @@ describe 'addMechanic', ->
     
   it 'fails when it doesn\'t exist', ->
     chai.assert.throws ->
-      Meteor.callAs 'addMechanic', 'torgen', 'id', 'cryptic_clues'
+      callAs 'addMechanic', 'torgen', 'id', 'cryptic_clues'
     , Meteor.Error
   
   describe 'to puzzle with empty mechanics', ->
@@ -48,7 +48,7 @@ describe 'addMechanic', ->
         
     describe 'when logged in', ->
       beforeEach ->
-        Meteor.callAs 'addMechanic', 'cjb', id, 'cryptic_clues'
+        callAs 'addMechanic', 'cjb', id, 'cryptic_clues'
 
       it 'appends mechanic', ->
         doc = model.Puzzles.findOne id
@@ -83,12 +83,12 @@ describe 'addMechanic', ->
     describe 'when logged in', ->
       it 'fails with invalid mechanic', ->
         chai.assert.throws ->
-          Meteor.callAs 'addMechanic', 'torgen', id, 'eating_contest'
+          callAs 'addMechanic', 'torgen', id, 'eating_contest'
         , Match.Error
 
       describe 'with new mechanic', ->
         beforeEach ->
-          Meteor.callAs 'addMechanic', 'cjb', id, 'cryptic_clues'
+          callAs 'addMechanic', 'cjb', id, 'cryptic_clues'
 
         it 'appends mechanic', ->
           doc = model.Puzzles.findOne id
@@ -102,7 +102,7 @@ describe 'addMechanic', ->
 
       describe 'with existing mechanic', ->
         beforeEach ->
-          Meteor.callAs 'addMechanic', 'cjb', id, 'nikoli_variants'
+          callAs 'addMechanic', 'cjb', id, 'nikoli_variants'
 
         it 'leaves mechanics unchanged', ->
           doc = model.Puzzles.findOne id

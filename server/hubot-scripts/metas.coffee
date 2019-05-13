@@ -1,5 +1,6 @@
 
 import {rejoin, strip, thingRE, objectFromRoom, puzzleOrThis } from '../imports/botutil.coffee'
+import { callAs } from '../imports/impersonate.coffee'
 
 makeMeta = (msg) ->
   name = msg.match[1]
@@ -10,7 +11,7 @@ makeMeta = (msg) ->
     msg.finish()
     return
   who = msg.envelope.user.id
-  if Meteor.callAs 'makeMeta', who, p.object._id
+  if callAs 'makeMeta', who, p.object._id
     msg.reply useful: true, "OK, #{name} is now a meta."
   else
     msg.reply useful: true, "#{name} was already a meta."
@@ -30,7 +31,7 @@ makeNotMeta = (msg) ->
     msg.finish()
     return
   who = msg.envelope.user.id
-  if Meteor.callAs 'makeNotMeta', who, p.object._id
+  if callAs 'makeNotMeta', who, p.object._id
     msg.reply useful: true, "OK, #{name} is no longer a meta."
   else
     msg.reply useful: true, "#{name} already wasn't a meta."
@@ -55,7 +56,7 @@ share.hubot.metas = (robot) ->
     m = puzzleOrThis(metaName, msg)
     return unless m?
     who = msg.envelope.user.id
-    if Meteor.callAs 'feedMeta', who, p.object._id, m.object._id
+    if callAs 'feedMeta', who, p.object._id, m.object._id
       msg.reply useful: true, "OK, #{puzzName} now feeds into #{metaName}."
     else
       msg.reply useful:true, "#{puzzName} already fed into #{metaName}."
@@ -70,7 +71,7 @@ share.hubot.metas = (robot) ->
     m = puzzleOrThis(metaName, msg)
     return unless m?
     who = msg.envelope.user.id
-    if Meteor.callAs 'unfeedMeta', who, p.object._id, m.object._id
+    if callAs 'unfeedMeta', who, p.object._id, m.object._id
       msg.reply useful: true, "OK, #{puzzName} no longer feeds into #{metaName}."
     else
       msg.reply useful:true, "#{puzzName} already didn't feed into #{metaName}."

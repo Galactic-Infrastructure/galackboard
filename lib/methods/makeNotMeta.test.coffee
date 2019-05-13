@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -50,7 +50,7 @@ describe 'makeNotMeta', ->
       solved_by: null
       puzzles: []
       tags: status: {name: 'Status', value: 'stuck', touched: 2, touched_by: 'torgen'}
-    chai.assert.isTrue Meteor.callAs 'makeNotMeta', 'cjb', id
+    chai.assert.isTrue callAs 'makeNotMeta', 'cjb', id
     doc = model.Puzzles.findOne id
     chai.assert.deepEqual doc,
       _id: id
@@ -78,7 +78,7 @@ describe 'makeNotMeta', ->
       tags:
         answer: {name: 'Answer', value: 'foo', touched: 2, touched_by: 'torgen'}
         temperature: {name: 'Temperature', value: '12', touched: 2, touched_by: 'torgen'}
-    chai.assert.isFalse Meteor.callAs 'makeNotMeta', 'cjb', id
+    chai.assert.isFalse callAs 'makeNotMeta', 'cjb', id
     doc = model.Puzzles.findOne id
     chai.assert.deepEqual doc,
       _id: id

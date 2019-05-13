@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -33,7 +33,7 @@ describe 'locateNick', ->
 
   it 'fails with old params', ->
     chai.assert.throws ->
-      Meteor.callAs 'locateNick', 'torgen',
+      callAs 'locateNick', 'torgen',
         lat: 37.368832
         lng: -122.036346
         timestamp: 5
@@ -41,7 +41,7 @@ describe 'locateNick', ->
 
   it 'fails with non-point', ->
     chai.assert.throws ->
-      Meteor.callAs 'locateNick', 'torgen',
+      callAs 'locateNick', 'torgen',
         location:
           type: 'LineString'
           coordinates: [[-122.036346,  37.368832], [-122.078827, 37.419857]]
@@ -57,7 +57,7 @@ describe 'locateNick', ->
           type: 'Point'
           coordinates: [-122.078827, 37.419857]
     
-      Meteor.callAs 'locateNick', 'torgen',
+      callAs 'locateNick', 'torgen',
         location:
         # Sunnyvale, CA
           type: 'Point'
@@ -86,7 +86,7 @@ describe 'locateNick', ->
         coordinates: [-122.078827, 37.419857]
       priv_located_order: 4
   
-    Meteor.callAs 'locateNick', 'torgen',
+    callAs 'locateNick', 'torgen',
       location:
       # Sunnyvale, CA
         type: 'Point'

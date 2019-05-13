@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -24,7 +24,7 @@ describe 'removeMechanic', ->
     
   it 'fails when it doesn\'t exist', ->
     chai.assert.throws ->
-      Meteor.callAs 'removeMechanic', 'torgen', 'id', 'cryptic_clues'
+      callAs 'removeMechanic', 'torgen', 'id', 'cryptic_clues'
     , Meteor.Error
   
   describe 'to puzzle with empty mechanics', ->
@@ -48,7 +48,7 @@ describe 'removeMechanic', ->
         
     describe 'when logged in', ->
       beforeEach ->
-        Meteor.callAs 'removeMechanic', 'cjb', id, 'cryptic_clues'
+        callAs 'removeMechanic', 'cjb', id, 'cryptic_clues'
 
       it 'does not create mechanics', ->
         doc = model.Puzzles.findOne id
@@ -83,12 +83,12 @@ describe 'removeMechanic', ->
     describe 'when logged in', ->
       it 'fails with invalid mechanic', ->
         chai.assert.throws ->
-          Meteor.callAs 'removeMechanic', 'torgen', id, 'eating_contest'
+          callAs 'removeMechanic', 'torgen', id, 'eating_contest'
         , Match.Error
 
       describe 'with new mechanic', ->
         beforeEach ->
-          Meteor.callAs 'removeMechanic', 'cjb', id, 'cryptic_clues'
+          callAs 'removeMechanic', 'cjb', id, 'cryptic_clues'
 
         it 'does not change mechanics', ->
           doc = model.Puzzles.findOne id
@@ -102,7 +102,7 @@ describe 'removeMechanic', ->
 
       describe 'with existing mechanic', ->
         beforeEach ->
-          Meteor.callAs 'removeMechanic', 'cjb', id, 'nikoli_variants'
+          callAs 'removeMechanic', 'cjb', id, 'nikoli_variants'
 
         it 'removes mechanic', ->
           doc = model.Puzzles.findOne id

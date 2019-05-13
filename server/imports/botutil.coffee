@@ -1,5 +1,6 @@
 'use strict'
 
+import { callAs } from './impersonate.coffee'
 
 # helper function: concat regexes
 export rejoin = (regs...) ->
@@ -42,7 +43,7 @@ export objectFromRoom = (msg) ->
     msg.reply useful: true, "I don't understand the type: #{type}."
     msg.finish()
     return
-  object = Meteor.callAs "get", who, type, id
+  object = callAs "get", who, type, id
   unless object
     msg.reply useful: true, "Something went wrong.  I can't look up #{room}."
     msg.finish()
@@ -52,7 +53,7 @@ export objectFromRoom = (msg) ->
 export puzzleOrThis = (s, msg) ->
   return objectFromRoom(msg) if s is 'this'
   who = msg.envelope.user.id
-  p = Meteor.callAs "getByName", who,
+  p = callAs "getByName", who,
     name: s
     optional_type: 'puzzles'
   return p if p?

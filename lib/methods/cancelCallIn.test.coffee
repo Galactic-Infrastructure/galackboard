@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -52,7 +52,7 @@ describe 'cancelCallIn', ->
 
   describe 'when logged in', ->
     beforeEach ->
-      Meteor.callAs 'cancelCallIn', 'cjb', id: callin
+      callAs 'cancelCallIn', 'cjb', id: callin
 
     it 'deletes callin', ->
       chai.assert.isUndefined model.CallIns.findOne()

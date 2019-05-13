@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -30,7 +30,7 @@ describe 'updatelastRead', ->
     , Match.Error
     
   it 'creates', ->
-    Meteor.callAs 'updateLastRead', 'torgen',
+    callAs 'updateLastRead', 'torgen',
       room_name: 'general/0',
       timestamp: 3
     chai.assert.include model.LastRead.findOne({nick: 'torgen', room_name: 'general/0'}),
@@ -41,7 +41,7 @@ describe 'updatelastRead', ->
       nick: 'torgen'
       room_name: 'general/0'
       timestamp: 2
-    Meteor.callAs 'updateLastRead', 'torgen',
+    callAs 'updateLastRead', 'torgen',
       room_name: 'general/0'
       timestamp: 3
     chai.assert.include model.LastRead.findOne({nick: 'torgen', room_name: 'general/0'}),
@@ -52,7 +52,7 @@ describe 'updatelastRead', ->
       nick: 'torgen'
       room_name: 'general/0'
       timestamp: 3
-    Meteor.callAs 'updateLastRead', 'torgen',
+    callAs 'updateLastRead', 'torgen',
       room_name: 'general/0'
       timestamp: 2
     chai.assert.include model.LastRead.findOne({nick: 'torgen', room_name: 'general/0'}),

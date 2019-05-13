@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -69,7 +69,7 @@ describe 'feedMeta', ->
       feedsInto: ['wew']
       link: 'https://puzzlehunt.mit.edu/bar'
       tags: {}
-    Meteor.callAs 'feedMeta', 'jeff', leaf, meta
+    callAs 'feedMeta', 'jeff', leaf, meta
     chai.assert.deepInclude model.Puzzles.findOne(meta),
       puzzles: ['yoy', leaf]
       touched: 7
@@ -101,7 +101,7 @@ describe 'feedMeta', ->
       link: 'https://puzzlehunt.mit.edu/foo'
       tags: {}
     model.Puzzles.update leaf, $addToSet: feedsInto: meta
-    Meteor.callAs 'feedMeta', 'jeff', leaf, meta
+    callAs 'feedMeta', 'jeff', leaf, meta
     chai.assert.deepInclude model.Puzzles.findOne(meta),
       puzzles: [leaf, 'yoy']
       touched: 1
@@ -132,7 +132,7 @@ describe 'feedMeta', ->
       feedsInto: ['wew']
       link: 'https://puzzlehunt.mit.edu/bar'
       tags: {}
-    Meteor.callAs 'feedMeta', 'jeff', leaf, meta
+    callAs 'feedMeta', 'jeff', leaf, meta
     chai.assert.deepInclude model.Puzzles.findOne(meta),
       puzzles: [leaf]
       touched: 7
@@ -154,7 +154,7 @@ describe 'feedMeta', ->
       link: 'https://puzzlehunt.mit.edu/bar'
       tags: {}
     chai.assert.throws ->
-      Meteor.callAs 'feedMeta', 'jeff', leaf, 'nope'
+      callAs 'feedMeta', 'jeff', leaf, 'nope'
     , Meteor.Error
     chai.assert.deepEqual model.Puzzles.findOne(leaf).feedsInto, ['wew']
 
@@ -170,6 +170,6 @@ describe 'feedMeta', ->
       link: 'https://puzzlehunt.mit.edu/foo'
       tags: {}
     chai.assert.throws ->
-      Meteor.callAs 'feedMeta', 'jeff', 'nope', meta
+      callAs 'feedMeta', 'jeff', 'nope', meta
     , Meteor.Error
     chai.assert.deepEqual model.Puzzles.findOne(meta).puzzles, ['yoy']

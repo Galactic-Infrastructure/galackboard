@@ -1,3 +1,4 @@
+'use strict'
 # Watch twitter and announce new tweets to general/0 chat.
 #_
 # The account login details are given in settings.json, like so:
@@ -9,6 +10,9 @@
 #     "access_token_secret": "wwwwwwwwwwwwwwwwwwwwww"
 #   }
 # }
+
+import { callAs } from './imports/impersonate.coffee'
+
 return unless share.DO_BATCH_PROCESSING
 settings = Meteor.settings?.twitter ? {}
 settings.consumer_key ?= process.env.TWITTER_CONSUMER_KEY
@@ -56,7 +60,7 @@ twit.stream 'statuses/filter', {track: HASHTAGS}, (stream) ->
       return
     console.log "Twitter! @#{data.user.screen_name} #{data.text}"
     text = linkify data.text
-    Meteor.callAs 'newMessage', 'via twitter',
+    callAs 'newMessage', 'via twitter',
       action: 'true'
       body: "<a href='https://twitter.com/#{data.user.screen_name}'>@#{data.user.screen_name}</a> <a href='https://twitter.com/#{data.user.screen_name}/status/#{data.id_str}' target='_blank'>says:</a> #{text}"
       bodyIsHtml: true

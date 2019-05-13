@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -31,7 +31,7 @@ describe 'newQuip', ->
     id = null
 
     beforeEach ->
-      id = Meteor.callAs('newQuip', 'torgen', 'I\'m codex, and there are wolves after me.')._id
+      id = callAs('newQuip', 'torgen', 'I\'m codex, and there are wolves after me.')._id
     
     it 'creates document', ->
       chai.assert.include model.Quips.findOne(id),

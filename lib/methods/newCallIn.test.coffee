@@ -3,7 +3,7 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import '../../server/000servercall.coffee'
+import { callAs } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
@@ -24,7 +24,7 @@ describe 'newCallIn', ->
 
   it 'fails when it doesn\'t exist', ->
     chai.assert.throws ->
-      Meteor.callAs 'newCallIn', 'torgen',
+      callAs 'newCallIn', 'torgen',
         target: 'something'
         answer: 'precipitate'
     , Meteor.Error
@@ -54,7 +54,7 @@ describe 'newCallIn', ->
 
     describe 'with simple callin', ->
       beforeEach ->
-        Meteor.callAs 'newCallIn', 'torgen',
+        callAs 'newCallIn', 'torgen',
           target: id
           answer: 'precipitate'
 
@@ -99,7 +99,7 @@ describe 'newCallIn', ->
         chai.assert.include o[0].body, '(Foo)', 'message'
   
     it 'sets backsolve', ->
-      Meteor.callAs 'newCallIn', 'torgen',
+      callAs 'newCallIn', 'torgen',
         target: id
         answer: 'precipitate'
         backsolve: true
@@ -113,7 +113,7 @@ describe 'newCallIn', ->
         provided: false
     
     it 'sets provided', ->
-      Meteor.callAs 'newCallIn', 'torgen',
+      callAs 'newCallIn', 'torgen',
         target: id
         answer: 'precipitate'
         provided: true
@@ -161,7 +161,7 @@ describe 'newCallIn', ->
       touched_by: 'cscott'
       puzzles: [meta, p]
       tags: {}
-    Meteor.callAs 'newCallIn', 'torgen',
+    callAs 'newCallIn', 'torgen',
       target: p
       answer: 'precipitate'
     m = model.Messages.find(room_name: "puzzles/#{meta}", dawn_of_time: $ne: true).fetch()
