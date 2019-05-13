@@ -20,12 +20,10 @@ To run in development mode:
 If you have application default credentials configured (e.g. you're running on
 Compute Engine, you manually configured the environment variable, or you used
 `gcloud auth application-default login` to log in as yourself), it will use
-Drive as that account, but the default settings will share any documents you
-create with me. This will annoy us both. You can prevent this by setting
-DRIVE_OWNER_ADDRESS and DRIVE_OWNER_NAME environment variables, or setting
-driveowner and drivehumanname in the meteor settings json file. (i.e. make a
-json file with those keys, then pass the filename to meteor with the --settings
-flag.)
+Drive as that account. If you want the documents and folders it creates to be
+shared with some other account, set the DRIVE_OWNER_ADDRESS environment
+variable, or driveowner in the meteor settings json file. (i.e. make a json
+file with that key, then pass the filename to meteor with the --settings flag.)
 
 Your code is pushed live to the server as you make changes, so
 you can just leave `meteor` running. You can reset the internal database with:
