@@ -50,6 +50,11 @@ linkify = do ->
       when username? then "#{sp}<a href='https://twitter.com/#{encodeURIComponent username.slice(1)}' target='_blank'>#{username}</a>"
       else text # shouldn't really ever reach here
 
+htmlify = (data) ->
+  text = data.extended_tweet?.full_text or data.text
+  text = linkify text
+  "<a href='https://twitter.com/#{data.user.screen_name}'>@#{data.user.screen_name}</a> <a href='https://twitter.com/#{data.user.screen_name}/status/#{data.id_str}' target='_blank'>says:</a> #{text}"
+
 # See https://dev.twitter.com/streaming/overview/request-parameters#track
 twit.stream 'statuses/filter', {track: HASHTAGS}, (stream) ->
   console.log "Listening to #{HASHTAGS} on twitter"
@@ -59,9 +64,12 @@ twit.stream 'statuses/filter', {track: HASHTAGS}, (stream) ->
       console.log 'WEIRD TWIT!', data
       return
     console.log "Twitter! @#{data.user.screen_name} #{data.text}"
-    text = linkify data.text
+    html = htmlify data
+    if data.quoted_status?
+      quote = htmlify data.quoted_status
+      html = "#{html}<blockquote>#{quote}</blockquote>"
     callAs 'newMessage', 'via twitter',
       action: 'true'
-      body: "<a href='https://twitter.com/#{data.user.screen_name}'>@#{data.user.screen_name}</a> <a href='https://twitter.com/#{data.user.screen_name}/status/#{data.id_str}' target='_blank'>says:</a> #{text}"
+      body: html
       bodyIsHtml: true
       bot_ignore: true
