@@ -94,6 +94,14 @@ export RoundUrlPrefix = new Setting(
   id
 )
 
+export MaximumMemeLength = new Setting(
+  'Maximum Meme Length',
+  'The maximum length of a message that can be turned into a meme.',
+  140,
+  Match.Integer,
+  parseInt
+)
+
 Object.freeze all_settings
 
 Meteor.methods

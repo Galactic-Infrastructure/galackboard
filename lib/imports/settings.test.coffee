@@ -74,6 +74,34 @@ describe 'settings', ->
           impersonating 'torgen', ->
             settings.PuzzleUrlPrefix.set 'ftp://log:pwd@molasses.holiday'
         , Match.Error
+    
+    describe 'of int', ->
+      it 'allows integer', ->
+        impersonating 'torgen', ->
+          settings.MaximumMemeLength.set 925
+        chai.assert.deepEqual settings.Settings.findOne('maximum_meme_length'),
+          _id: 'maximum_meme_length'
+          value: 925
+          touched: 7
+          touched_by: 'torgen'
+
+      it 'allows string of integer', ->
+        impersonating 'torgen', ->
+          settings.MaximumMemeLength.set '633'
+        chai.assert.deepEqual settings.Settings.findOne('maximum_meme_length'),
+          _id: 'maximum_meme_length'
+          value: 633
+          touched: 7
+          touched_by: 'torgen'
+
+      it 'allows string of integral float', ->
+        impersonating 'torgen', ->
+          settings.MaximumMemeLength.set '286.99'
+        chai.assert.deepEqual settings.Settings.findOne('maximum_meme_length'),
+          _id: 'maximum_meme_length'
+          value: 286
+          touched: 7
+          touched_by: 'torgen'
   
   describe 'get', ->
     it 'allows legacy values', ->

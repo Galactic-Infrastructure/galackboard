@@ -1,6 +1,7 @@
 # Description:
 #   Get a meme from https://memegen.link
 
+import { MaximumMemeLength } from '/lib/imports/settings.coffee'
 
 share.hubot.memes = (robot) ->
   robot.commands.push 'bot Y U NO <text> - Generates the Y U NO GUY with the bottom caption of <text>'
@@ -105,5 +106,8 @@ encode = (s) ->
    s.toLowerCase().replace /[-_ ?%\#/\"]/g, (c) -> convTable[c]
 
 memegen = (msg, imageName, topText, botText) ->
+  if msg.match[0].length > MaximumMemeLength.get()
+    console.log "Got a #{imageName} meme but it was too long"
+    return
   url = "#{memeGeneratorUrl}/#{imageName}/#{encode topText}/#{encode botText}.jpg"
   msg.send url
