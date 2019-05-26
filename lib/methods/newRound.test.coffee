@@ -3,10 +3,11 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import { callAs } from '../../server/imports/impersonate.coffee'
+import { callAs, impersonating } from '../../server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
+import { RoundUrlPrefix } from '/lib/imports/settings.coffee'
 
 model = share.model
 
@@ -32,6 +33,7 @@ describe 'newRound', ->
 
   beforeEach ->
     resetDatabase()
+    RoundUrlPrefix.ensure()
 
   it 'fails without login', ->
     chai.assert.throws ->
@@ -69,9 +71,7 @@ describe 'newRound', ->
         chai.assert.notProperty round, prop
   
   it 'derives link', ->
-    model.Settings.insert
-      _id: 'round_url_prefix'
-      value: 'https://testhuntpleaseign.org/rounds'
+    impersonating 'cjb', -> RoundUrlPrefix.set 'https://testhuntpleaseign.org/rounds'
     id = callAs 'newRound', 'torgen',
       name: 'Foo'
     ._id

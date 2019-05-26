@@ -19,7 +19,9 @@
 # We need to use a backslash escape as a workaround.
 
 import {rejoin, strip, thingRE, objectFromRoom } from '../imports/botutil.coffee'
-import { callAs } from '../imports/impersonate.coffee'
+import { callAs, impersonating } from '../imports/impersonate.coffee'
+import { all_settings } from '/lib/imports/settings.coffee'
+import canonical from '/lib/imports/canonical.coffee'
 
 share.hubot.codex = (robot) ->
 
@@ -318,16 +320,20 @@ share.hubot.codex = (robot) ->
 
   robot.commands.push 'bot global list - lists dynamic settings'
   robot.respond /global list$/i, (msg) ->
-    for setting from share.model.Settings.find {}
-      msg.priv useful: true, "#{setting.name}: #{setting.description} Current: '#{setting.value}' Default: '#{setting.default}'"
+    for canon, setting of all_settings
+      msg.priv useful: true, "#{setting.name}: #{setting.description}\nCurrent: '#{setting.get()}' Default: '#{setting.default}'"
     msg.finish()
 
   robot.commands.push 'bot global set <setting> to <value> - changes a dynamic setting'
   robot.respond (rejoin /global set /, thingRE, / to /, thingRE, /$/i), (msg) ->
-    setting = strip msg.match[1]
+    setting_name = strip msg.match[1]
     value = strip msg.match[2]
-    if callAs 'changeSetting', msg.envelope.user.id, setting, value
-      msg.reply useful: true, "OK, set #{setting} to #{value}"
-    else
-      msg.reply useful: true, "Sorry, I don't know the setting '#{setting}'."
-    msg.finish()
+    setting = all_settings[canonical setting_name]
+    unless setting?
+      msg.reply useful: true, "Sorry, I don't know the setting '#{setting_name}'."
+      return
+    try
+      impersonating msg.envelope.user.id, -> setting.set value
+      msg.reply useful: true, "OK, set #{setting_name} to #{value}"
+    catch error
+      msg.reply useful: true, "Sorry, there was an error: #{error}"

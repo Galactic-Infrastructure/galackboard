@@ -3,10 +3,11 @@
 # Will access contents via share
 import '../model.coffee'
 # Test only works on server side; move to /server if you add client tests.
-import { callAs } from '../../server/imports/impersonate.coffee'
+import { callAs, impersonating } from '/server/imports/impersonate.coffee'
 import chai from 'chai'
 import sinon from 'sinon'
 import { resetDatabase } from 'meteor/xolvio:cleaner'
+import { PuzzleUrlPrefix } from '/lib/imports/settings.coffee'
 
 model = share.model
 
@@ -32,6 +33,7 @@ describe 'newPuzzle', ->
 
   beforeEach ->
     resetDatabase()
+    PuzzleUrlPrefix.ensure()
 
   it 'fails without login', ->
     chai.assert.throws ->
@@ -116,9 +118,7 @@ describe 'newPuzzle', ->
 
 
   it 'derives link', ->
-    model.Settings.insert
-      _id: 'puzzle_url_prefix'
-      value: 'https://testhuntpleaseign.org/puzzles'
+    impersonating 'cjb', -> PuzzleUrlPrefix.set 'https://testhuntpleaseign.org/puzzles'
     round = model.Rounds.insert
       name: 'Round'
       canon: 'round'

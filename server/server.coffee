@@ -1,5 +1,6 @@
 'use strict'
 model = share.model # import
+import { Settings } from '/lib/imports/settings.coffee'
 
 puzzleQuery = (query) -> 
   model.Puzzles.find query,
@@ -71,7 +72,7 @@ Meteor.publish 'presence-for-room', loginRequired (room_name) ->
     foreground_uuid: 0
     present: 0
 
-Meteor.publish 'settings', loginRequired -> model.Settings.find()
+Meteor.publish 'settings', loginRequired -> Settings.find()
 
 Meteor.publish 'lastread', loginRequired (room_name) -> model.LastRead.find {nick: @userId, room_name}
 
