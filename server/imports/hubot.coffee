@@ -132,7 +132,7 @@ class BlackboardAdapter extends Hubot.Adapter
         # if private, ensure it's treated as a direct address
         tm.direct = @mynameRE.test(tm.text)
         if tm.private and not tm.direct
-          tm.text = "#{robot.name} #{tm.text}"
+          tm.text = "#{@robot.name} #{tm.text}"
         @receive tm
     startup = false
     callAs "newMessage", @botname,
