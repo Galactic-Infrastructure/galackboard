@@ -32,13 +32,8 @@ describe 'newMessage', ->
         room_name: 'general/0'
         nick: 'torgen'
         bodyIsHtml: true
-        useful: false
-        poll: null
-        system: false
         to: null
-        useless_cmd: false
         timestamp: 7
-        action: false
         body: 'Haha  you'
 
     it 'allows classes', ->
@@ -51,11 +46,7 @@ describe 'newMessage', ->
         room_name: 'general/0'
         nick: 'torgen'
         bodyIsHtml: true
-        useful: false
-        poll: null
-        system: false
         to: null
-        useless_cmd: false
         timestamp: 7
         action: true
         body: 'has requested help: stuck (puzzle <a class="puzzles-link" target="_blank" href="/puzzles/2">Example</a>)'

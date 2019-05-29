@@ -814,18 +814,31 @@ doc_id_to_link = (id) ->
     newMessage: (args) ->
       check @userId, NonEmptyString
       check args, Object
+      check args, ObjectWith
+        body: Match.Optional String
+        bodyIsHtml: Match.Optional Boolean
+        system: Match.Optional Boolean
+        action: Match.Optional Boolean
+        to: Match.Optional NonEmptyString
+        poll: Match.Optional NonEmptyString
+        room_name: Match.Optional NonEmptyString
+        useful: Match.Optional Boolean
+        useless_cmd: Match.Optional Boolean
+        oplog: Match.Optional Boolean
+        stream: Match.Optional NonEmptyString
+        suppressLastRead: Match.Optional Boolean
       return if this.isSimulation # suppress flicker
       newMsg =
         body: args.body or ""
-        bodyIsHtml: args.bodyIsHtml or false
+        bodyIsHtml: args.bodyIsHtml
         nick: @userId
-        system: args.system or false
-        action: args.action or false
+        system: args.system
+        action: args.action
         to: canonical(args.to or "") or null
-        poll: args.poll or null
+        poll: args.poll
         room_name: args.room_name or "general/0"
-        useful: args.useful or false
-        useless_cmd: args.useless_cmd or false
+        useful: args.useful
+        useless_cmd: args.useless_cmd
       if args.oplog
         newMsg.oplog = newMsg.action = newMsg.followup = true
         newMsg.room_name = 'oplog/0'
