@@ -12,6 +12,7 @@
     "hubot-help": "^1.0.1",
     "mail-listener5": "^2.0.0",
     "node-random-name": "^1.0.1",
+    "sanitize-html": "^1.20.1",
     "twit": "^2.2.11"
   },
   "devDependencies": {

@@ -5,7 +5,11 @@ import { ArrayMembers, ArrayWithLength, NumberInRange, NonEmptyString, IdOrObjec
 import { IsMechanic } from './imports/mechanics.coffee'
 import { getTag, isStuck, canonicalTags } from './imports/tags.coffee'
 import { RoundUrlPrefix, PuzzleUrlPrefix } from './imports/settings.coffee'
-
+if Meteor.isServer
+  {newMessage, ensureDawnOfTime} = require('/server/imports/newMessage.coffee')
+else
+  newMessage = ->
+  ensureDawnOfTime = ->
 # Blackboard -- data model
 # Loaded on both the client and the server
 
@@ -15,11 +19,6 @@ PRESENCE_KEEPALIVE_MINUTES = 2
 
 # this is used to yield "zero results" in collections which index by timestamp
 NOT_A_TIMESTAMP = -9999
-
-emojify = if Meteor.isServer
-  require('../server/imports/emoji.coffee').default
-else
-  (s) -> s
 
 randomname = if Meteor.isServer
   (s) -> require('../server/imports/randomname.coffee').default(seed: s)
@@ -431,18 +430,6 @@ doc_id_to_link = (id) ->
         puzzles: npuzzles
         touched: UTCNow()
         touched_by: canonical(args.who))
-
-  ensureDawnOfTime = (room_name) ->
-    return unless Meteor.isServer
-    Messages.upsert room_name,
-      $min: timestamp: UTCNow() - 1
-      $setOnInsert:
-        system: true
-        dawn_of_time: true
-        room_name: room_name
-        bot_ignore: true
-  Meteor.startup ->
-    ['general/0', 'callins/0', 'oplog/0'].forEach ensureDawnOfTime
       
   Meteor.methods
     newRound: (args) ->
@@ -837,24 +824,20 @@ doc_id_to_link = (id) ->
         to: canonical(args.to or "") or null
         poll: args.poll or null
         room_name: args.room_name or "general/0"
-        timestamp: UTCNow()
         useful: args.useful or false
         useless_cmd: args.useless_cmd or false
       if args.oplog
         newMsg.oplog = newMsg.action = newMsg.followup = true
         newMsg.room_name = 'oplog/0'
         newMsg.stream = args.stream or ''
-      # translate emojis!
-      newMsg.body = emojify newMsg.body unless newMsg.bodyIsHtml
-      ensureDawnOfTime newMsg.room_name
+      newMsg = newMessage newMsg
       # update the user's 'last read' message to include this one
       # (doing it here allows us to use server timestamp on message)
       unless (args.suppressLastRead or newMsg.system or newMsg.oplog)
         Meteor.call 'updateLastRead',
           room_name: newMsg.room_name
           timestamp: newMsg.timestamp
-      newMsg._id = Messages.insert newMsg
-      return newMsg
+      newMsg
 
     deleteMessage: (id) ->
       check @userId, NonEmptyString
