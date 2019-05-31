@@ -30,10 +30,7 @@ saySomething = (room_name) ->
   Meteor.setTimeout saySomething.bind(null, room_name), \
     (5 + 10*Random.fraction()) * 1000 # 5-15 seconds
   friend = randomNick()
-  m = switch Random.choice ['system','action','pm','text','text','text']
-    when 'system'
-      system: true
-      body: "system message from #{who}"
+  m = switch Random.choice ['action','pm','text','text','text']
     when 'action'
       body: Random.choice [
         "does something nice for #{friend}",

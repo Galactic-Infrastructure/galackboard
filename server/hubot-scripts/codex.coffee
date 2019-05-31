@@ -17,6 +17,7 @@
 # BEWARE: regular expressions can't start with whitespace in coffeescript
 # (https://github.com/jashkenas/coffeescript/issues/3756)
 # We need to use a backslash escape as a workaround.
+'use strict'
 
 import {rejoin, strip, thingRE, objectFromRoom } from '../imports/botutil.coffee'
 import { callAs, impersonating } from '../imports/impersonate.coffee'
@@ -303,10 +304,7 @@ share.hubot.codex = (robot) ->
 
   robot.commands.push 'bot announce <message>'
   robot.respond /announce (.*)$/i, (msg) ->
-    callAs 'newMessage', msg.envelope.user.id,
-      oplog: true
-      body: "Announcement: #{msg.match[1]}"
-      stream: 'announcements'
+    callAs 'announce', msg.envelope.user.id, "Announcement: #{msg.match[1]}"
     msg.finish()
 
   wordOrQuote = /([^\"\'\s]+|\"[^\"]+\"|\'[^\']+\')/

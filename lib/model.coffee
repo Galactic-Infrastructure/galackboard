@@ -811,42 +811,32 @@ doc_id_to_link = (id) ->
       n = Meteor.users.update @userId, $pull: favorite_mechanics: mechanic
       throw new Meteor.Error(400, "bad userId: #{@userId}") unless n > 0
 
+    announce: (body) ->
+      check @userId, NonEmptyString
+      check body, NonEmptyString
+      oplog body, null, null, @userId, 'announcements'
+
     newMessage: (args) ->
       check @userId, NonEmptyString
-      check args, Object
-      check args, ObjectWith
+      check args,
         body: Match.Optional String
         bodyIsHtml: Match.Optional Boolean
-        system: Match.Optional Boolean
         action: Match.Optional Boolean
         to: Match.Optional NonEmptyString
-        poll: Match.Optional NonEmptyString
         room_name: Match.Optional NonEmptyString
         useful: Match.Optional Boolean
-        useless_cmd: Match.Optional Boolean
-        oplog: Match.Optional Boolean
-        stream: Match.Optional NonEmptyString
+        bot_ignore: Match.Optional Boolean
         suppressLastRead: Match.Optional Boolean
       return if this.isSimulation # suppress flicker
-      newMsg =
-        body: args.body or ""
-        bodyIsHtml: args.bodyIsHtml
-        nick: @userId
-        system: args.system
-        action: args.action
-        to: canonical(args.to or "") or null
-        poll: args.poll
-        room_name: args.room_name or "general/0"
-        useful: args.useful
-        useless_cmd: args.useless_cmd
-      if args.oplog
-        newMsg.oplog = newMsg.action = newMsg.followup = true
-        newMsg.room_name = 'oplog/0'
-        newMsg.stream = args.stream or ''
+      suppress = args.suppressLastRead
+      delete args.suppressLastRead
+      newMsg = {args..., nick: @userId}
+      newMsg.body ?= ''
+      newMsg.room_name ?= "general/0"
       newMsg = newMessage newMsg
       # update the user's 'last read' message to include this one
       # (doing it here allows us to use server timestamp on message)
-      unless (args.suppressLastRead or newMsg.system or newMsg.oplog)
+      unless suppress
         Meteor.call 'updateLastRead',
           room_name: newMsg.room_name
           timestamp: newMsg.timestamp
@@ -1269,7 +1259,8 @@ doc_id_to_link = (id) ->
         question: question
         options: opts
         votes: {}
-      Meteor.call 'newMessage',
+      newMessage
+        nick: @userId
         body: question
         room_name: room
         poll: id

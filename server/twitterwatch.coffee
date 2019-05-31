@@ -70,7 +70,7 @@ stream.on 'tweet', Meteor.bindEnvironment (data) ->
     quote = htmlify data.quoted_status
     html = "#{html}<blockquote>#{quote}</blockquote>"
   callAs 'newMessage', 'via twitter',
-    action: 'true'
+    action: true
     body: html
     bodyIsHtml: true
     bot_ignore: true

@@ -32,7 +32,6 @@ describe 'newMessage', ->
         room_name: 'general/0'
         nick: 'torgen'
         bodyIsHtml: true
-        to: null
         timestamp: 7
         body: 'Haha  you'
 
@@ -46,7 +45,6 @@ describe 'newMessage', ->
         room_name: 'general/0'
         nick: 'torgen'
         bodyIsHtml: true
-        to: null
         timestamp: 7
         action: true
         body: 'has requested help: stuck (puzzle <a class="puzzles-link" target="_blank" href="/puzzles/2">Example</a>)'
