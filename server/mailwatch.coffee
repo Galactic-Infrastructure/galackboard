@@ -16,6 +16,7 @@
 
 import { callAs } from './imports/impersonate.coffee'
 import { MailListener } from 'mail-listener5'
+import { newMessage } from './imports/newMessage.coffee'
 
 watch = Meteor.settings?.watch ? {}
 watch.username ?= process.env.MAILWATCH_USERNAME
@@ -46,23 +47,24 @@ mailListener.on 'error', (err) ->
   console.error 'IMAP error', err
 
 mailListener.on 'mail', Meteor.bindEnvironment (mail) ->
-  # mail arrived! fields:
-  #  text -- body plaintext
-  #  html -- optional field, contains body formatted as HTML
-  #  headers -- hash, with 'sender', 'date', 'subject', 'from', 'to' (unparsed)
-  #  subject, messageId, priority
-  #  from -- array of objects with 'address' and 'name' fields
-  #  to -- same as from
-  #  attachements -- an array of objects with various fields
-  console.log 'Mail from HQ arrived:', mail.subject
-  callAs 'newMessage', 'thehunt',
-    action: true
-    body: "sent mail: #{mail.subject}"
-    bot_ignore: true
-  callAs 'newMessage', 'thehunt',
+  sender = mail.from.value[0]
+  console.log sender
+  mail_field =
+    from_address: sender.address
+    subject: mail.subject
+  if sender.name?
+    mail_field.from_name = sender.name
+
+  console.log "Mail from #{mail.from.text} arrived:", mail.subject
+  newMessage
+    nick: sender.address
+    room_name: 'general/0'
     body: mail.html ? mail.text
     bodyIsHtml: mail.html?
     bot_ignore: true
+    mail:
+      sender_name: sender.name ? ''
+      subject: mail.subject
 
 Meteor.startup ->
   mailListener.start()

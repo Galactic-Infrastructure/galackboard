@@ -32,6 +32,11 @@ export newMessage = (newMsg) ->
     room_name: NonEmptyString
     useful: Match.Optional Boolean
     bot_ignore: Match.Optional Boolean
+    # Present only in messages received via IMAP.
+    # Nick will be sender's address.
+    mail: Match.Optional
+      sender_name: Match.Optional String
+      subject: String
   # translate emojis!
   if newMsg.bodyIsHtml
     newMsg.body = sanitize newMsg.body, params

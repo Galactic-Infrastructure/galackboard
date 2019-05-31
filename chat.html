@@ -71,8 +71,13 @@
 </template>
 
 <template name="media_message">
-  <div class="bb-message media{{#if message.to}} bb-message-pm{{/if}}{{#if message.starred}} starred{{/if}}" data-nick="{{message.nick}}" data-pm-to="{{message.to}}">
-    {{gravatar id=email image="wavatar" size=48 classes="media-object pull-left img-rounded" }}
+  <div class="bb-message media{{#if message.to}} bb-message-pm{{/if}}{{#if message.mail}} bb-message-mail{{/if}}{{#if message.starred}} starred{{/if}}"
+       data-nick="{{message.nick}}" data-pm-to="{{message.to}}">
+    {{#if message.mail}}
+       {{gravatar id=message.nick image="wavatar" size=48 classes="media-object pull-left img-rounded" }}
+    {{else}}
+      {{gravatar id=email image="wavatar" size=48 classes="media-object pull-left img-rounded" }}
+    {{/if}}
     <div class="media-body bb-message-body">
       <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
       {{#unless message.to}}
@@ -80,10 +85,15 @@
         <div class="bb-message-star"></div>
       {{/unless}}
       {{> message_delete_button}}
-      <h5 class="media-heading"><span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span>
-            {{#if message.to}}
-      <small>(Private message to {{nickOrName message.to}})</small>
-            {{/if}}
+      <h5 class="media-heading">
+        {{#if message.mail}}
+          Mail from {{#with message.mail.sender_name}}{{this}}{{else}}{{message.nick}}{{/with}} <i class="fas fa-envelope"></i> {{message.mail.subject}}
+        {{else}}
+          <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span>
+              {{#if message.to}}
+        <small>(Private message to {{nickOrName message.to}})</small>
+              {{/if}}
+        {{/if}}
       </h5>
       {{body}}
       {{#if message.poll}}{{> poll message.poll}}{{/if}}
