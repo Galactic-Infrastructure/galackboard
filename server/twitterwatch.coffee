@@ -11,7 +11,7 @@
 #   }
 # }
 
-import { callAs } from './imports/impersonate.coffee'
+import { newMessage } from './imports/newMessage.coffee'
 import Twitter from 'twit'
 
 return unless share.DO_BATCH_PROCESSING
@@ -53,8 +53,7 @@ linkify = do ->
 
 htmlify = (data) ->
   text = data.extended_tweet?.full_text or data.text
-  text = linkify text
-  "<a href='https://twitter.com/#{data.user.screen_name}'>@#{data.user.screen_name}</a> <a href='https://twitter.com/#{data.user.screen_name}/status/#{data.id_str}' target='_blank'>says:</a> #{text}"
+  linkify text
 
 # See https://dev.twitter.com/streaming/overview/request-parameters#track
 stream = twit.stream 'statuses/filter', {track: HASHTAGS}
@@ -65,15 +64,24 @@ stream.on 'tweet', Meteor.bindEnvironment (data) ->
     console.log 'WEIRD TWIT!', data
     return
   console.log "Twitter! @#{data.user.screen_name} #{data.text}"
-  html = htmlify data
+  body = htmlify data
+  tweet = {
+    id_str: data.id_str
+    avatar: data.user.profile_image_url_https
+  }
   if data.quoted_status?
-    quote = htmlify data.quoted_status
-    html = "#{html}<blockquote>#{quote}</blockquote>"
-  callAs 'newMessage', 'via twitter',
-    action: true
-    body: html
+    tweet.quote = htmlify data.quoted_status
+    tweet.quote_id_str = data.quoted_status_id_str
+    tweet.quote_nick = data.quoted_status.user.screen_name
+
+  newMessage {
+    nick: data.user.screen_name
+    room_name: 'general/0'
+    body
     bodyIsHtml: true
     bot_ignore: true
+    tweet
+  }
 
 stream.on 'error', Meteor.bindEnvironment (error) ->
   console.warn 'Twitter error:', error

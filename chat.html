@@ -71,9 +71,11 @@
 </template>
 
 <template name="media_message">
-  <div class="bb-message media{{#if message.to}} bb-message-pm{{/if}}{{#if message.mail}} bb-message-mail{{/if}}{{#if message.starred}} starred{{/if}}"
+  <div class="bb-message media{{#if message.to}} bb-message-pm{{/if}}{{#if message.mail}} bb-message-mail{{/if}}{{#if message.tweet}} bb-message-tweet{{/if}}{{#if message.starred}} starred{{/if}}"
        data-nick="{{message.nick}}" data-pm-to="{{message.to}}">
-    {{#if message.mail}}
+    {{#if message.tweet}}
+      <img src="{{message.tweet.avatar}}" class="media-object pull-left img-rounded" width=48 height=48>
+    {{else if message.mail}}
        {{gravatar id=message.nick image="wavatar" size=48 classes="media-object pull-left img-rounded" }}
     {{else}}
       {{gravatar id=email image="wavatar" size=48 classes="media-object pull-left img-rounded" }}
@@ -86,7 +88,9 @@
       {{/unless}}
       {{> message_delete_button}}
       <h5 class="media-heading">
-        {{#if message.mail}}
+        {{#if message.tweet}}
+          <i class="fab fa-twitter"></i> @<a href="https://twitter.com/{{message.nick}}" target="_blank">{{message.nick}}</a> <a href="https://twitter.com/{{message.nick}}/status/{{message.tweet.id_str}}" target="_blank">tweeted</a>:
+        {{else if message.mail}}
           Mail from {{#with message.mail.sender_name}}{{this}}{{else}}{{message.nick}}{{/with}} <i class="fas fa-envelope"></i> {{message.mail.subject}}
         {{else}}
           <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span>
@@ -95,7 +99,11 @@
               {{/if}}
         {{/if}}
       </h5>
-      {{body}}
+      {{cleanup message.body}}
+      {{#if message.tweet.quote}}
+        <h6>in reply to @<a href="https://twitter.com/{{message.tweet.quote_nick}}" target="_blank">{{message.tweet.quote_nick}}</a>'s <a href="https://twitter.com/{{message.tweet.quote_nick}}/status/{{message.tweet.quote_id_str}}" target="_blank">tweet</a>:</h6>
+        <blockquote>{{cleanup message.tweet.quote}}</blockquote>
+      {{/if}}
       {{#if message.poll}}{{> poll message.poll}}{{/if}}
     </div> 
   </div>  
@@ -136,14 +144,14 @@
       {{#unless message.deleted}}
         {{#if message.dawn_of_time}}<!-- Channel creation -->
         {{else if message.presence}}
-          <div class="bb-message-presence {{message.presence}}" title="{{body}}">
+          <div class="bb-message-presence {{message.presence}}" title="{{cleanup message.body}}">
             {{gravatar id=email image="wavatar" size=14 }}{{message.nick}}
           </div>
         {{else if message.system}}
           <div class="bb-message-system">
             <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
             {{> message_delete_button}}
-              {{body}}
+            {{cleanup message.body}}
           </div>
         {{else if usefulEnough message}}
           {{#if message.action}}
@@ -151,7 +159,7 @@
               <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
               {{> message_delete_button}}
                 <i class="fas fa-hand-point-right"></i>
-                <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span> {{body}}
+                <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span> {{cleanup message.body}}
             </div>
           {{else}}
             {{> media_message }}

@@ -23,7 +23,7 @@ Session.setDefault
 computeMessageFollowup = (prev, curr) ->
   return false unless prev?.classList?.contains("media")
   # Special message types that are never followups
-  for c in ['bb-message-mail']
+  for c in ['bb-message-mail', 'bb-message-tweet']
     return false if prev.classList.contains c
     return false if curr.classList.contains c
   return false unless prev.dataset.nick == curr.dataset.nick
@@ -150,13 +150,11 @@ Template.poll.events
   'click button.toggle-votes': (event, template) ->
     template.show_votes.set(not template.show_votes.get())
 
-
 messageTransform = (m) ->
   _id: m._id
   message: m
   email: nickEmail m.nick
-  body: ->
-    body = m.body or ''
+  cleanup: (body) ->
     unless m.bodyIsHtml
       body = UI._escape body
       body = body.replace /\n|\r\n?/g, '<br/>'

@@ -37,9 +37,24 @@ export newMessage = (newMsg) ->
     mail: Match.Optional
       sender_name: Match.Optional String
       subject: String
+    # Present only in messages received via Twitter.
+    # Nick will be sender's handle
+    tweet: Match.Optional
+      # numeric tweet ID as a string (as it's a large integer)
+      id_str: NonEmptyString
+      # url of tweeter's profile picture
+      avatar: NonEmptyString
+      # Body of quoted tweet, if this was a quote-retweet
+      quote: Match.Optional NonEmptyString
+      # Numeric id of quoted tweet as a string, if this was a quote-retweet
+      quote_id_str: Match.Optional NonEmptyString
+      # Twitter handle of tweeter of quoted tweet, if this was a quote-retweet
+      quote_nick: Match.Optional NonEmptyString
   # translate emojis!
   if newMsg.bodyIsHtml
     newMsg.body = sanitize newMsg.body, params
+    if newMsg.tweet?.quote?
+      newMsg.tweet.quote = sanitize newMsg.tweet.quote, params
   else
     newMsg.body = emojify newMsg.body
   newMsg.to = canonical newMsg.to if newMsg.to?
