@@ -14,7 +14,6 @@
 # To find the proper values for an email address, try the imap-autoconfig
 # package.
 
-import { callAs } from './imports/impersonate.coffee'
 import { MailListener } from 'mail-listener5'
 import { newMessage } from './imports/newMessage.coffee'
 
