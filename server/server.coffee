@@ -136,6 +136,7 @@ Meteor.publish 'recent-messages', loginRequired (room_name, limit) ->
   model.Messages.find
     room_name: room_name
     $or: [ {to: null}, {to: @userId}, {nick: @userId }]
+    deleted: $ne: true
   ,
     sort: [['timestamp', 'desc']]
     limit: limit
@@ -160,7 +161,7 @@ Meteor.publish 'oplogs-since', loginRequired (since) ->
     timestamp: $gt: since
 
 Meteor.publish 'starred-messages', loginRequired (room_name) ->
-  model.Messages.find { room_name: room_name, starred: true },
+  model.Messages.find { room_name: room_name, starred: true, deleted: { $ne: true } },
     sort: [["timestamp", "asc"]]
 
 Meteor.publish 'callins', loginRequired ->

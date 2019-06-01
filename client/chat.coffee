@@ -56,6 +56,7 @@ instachat = {}
 instachat["UTCOffset"] = new Date().getTimezoneOffset() * 60000
 instachat["alertWhenUnreadMessages"] = false
 instachat["scrolledToBottom"]        = true
+instachat['readMarker'] = $ '<div class="bb-message-last-read">read</div>'
 instachat["mutationObserver"] = new MutationObserver (recs, obs) ->
   for rec in recs
     console.log rec unless Meteor.isProduction
@@ -66,6 +67,11 @@ instachat["mutationObserver"] = new MutationObserver (recs, obs) ->
       nextEl = nextEl.nextElementSibling
     assignMessageFollowup nextEl
   return
+instachat["readObserver"] = new MutationObserver (recs, obs) ->
+  for rec in recs
+    continue unless rec.target.dataset.read is 'read'
+    continue unless rec.target.nextElementSibling?.dataset.read is 'unread'
+    $(instachat.readMarker).insertAfter rec.target
 
 # Favicon instance, used for notifications
 # (first add host to path)
@@ -154,6 +160,15 @@ messageTransform = (m) ->
   _id: m._id
   message: m
   email: nickEmail m.nick
+  read: ->
+    # Since a message can go from unread to read, but never the other way,
+    # use a nonreactive read at first. If it's unread, then do a reactive read
+    # to create the tracker dependency.
+    result = Tracker.nonreactive ->
+      m.timestamp <= Session.get 'lastread'
+    unless result
+      Session.get 'lastread'
+    result
   cleanup: (body) ->
     unless m.bodyIsHtml
       body = UI._escape body
@@ -168,7 +183,6 @@ Template.messages.helpers
   room_name: -> Session.get('room_name')
   ready: -> Session.equals('chatReady', true) and \
             Template.instance().subscriptionsReady()
-  isLastRead: (ts) -> Session.equals('lastread', +ts)
   # The dawn of time message has ID equal to the room name because it's
   # efficient to find it that way on the client, where there are no indexes.
   startOfChannel: -> model.Messages.findOne(_id: Session.get 'room_name')?
@@ -260,6 +274,7 @@ Template.messages.onRendered ->
     $("#messages").each ->
       console.log "Observing #{this}" unless Meteor.isProduction
       instachat.mutationObserver.observe(this, {childList: true})
+      instachat.readObserver.observe(this, {attributes: true, attributeFilter: ['data-read'], subtree: true})
 
 Template.messages.events
   'click .bb-chat-load-more': (event, template) ->
