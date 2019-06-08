@@ -4,16 +4,15 @@ scriptroot=$(readlink -f $(dirname $0))
 
 BUNDLE=$1
 
+sudo mkdir /opt/codex2
 if [[ -z $BUNDLE ]]; then
   cd $scriptroot/..
   meteor npm install
-  meteor build /tmp
-  BUNDLE=/tmp/codex-blackboard.tar.gz
-  cd -
+  meteor build --directory /opt/codex2
+else
+  sudo tar -C /opt/codex2 -xz < $BUNDLE
 fi
 
-sudo mkdir /opt/codex2
-sudo tar -C /opt/codex2 -xz < $BUNDLE
 cd /opt/codex2/bundle/programs/server
 sudo npm install
 cd -

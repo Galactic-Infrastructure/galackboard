@@ -38,9 +38,8 @@ cd $scriptroot/..
 
 # Build the bundle, then install it.
 meteor npm install
-meteor build ../build
 sudo mkdir /opt/codex
-sudo tar -C /opt/codex -xz < ../build/codex-blackboard.tar.gz
+meteor build --directory /opt/codex
 cd /opt/codex/bundle/programs/server
 sudo npm install
 
