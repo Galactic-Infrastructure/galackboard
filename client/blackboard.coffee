@@ -14,7 +14,8 @@ blackboard = {} # store page global state
 
 Meteor.startup ->
   if typeof Audio is 'function' # for phantomjs
-    blackboard.newAnswerSound = new Audio "sound/that_was_easy.wav"
+    blackboard.newAnswerSound = new Audio(Meteor._relativeToSiteRootUrl '/sound/that_was_easy.wav')
+  return unless blackboard.newAnswerSound?.play?
   # set up a persistent query so we can play the sound whenever we get a new
   # answer
   # note that this observe 'leaks' -- we're not setting it up/tearing it
@@ -27,8 +28,11 @@ Meteor.startup ->
       return unless doc.target? # 'no recent puzzle was solved'
       return if doc.target is oldDoc.target # answer changed, not really new
       console.log 'that was easy', doc, oldDoc
-      if 'true' isnt reactiveLocalStorage.getItem 'mute'
-        blackboard.newAnswerSound?.play?()
+      return if 'true' is reactiveLocalStorage.getItem 'mute'
+      try
+        await blackboard.newAnswerSound.play()
+      catch err
+        console.error err.message, err
   # see if we've got native emoji support, and add the 'has-emojis' class
   # if so; inspired by
   # https://stackoverflow.com/questions/27688046/css-reference-to-phones-emoji-font

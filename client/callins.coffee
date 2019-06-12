@@ -1,13 +1,16 @@
 'use strict'
 
 import { nickEmail } from './imports/nickEmail.coffee'
+import { reactiveLocalStorage } from './imports/storage.coffee'
 
 model = share.model # import
 settings = share.settings # import
 
 Meteor.startup ->
   if typeof Audio is 'function' # for phantomjs
-    newCallInSound = new Audio "sound/new_callin.wav"
+    newCallInSound = new Audio(Meteor._relativeToSiteRootUrl '/sound/new_callin.wav')
+
+  return unless newCallInSound?.play?
   # note that this observe 'leaks'; that's ok, the set of callins is small
   Tracker.autorun ->
     sub = Meteor.subscribe 'callins'
@@ -17,8 +20,11 @@ Meteor.startup ->
       added: (doc) ->
         return if initial
         console.log 'ding dong'
-        unless Session.get 'mute'
-          newCallInSound?.play?()
+        return if 'true' is reactiveLocalStorage.getItem 'mute'
+        try
+          await newCallInSound.play()
+        catch err
+          console.error err.message, err
     initial = false
 
 Template.callins.onCreated ->

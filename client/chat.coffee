@@ -619,13 +619,14 @@ $(window).unload -> cleanupChat()
 # App startup
 Meteor.startup ->
   return unless typeof Audio is 'function' # for phantomjs
-  instachat.messageMentionSound = new Audio "/sound/Electro_-S_Bainbr-7955.wav"
+  instachat.messageMentionSound = new Audio(Meteor._relativeToSiteRootUrl '/sound/Electro_-S_Bainbr-7955.wav')
 
 updateNotice = do ->
   [lastUnread, lastMention] = [0, 0]
   (unread, mention) ->
     if mention > lastMention and instachat.ready
-      instachat.messageMentionSound?.play?() unless 'true' is reactiveLocalStorage.getItem 'mute'
+      unless 'true' is reactiveLocalStorage.getItem 'mute'
+        instachat.messageMentionSound?.play?()?.catch? (err) -> console.error err.message, err
     # update title and favicon
     if mention > 0
       favicon.badge mention, {bgColor: '#00f'} if mention != lastMention
