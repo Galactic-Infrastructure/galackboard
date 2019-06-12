@@ -142,16 +142,12 @@ Template.puzzle_callin_modal.events
     event.preventDefault() # don't reload page
     answer = template.$('.bb-callin-answer').val()
     return unless answer
-    backsolve = ''
+    args =
+      target: Session.get 'id'
+      answer: answer
     if template.$('input:checked[value="provided"]').val() is 'provided'
-      backsolve += "provided "
+      args.provided = true
     if template.$('input:checked[value="backsolve"]').val() is 'backsolve'
-      backsolve += "backsolved "
-    if backsolve
-      backsolve += "answer "
-    if /answer|backsolve|provided|for|puzzle|^[\'\"]/i.test(answer)
-      answer = '"' + answer.replace(/\"/g,'\\"') + '"'
-    Meteor.call "newMessage",
-      body: "bot: call in #{backsolve}#{answer.toUpperCase()}"
-      room_name: "#{Session.get 'type'}/#{Session.get 'id'}"
+      args.backsolve = true
+    Meteor.call "newCallIn", args
     template.$('.modal').modal 'hide'
