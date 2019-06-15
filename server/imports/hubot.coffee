@@ -29,7 +29,6 @@ class BlackboardAdapter extends Hubot.Adapter
   #
   # Returns nothing.
   send: (envelope, strings...) ->
-    console.log 'envelope', envelope
     return @priv envelope, strings... if envelope.message.private
     @sendHelper envelope, strings, (string, props) =>
       console.log "send #{envelope.room}: #{string} (#{envelope.user.id})" if DEBUG
@@ -49,7 +48,7 @@ class BlackboardAdapter extends Hubot.Adapter
   # Returns nothing.
   emote: (envelope, strings...) ->
     if envelope.message.private
-        return @priv envelope, tweakStrings(strings, (s) -> "*** #{s} ***")...
+      return @priv envelope, tweakStrings(strings, (s) -> "*** #{s} ***")...
     @sendHelper envelope, strings, (string, props) =>
       console.log "emote #{envelope.room}: #{string} (#{envelope.user.id})" if DEBUG
       callAs "newMessage", @botname, Object.assign {}, props,
