@@ -40,7 +40,6 @@ class Setting
     return raw if Match.test raw, @matcher
     check raw, String
     conv = @parser raw
-    console.log raw, conv
     check conv, @matcher
     conv
 
