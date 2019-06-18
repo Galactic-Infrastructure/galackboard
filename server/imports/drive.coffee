@@ -1,6 +1,7 @@
 'use strict'
 
 import { Readable } from 'stream'
+import delay from 'delay'
 
 # Drive folder settings
 DEFAULT_ROOT_FOLDER_NAME = "MIT Mystery Hunt #{new Date().getFullYear()}"
@@ -38,8 +39,6 @@ userRateExceeded = (error) ->
   return false
 
 delays = [100, 250, 500, 1000, 2000, 5000, 10000]
-
-delay = (ms) -> new Promise (resolve) -> setTimeout resolve, ms
 
 apiThrottle = (base, name, params) ->
   ix = 0
