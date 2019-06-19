@@ -260,16 +260,6 @@ doc_id_to_link = (id) ->
   isDuplicateError = (error) ->
     Meteor.isServer and error?.name in ['MongoError', 'BulkWriteError'] and error?.code==11000
 
-  huntPrefix = (type) ->
-    # this is a huge hack, it's too hard to find the correct
-    # round group to use.  But this helps avoid reloading the hunt software
-    # every time the hunt domain changes.
-    rg = Rounds.findOne({}, sort: ['sort_key'])
-    if rg?.link
-      return rg.link.replace(/\/+$/, '') + '/' + type + '/'
-    else
-      return Meteor.settings?[type+'_prefix']
-
   # a key of BBCollection
   ValidType = Match.Where (x) ->
     check x, NonEmptyString
