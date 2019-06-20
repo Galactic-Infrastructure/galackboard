@@ -10,9 +10,6 @@ model = share.model
 # Was in lib/model.coffee, but that meant it was loaded on the client even
 # though it could never run there.
 
-# how many chats in a page?
-MESSAGE_PAGE = 100
-
 # helper function: like _.throttle, but always ensures `wait` of idle time
 # between invocations.  This ensures that we stay chill even if a single
 # execution of the function starts to exceed `wait`.
