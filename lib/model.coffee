@@ -407,6 +407,7 @@ doc_id_to_link = (id) ->
       if args.pos?
         npos += args.pos
         return false if npos < 0
+        return false if npos > npuzzles.length
       else if args.before?
         npos = npuzzles.indexOf args.before
         return false unless npos >= 0
