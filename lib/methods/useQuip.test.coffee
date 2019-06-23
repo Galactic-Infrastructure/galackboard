@@ -16,7 +16,9 @@ describe 'useQuip', ->
   clock = null
 
   beforeEach ->
-    clock = sinon.useFakeTimers(7)
+    clock = sinon.useFakeTimers
+      now: 7
+      toFake: ['Date']
 
   afterEach ->
     clock.restore()

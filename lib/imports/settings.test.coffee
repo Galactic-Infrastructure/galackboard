@@ -12,7 +12,9 @@ describe 'settings', ->
 
   beforeEach ->
     resetDatabase()
-    clock = sinon.useFakeTimers(4)
+    clock = sinon.useFakeTimers
+      now: 4
+      toFake: ['Date']
     setting.ensure() for canon, setting of settings.all_settings
     clock.tick 3
 

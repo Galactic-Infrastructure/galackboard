@@ -14,7 +14,9 @@ describe 'deletePuzzle', ->
   driveMethods = null
   clock = null
   beforeEach ->
-    clock = sinon.useFakeTimers(7)
+    clock = sinon.useFakeTimers
+      now: 7
+      toFake: ['Date']
     driveMethods =
       createPuzzle: sinon.fake.returns
         id: 'fid' # f for folder
@@ -28,6 +30,7 @@ describe 'deletePuzzle', ->
       share.drive = driveMethods
 
   afterEach ->
+    clock.restore()
     sinon.restore()
 
   id = null

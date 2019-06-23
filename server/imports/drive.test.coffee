@@ -34,7 +34,9 @@ describe 'drive', ->
   permissions = null
 
   beforeEach ->
-    clock = sinon.useFakeTimers 7
+    clock = sinon.useFakeTimers
+      now: 7
+      toFake: ['Date', 'setTimeout', 'clearTimeout']
     api =
       children:
         list: ->
@@ -51,6 +53,7 @@ describe 'drive', ->
     Meteor.settings.folder = 'Test Folder'
 
   afterEach ->
+    clock.restore()
     sinon.verifyAndRestore()
 
   it 'propagates errors', ->

@@ -16,10 +16,12 @@ describe 'moveRound', ->
   id1 = null
   id2 = null
   beforeEach ->
-    clock = sinon.useFakeTimers(7)
+    clock = sinon.useFakeTimers
+      now: 7
+      toFake: ['Date']
 
   afterEach ->
-    sinon.restore()
+    clock.restore()
 
   beforeEach ->
     resetDatabase()
