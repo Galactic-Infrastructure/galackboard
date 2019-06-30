@@ -3,7 +3,7 @@ Instead of:
 
 ```coffee
   modules.export = (robot) ->
-    /* stuff */
+    # stuff
 ```
 
 Use:
@@ -12,7 +12,7 @@ Use:
   share.hubot.ping = (robot) ->
     robot.commands.push 'cmd1 arg - desc'
     robot.commands.push 'cmd2 arg - desc'
-    /* stuff */
+    # stuff
 ```
 
 Note that the name of the script is given as the field name, and you
@@ -32,10 +32,10 @@ Then either:
   names of the packages to load
 * set the `EXTERNAL_SCRIPTS` environment variable to a comma-separated list of
   the package names.
-* Import it in `server/hubot.coffee` and run it on the robot, or if you want
-  the script's replies to be private even to public messages, on `robot.priv`.
-  Unlike the above two options, it will not be possible to disable this script
-  without rebuilding.
+* Import it in `server/hubot.coffee` and run it on the robot. If you want
+  the script's replies to be private even to public messages, pass it to
+  `robot.privately`. Unlike the above two options, it will not be possible
+  to disable this script without rebuilding.
   
 Note that `hubot-help` is always installed, so you don't need to add it.
 
