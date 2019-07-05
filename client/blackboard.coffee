@@ -33,6 +33,8 @@ Meteor.startup ->
         await blackboard.newAnswerSound.play()
       catch err
         console.error err.message, err
+
+Meteor.startup ->
   # see if we've got native emoji support, and add the 'has-emojis' class
   # if so; inspired by
   # https://stackoverflow.com/questions/27688046/css-reference-to-phones-emoji-font
