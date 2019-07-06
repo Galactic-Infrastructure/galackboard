@@ -73,9 +73,15 @@
         {{/if}}
         <div class="btn-group bb-sort-order">
           <button class="btn btn-small {{#if sortReverse}}active{{/if}}"
-                  data-sortReverse="true">Newest rounds first</button>
+                  data-sortReverse="true" title="Newest rounds first">
+            <i class="fas fa-clock"></i>
+            <i class="fas fa-long-arrow-alt-up"></i>
+          </button>
           <button class="btn btn-small {{#unless sortReverse}}active{{/unless}}"
-                  data-sortReverse="false">Oldest rounds first</button>
+                  data-sortReverse="false" title="Oldest rounds first">
+            <i class="fas fa-clock"></i>
+            <i class="fas fa-long-arrow-alt-down"></i>
+          </button>
         </div>
         {{#unless canEdit}}<br/>
           <div class="btn-group btn-group-vertical text-right">
