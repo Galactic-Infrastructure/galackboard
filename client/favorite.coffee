@@ -1,7 +1,7 @@
 'use strict'
 
 Template.favorite.helpers
-  favorite: -> @favorites?.includes Meteor.userId()
+  favorite: -> @favorites?[Meteor.userId()]
 
 Template.favorite.events
   'click .favorite': (event, template) -> Meteor.call 'unfavorite', @_id

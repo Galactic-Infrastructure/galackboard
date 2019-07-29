@@ -89,8 +89,9 @@ if Meteor.isServer
 #   drive: optional google drive folder id
 #   spreadsheet: optional google spreadsheet id
 #   doc: optional google doc id
-#   favorites: list of userids of users who favorited this puzzle.
-#              on the client, either empty/null or contains only you.
+#   favorites: object whose keys are userids of users who favorited this
+#              puzzle. Values are true. On the client, either empty or contains
+#              only you.
 #   mechanics: list of canonical forms of mechanic names from
 #              ./imports/mechanics.coffee.
 #   puzzles: array of puzzle _ids for puzzles that feed into this.
@@ -1200,15 +1201,15 @@ doc_id_to_link = (id) ->
     favorite: (puzzle) ->
       check @userId, NonEmptyString
       check puzzle, NonEmptyString
-      num = Puzzles.update puzzle, $addToSet:
-        favorites: @userId
+      num = Puzzles.update puzzle, $set:
+        "favorites.#{@userId}": true
       num > 0
 
     unfavorite: (puzzle) ->
       check @userId, NonEmptyString
       check puzzle, NonEmptyString
-      num = Puzzles.update puzzle, $pull:
-        favorites: @userId
+      num = Puzzles.update puzzle, $unset:
+        "favorites.#{@userId}": ''
       num > 0
 
     addMechanic: (puzzle, mechanic) ->

@@ -169,7 +169,7 @@ Template.blackboard.helpers
   unassigned: unassigned_helper
   favorites: ->
     query = $or: [
-      {favorites: Meteor.userId()},
+      {"favorites.#{Meteor.userId()}": true},
       mechanics: $in: Meteor.user().favorite_mechanics or []
     ]
     if not Session.get('canEdit') and 'true' is reactiveLocalStorage.getItem 'hideSolved'

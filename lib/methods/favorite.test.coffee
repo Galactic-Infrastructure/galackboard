@@ -70,7 +70,8 @@ describe 'favorite', ->
         chai.assert.isTrue ret
 
       it 'sets favorites', ->
-        chai.assert.deepEqual model.Puzzles.findOne(id).favorites, ['cjb']
+        chai.assert.deepEqual model.Puzzles.findOne(id).favorites,
+          cjb: true
 
       it 'does not touch', ->
         doc = model.Puzzles.findOne id
@@ -90,7 +91,9 @@ describe 'favorite', ->
         solved: null
         solved_by: null
         incorrectAnswers: []
-        favorites: ['torgen', 'cscott']
+        favorites:
+          torgen: true
+          cscott: true
         link: 'https://puzzlehunt.mit.edu/foo'
         drive: 'fid'
         spreadsheet: 'sid'
@@ -111,7 +114,10 @@ describe 'favorite', ->
         chai.assert.isTrue ret
 
       it 'sets favorites', ->
-        chai.assert.deepEqual model.Puzzles.findOne(id).favorites, ['torgen', 'cscott', 'cjb']
+        chai.assert.deepEqual model.Puzzles.findOne(id).favorites,
+          torgen: true
+          cscott: true
+          cjb: true
 
       it 'does not touch', ->
         doc = model.Puzzles.findOne id
@@ -131,7 +137,9 @@ describe 'favorite', ->
         solved: null
         solved_by: null
         incorrectAnswers: []
-        favorites: ['torgen', 'cjb']
+        favorites:
+          torgen: true
+          cjb: true
         link: 'https://puzzlehunt.mit.edu/foo'
         drive: 'fid'
         spreadsheet: 'sid'
@@ -152,7 +160,9 @@ describe 'favorite', ->
         chai.assert.isTrue ret
 
       it 'leaves favorites unchanged', ->
-        chai.assert.deepEqual model.Puzzles.findOne(id).favorites, ['torgen', 'cjb']
+        chai.assert.deepEqual model.Puzzles.findOne(id).favorites,
+          torgen: true
+          cjb: true
 
       it 'does not touch', ->
         doc = model.Puzzles.findOne id
