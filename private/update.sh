@@ -5,6 +5,7 @@ scriptroot=$(readlink -f $(dirname $0))
 BUNDLE=$1
 
 sudo mkdir /opt/codex2
+sudo chmod a+rwx /opt/codex2
 if [[ -z $BUNDLE ]]; then
   cd $scriptroot/..
   meteor npm install

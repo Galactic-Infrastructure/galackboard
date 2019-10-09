@@ -39,6 +39,7 @@ cd $scriptroot/..
 # Build the bundle, then install it.
 meteor npm install
 sudo mkdir /opt/codex
+sudo chmod a+rwx /opt/codex
 meteor build --directory /opt/codex
 cd /opt/codex/bundle/programs/server
 sudo npm install
