@@ -1,0 +1,36 @@
+<template name="options">
+  {{! expected data context: list of selected mechanics }}
+  {{! nested element: label for dropdown }}
+  <div class="bb-options-dropdown">
+    <a class="btn dropdown-toggle btn btn-small" data-toggle="dropdown" href="#">
+      <i class="fa fa-cog"></i>
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a>
+        <label class="checkbox bb-hide-solved">
+          <input type="checkbox" id="bb-hide-solved-input" checked="{{hideSolved}}">
+          Hide solved puzzles
+        </label>
+      </a></li>
+      <li><a>
+        <label class="checkbox bb-hide-solved-meta">
+          <input type="checkbox" id="bb-hide-solved-meta-input" checked="{{hideSolvedMeta}}">
+          Hide solved metas
+        </label>
+      </a></li>
+      <li><a>
+        <label class="checkbox bb-compact-mode">
+          <input type="checkbox" id="bb-compact-mode" checked="{{compactMode}}">
+          Compact mode
+        </label>
+      </a></li>
+      <li><a>
+        <label class="checkbox bb-boring-mode">
+          <input type="checkbox" id="bb-boring-mode" checked="{{boringMode}}">
+          Less Colorful
+        </label>
+      </a></li>
+    </ul>
+  </div>
+</template>

@@ -233,14 +233,6 @@ Template.blackboard.events
   "click .bb-sort-order button": (event, template) ->
     reverse = $(event.currentTarget).attr('data-sortReverse') is 'true'
     doBoolean 'sortReverse', reverse
-  "change .bb-hide-solved input": (event, template) ->
-    doBoolean 'hideSolved', event.target.checked
-  "change .bb-hide-solved-meta input": (event, template) ->
-    doBoolean 'hideSolvedMeta', event.target.checked
-  "change .bb-compact-mode input": (event, template) ->
-    doBoolean 'compactMode', event.target.checked
-  "change .bb-boring-mode input": (event, template) ->
-    doBoolean 'boringMode', event.target.checked
   "click .bb-hide-status": (event, template) ->
     doBoolean 'hideStatus', ('true' isnt reactiveLocalStorage.getItem 'hideStatus')
   "click .bb-add-round": (event, template) ->
