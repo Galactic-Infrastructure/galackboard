@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd /home/npinsker/codex-blackboard
+
 git fetch
 
 UPSTREAM=${1:-'@{u}'}
