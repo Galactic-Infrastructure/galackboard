@@ -2,13 +2,13 @@
 
 <div class="navbar navbar-inverse navbar-fixed-top bb-topbar">
   <div class="navbar-inner">
+    {{> header_breadcrumbs}}
     {{> header_loginmute}}
     {{#unless compactHeader}}
     {{> header_lastupdates}}
     {{> header_lastchats}}
     {{/unless}}
   </div>
-  {{> header_breadcrumbs}}
 </div>
 </template>
 
