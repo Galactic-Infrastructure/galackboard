@@ -7,10 +7,6 @@ model = share.model # import
 settings = share.settings # import
 
 Meteor.startup ->
-  if typeof Audio is 'function' # for phantomjs
-    newCallInSound = new Audio(Meteor._relativeToSiteRootUrl '/sound/new_callin.wav')
-
-  return unless newCallInSound?.play?
   # note that this observe 'leaks'; that's ok, the set of callins is small
   Tracker.autorun ->
     sub = Meteor.subscribe 'callins'
