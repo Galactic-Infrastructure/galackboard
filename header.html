@@ -189,6 +189,13 @@
 <!-- login/mute buttons -->
   <div class="bb-buttonbar {{#unless compactHeader}}pull-right{{/unless}}">
    <div>
+    <div class="btn-group">
+     <button data-original-title="{{connectStatus.status}}{{#if connectStatus.retryTime}} until {{pretty_ts connectStatus.retryTime}}{{/if}}"
+             title="connecting" class="{{connectStatus.status}} btn btn-small btn-inverse">
+        <span class="bb-statuslight"></span>
+     </button>
+    </div>
+
     {{#if sessionNick}}
      <div class="btn-group{{#if compactHeader}} bb-login{{/if}}">
       <a class="btn btn-small btn-inverse dropdown-toggle"
@@ -236,15 +243,6 @@
      </button>
     </div>
 {{/if}}
-    <div class="btn-group">
-     <button title="{{volumeTitle}}" class="mute btn btn-small btn-inverse">
-      <span class="fas {{volumeIcon}}"></span>
-     </button>
-     <button data-original-title="{{connectStatus.status}}{{#if connectStatus.retryTime}} until {{pretty_ts connectStatus.retryTime}}{{/if}}"
-             title="connecting" class="{{connectStatus.status}} btn btn-small btn-inverse">
-        <span class="bb-statuslight"></span>
-     </button>
-    </div>
    </div>
   </div>
 </template>

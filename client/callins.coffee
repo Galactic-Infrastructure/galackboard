@@ -21,10 +21,6 @@ Meteor.startup ->
         return if initial
         console.log 'ding dong'
         return if 'true' is reactiveLocalStorage.getItem 'mute'
-        try
-          await newCallInSound.play()
-        catch err
-          console.error err.message, err
     initial = false
 
 Template.callins.onCreated ->

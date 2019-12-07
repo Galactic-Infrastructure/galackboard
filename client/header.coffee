@@ -145,10 +145,6 @@ Template.registerHelper 'pretty_ts', (args) ->
 
 ############## log in/protect/mute panel ####################
 Template.header_loginmute.helpers
-  volumeIcon: ->
-    if 'true' is reactiveLocalStorage.getItem 'mute' then 'fa-volume-off' else 'fa-volume-up'
-  volumeTitle: ->
-    if 'true' is reactiveLocalStorage.getItem 'mute' then 'Muted' else 'Click to mute'
   botIcon: ->
     if 'true' is reactiveLocalStorage.getItem 'nobot' then 'icon-bot-off' else 'icon-bot-on'
   connectStatus: Meteor.status

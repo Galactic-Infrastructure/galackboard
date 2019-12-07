@@ -13,11 +13,6 @@ SOUND_THRESHOLD_MS = 30*1000 # 30 seconds
 blackboard = {} # store page global state
 
 Meteor.startup ->
-  if typeof Audio is 'function' # for phantomjs
-    blackboard.newAnswerSound = new Audio(Meteor._relativeToSiteRootUrl '/sound/that_was_easy.wav')
-  return unless blackboard.newAnswerSound?.play?
-  # set up a persistent query so we can play the sound whenever we get a new
-  # answer
   # note that this observe 'leaks' -- we're not setting it up/tearing it
   # down with the blackboard page, we're going to play the sound whatever
   # page the user is currently on.  This is "fun".  Trust us...
@@ -29,10 +24,6 @@ Meteor.startup ->
       return if doc.target is oldDoc.target # answer changed, not really new
       console.log 'that was easy', doc, oldDoc
       return if 'true' is reactiveLocalStorage.getItem 'mute'
-      try
-        await blackboard.newAnswerSound.play()
-      catch err
-        console.error err.message, err
 
 Meteor.startup ->
   # see if we've got native emoji support, and add the 'has-emojis' class
