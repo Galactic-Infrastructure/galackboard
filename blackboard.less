@@ -40,7 +40,7 @@
           border-radius: @radius;
 }
 
-@navbar-height: 101px; /* was 69px */
+@navbar-height: 48px;
 
 body {
   background: url('/img/grid_noise.png');
@@ -320,6 +320,19 @@ body.has-emojis {
     }
   }
 }
+
+.gCanEdit.bb-editable {
+  &:hover {
+    background: #fcffc0;
+    cursor: pointer;
+  }
+  input {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    min-height: auto;
+  }
+}
+
 .bb-canEdit .bb-editable {
   &:hover {
     background: #fcffc0;

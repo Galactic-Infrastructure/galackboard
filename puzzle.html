@@ -1,6 +1,11 @@
 <template name="puzzle_info">
 <div class="{{#if stuck}}bb-status-stuck{{else if puzzle.solved}}bb-status-solved{{/if}}">
   <h1>{{puzzle.name}} {{>favorite puzzle}}</h1>
+  {{#unless solved}}
+  <li class="bb-drive-buttons">
+    {{> puzzle_callin_button}}{{> puzzle_summon_button}}
+  </li>
+  {{/unless}}
   <h2>{{capType}}
     {{#if puzzle.link}}(<a href="{{puzzle.link}}" target="_blank">link<i class="fas fa-expand-arrows-alt"></i></a>){{/if}}
   </h2>

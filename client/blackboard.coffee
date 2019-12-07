@@ -218,7 +218,7 @@ share.find_bbedit = (event) ->
 
 Template.blackboard.onRendered ->
   #  page title
-  $("title").text("#{settings.TEAM_NAME} Puzzle Blackboard")
+  $("title").text("Galackboard")
   $('#bb-tables .bb-puzzle .puzzle-name > a').tooltip placement: 'left'
   @autorun () ->
     editing = Session.get 'editing'
@@ -257,7 +257,7 @@ Template.blackboard.events
     alertify.prompt "Name of new tag:", (e,str) =>
       return unless e # bail if cancelled
       Meteor.call 'setTag', {type:'puzzles', object: @puzzle._id, name:str, value:''}
-  "click .bb-canEdit .bb-delete-icon": (event, template) ->
+  "click .bb-delete-icon": (event, template) ->
     event.stopPropagation() # keep .bb-editable from being processed!
     [type, id, rest...] = share.find_bbedit(event)
     message = "Are you sure you want to delete "
@@ -275,6 +275,12 @@ Template.blackboard.events
     # note that we rely on 'blur' on old field (which triggers ok or cancel)
     # happening before 'click' on new field
     Session.set 'editing', share.find_bbedit(event).join('/')
+  "click .gCanEdit.bb-editable": (event, template) ->
+    # note that we rely on 'blur' on old field (which triggers ok or cancel)
+    # happening before 'click' on new field
+    console.log(share.find_bbedit(event).join('/'))
+    Session.set 'editing', share.find_bbedit(event).join('/')
+
   'click input[type=color]': (event, template) ->
     event.stopPropagation()
   'input input[type=color]': (event, template) ->

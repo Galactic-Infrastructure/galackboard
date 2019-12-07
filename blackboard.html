@@ -362,28 +362,22 @@
       {{>blackboard_link}}
     {{/with}}
   </div></td>
-  <td class="puzzle-answer bb-editable"
+  <td class="puzzle-answer gCanEdit bb-editable"
       data-bbedit="tags/{{puzzle._id}}/answer/value">
     {{#if editing "tags" puzzle._id "answer" "value"}}
       <input type="text" id="tags-{{puzzle._id}}-answer-value"
               value="{{tag "answer"}}"
               class="input-block-level" />
     {{else}}
-      {{#if canEdit}}
-        <i class="bb-edit-icon fas fa-pencil-alt pull-right"
-            title="Change the answer of this puzzle"></i>
-      {{/if}}
       {{#if tag "answer"}}
-        {{#if canEdit}}
-          <i class="bb-delete-icon fas fa-times pull-left"
-              title="Delete the answer to this puzzle"></i>
-        {{/if}}
+        <i class="bb-delete-icon fas fa-times pull-left"
+            title="Delete the answer to this puzzle"></i>
         <span class="answer">{{tag "answer"}}</span>
       {{/if}}
     {{/if}}
   </td>
   {{#unless compactMode}}
-    <td class="puzzle-status {{#unless puzzle.solved}}bb-editable{{/unless}}"
+    <td class="puzzle-status gCanEdit {{#unless puzzle.solved}}bb-editable{{/unless}}"
         data-bbedit="tags/{{puzzle._id}}/status/value">
       {{#if editing "tags" puzzle._id "status" "value"}}
         <input type="text" id="tags-{{puzzle._id}}-status-value"
@@ -391,14 +385,10 @@
                 class="input-block-level" />
       {{else}}
         {{#unless puzzle.solved}}
-        {{#if canEdit}}
-          <i class="bb-edit-icon fas fa-pencil-alt pull-right"
-              title="Change the status of this puzzle"></i>
           {{#if tag "status"}}
             <i class="bb-delete-icon fas fa-times pull-left"
                 title="Delete the status message for this puzzle"></i>
           {{/if}}
-        {{/if}}
         {{/unless}}
         {{tag "status"}}
       {{/if}}

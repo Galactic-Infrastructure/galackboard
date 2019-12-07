@@ -35,8 +35,7 @@ Template.registerHelper 'canEdit', () ->
   Meteor.userId() and (Session.get 'canEdit') and \
   (Session.equals 'currentPage', 'blackboard')
 Template.registerHelper 'editing', (args..., options) ->
-  canEdit = options?.hash?.canEdit or (Session.get 'canEdit')
-  return false unless Meteor.userId() and canEdit
+  return false unless Meteor.userId()
   return Session.equals 'editing', args.join('/')
 
 Template.registerHelper 'linkify', (contents) ->
