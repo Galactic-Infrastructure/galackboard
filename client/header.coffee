@@ -262,13 +262,6 @@ generate_crumbs = (leaf_type, leaf_id) ->
   leaf_id = Session.get 'breadcrumbs_leaf_id'
   return crumbs unless leaf_type? and leaf_id?
   if leaf_type is 'puzzles'
-    metas = min_meta_paths leaf_id
-    # Deepest are last here, so...
-    metas.reverse()
-    # One breadcrumb for each level of meta.
-    # Consider grouping together beyond some number of levels
-    for meta in metas
-      crumbs.push {page: 'metas', type: 'puzzles', id: meta}
     crumbs.push {page: 'puzzle', type: 'puzzles', id: leaf_id}
   else if leaf_type is 'rounds'
     crumbs.push {page: 'round', type: 'rounds', id: leaf_id}
@@ -288,12 +281,19 @@ generate_crumbs = (leaf_type, leaf_id) ->
 Tracker.autorun ->
   leaf_type = Session.get 'breadcrumbs_leaf_type'
   leaf_id = Session.get 'breadcrumbs_leaf_id'
-  crumbs = generate_crumbs leaf_type, leaf_id
   type = Session.get 'type'
   id = Session.get 'id'
-  unless type is leaf_type and id is leaf_id
-    return unless in_crumbs crumbs, type, id
-  breadcrumbs_var.set crumbs
+
+  crumbs = breadcrumbs_var.get().slice()
+  for crumb in crumbs
+    if crumb['id'] == leaf_id
+      return
+  if leaf_type == undefined
+    return
+
+  crumbs.push({page: 'puzzle', type: leaf_type, id: leaf_id})
+
+  breadcrumbs_var.set(crumbs)
 
 Template.header_breadcrumb_chat.helpers
   inThisRoom: ->
@@ -381,6 +381,21 @@ Template.header_breadcrumbs.helpers
       Session.get 'RINGHUNTERS_FOLDER'
     when 'puzzles'
       model.Puzzles.findOne(Session.get 'id')?.drive
+
+Template.header_breadcrumb_puzzle.events
+  "click .bb-close-puzzle": (event, template) ->
+    crumbs = breadcrumbs_var.get().slice()
+    crumbs = ({...w} for w in crumbs when w['id'] != this.id and w['id'] != undefined)
+    Session.set
+      type: crumbs[crumbs.length - 1].type
+      id: crumbs[crumbs.length - 1].id
+      breadcrumbs_leaf_type: crumbs[crumbs.length - 1].type
+      breadcrumbs_leaf_id: crumbs[crumbs.length - 1].id
+
+    breadcrumbs_var.set(crumbs)
+    if crumbs.length == 1
+      share.Router.navigate "/", {trigger: true}
+      
 
 Template.header_breadcrumbs.events
   "click .bb-upload-file": (event, template) ->

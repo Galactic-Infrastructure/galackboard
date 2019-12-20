@@ -85,8 +85,11 @@
 
 <template name="header_breadcrumb_puzzle">
   <li class="{{#if active}}active{{/if}}">
+    <a class="bb-close-puzzle btn-inverse" style='background-image: none;'>
+      <i class="fa fa-times-circle"></i>
+    </a>
     <a href="/puzzles/{{id}}" class="puzzles-link">
-      <i class="fas fa-book"></i><span class="bb-omit-when-narrow"> Puzzle:</span> <span class="bb-abbrev-when-narrow" data-full="{{puzzle.name}}" data-abbrev="{{abbrev puzzle.name}}"></span>
+      <span class="bb-abbrev-when-narrow" data-full="{{puzzle.name}}" data-abbrev="{{abbrev puzzle.name}}"></span>
     </a>
     {{> header_breadcrumb_extra_links puzzle}}
   </li>
