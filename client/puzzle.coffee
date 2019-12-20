@@ -151,3 +151,97 @@ Template.puzzle_callin_modal.events
       args.backsolve = true
     Meteor.call "newCallIn", args
     template.$('.modal').modal 'hide'
+
+Template.puzzle.events
+  "click .gCanEdit.bb-editable": (event, template) ->
+    # note that we rely on 'blur' on old field (which triggers ok or cancel)
+    # happening before 'click' on new field
+    Session.set 'editing', share.find_bbedit(event).join('/')
+  'click input[type=color]': (event, template) ->
+    event.stopPropagation()
+  'input input[type=color]': (event, template) ->
+    edit = $(event.currentTarget).closest('*[data-bbedit]').attr('data-bbedit')
+    [type, id, rest...] = edit.split('/')
+    # strip leading/trailing whitespace from text (cancel if text is empty)
+    text = hexToCssColor event.currentTarget.value.replace /^\s+|\s+$/, ''
+    processBlackboardEdit[type]?(text, id, rest...) if text
+
+okCancelEvents = share.okCancelEvents = (selector, callbacks) ->
+  ok = callbacks.ok or (->)
+  cancel = callbacks.cancel or (->)
+  evspec = ("#{ev} #{selector}" for ev in ['keyup','keydown','focusout'])
+  events = {}
+  events[evspec.join(', ')] = (evt) ->
+    if evt.type is "keydown" and evt.which is 27
+      # escape = cancel
+      cancel.call this, evt
+    else if evt.type is "keyup" and evt.which is 13 or evt.type is "focusout"
+      # blur/return/enter = ok/submit if non-empty
+      value = String(evt.target.value or "")
+      if value
+        ok.call this, value, evt
+      else
+        cancel.call this, evt
+  events
+
+processBlackboardEdit =
+  tags: (text, id, canon, field) ->
+    field = 'name' if text is null # special case for delete of status tag
+    processBlackboardEdit["tags_#{field}"]?(text, id, canon)
+  puzzles: (text, id, field) ->
+    processBlackboardEdit["puzzles_#{field}"]?(text, id)
+  rounds: (text, id, field) ->
+    processBlackboardEdit["rounds_#{field}"]?(text, id)
+  puzzles_title: (text, id) ->
+    if text is null # delete puzzle
+      Meteor.call 'deletePuzzle', id
+    else
+      Meteor.call 'renamePuzzle', {id:id, name:text}
+  rounds_title: (text, id) ->
+    if text is null # delete round
+      Meteor.call 'deleteRound', id
+    else
+      Meteor.call 'renameRound', {id:id, name:text}
+  tags_name: (text, id, canon) ->
+    n = model.Names.findOne(id)
+    if text is null # delete tag
+      return Meteor.call 'deleteTag', {type:n.type, object:id, name:canon}
+    t = model.collection(n.type).findOne(id).tags[canon]
+    Meteor.call 'setTag', {type:n.type, object:id, name:text, value:t.value}, (error,result) ->
+      if (canon isnt model.canonical(text)) and (not error)
+        Meteor.call 'deleteTag', {type:n.type, object:id, name:t.name}
+  tags_value: (text, id, canon) ->
+    n = model.Names.findOne(id)
+    t = model.collection(n.type).findOne(id).tags[canon]
+    # special case for 'status' tag, which might not previously exist
+    for special in ['Status', 'Answer']
+      if (not t) and canon is model.canonical(special)
+        t =
+          name: special
+          canon: model.canonical(special)
+          value: ''
+    # set tag (overwriting previous value)
+    Meteor.call 'setTag', {type:n.type, object:id, name:t.name, value:text}
+  link: (text, id) ->
+    n = model.Names.findOne(id)
+    Meteor.call 'setField',
+      type: n.type
+      object: id
+      fields: link: text
+
+moveWithinMeta = (pos) -> (event, template) -> 
+  meta = template.data
+  Meteor.call 'moveWithinMeta', @puzzle._id, meta.puzzle._id, pos: pos
+
+Template.puzzle.events okCancelEvents('.bb-editable input[type=text]',
+  ok: (text, evt) ->
+    # find the data-bbedit specification for this field
+    edit = $(evt.currentTarget).closest('*[data-bbedit]').attr('data-bbedit')
+    [type, id, rest...] = edit.split('/')
+    # strip leading/trailing whitespace from text (cancel if text is empty)
+    text = text.replace /^\s+|\s+$/, ''
+    processBlackboardEdit[type]?(text, id, rest...) if text
+    Session.set 'editing', undefined # done editing this
+  cancel: (evt) ->
+    Session.set 'editing', undefined # not editing anything anymore
+)

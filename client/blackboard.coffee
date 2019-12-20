@@ -278,7 +278,6 @@ Template.blackboard.events
   "click .gCanEdit.bb-editable": (event, template) ->
     # note that we rely on 'blur' on old field (which triggers ok or cancel)
     # happening before 'click' on new field
-    console.log(share.find_bbedit(event).join('/'))
     Session.set 'editing', share.find_bbedit(event).join('/')
 
   'click input[type=color]': (event, template) ->
