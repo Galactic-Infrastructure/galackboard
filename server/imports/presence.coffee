@@ -17,42 +17,42 @@ class PresenceManager
 
     # generate automatic "<nick> entered <room>" and <nick> left room" messages
     # as the presence set changes
-    initiallySuppressPresence = true
-    @handle = model.Presence.find(present: true).observe
-      added: (presence) ->
-        return if initiallySuppressPresence
-        return if presence.room_name is 'oplog/0'
-        # look up a real name, if there is one
-        n = Meteor.users.findOne canonical presence.nick
-        name = n?.real_name or presence.nick
-        model.Messages.insert
-          system: true
-          nick: presence.nick
-          to: null
-          presence: 'join'
-          body: "#{name} joined the room."
-          bodyIsHtml: false
-          room_name: presence.room_name
-          timestamp: presence.timestamp
-      removed: (presence) ->
-        return if initiallySuppressPresence
-        return if presence.room_name is 'oplog/0'
-        # look up a real name, if there is one
-        n = Meteor.users.findOne canonical presence.nick
-        name = n?.real_name or presence.nick
-        model.Messages.insert
-          system: true
-          nick: presence.nick
-          to: null
-          presence: 'part'
-          body: "#{name} left the room."
-          bodyIsHtml: false
-          room_name: presence.room_name
-          timestamp: model.UTCNow()
-    # turn on presence notifications once initial observation set has been
-    # processed. (observe doesn't return on server until initial observation
-    # is complete.)
-    initiallySuppressPresence = false
+    # initiallySuppressPresence = true
+    # @handle = model.Presence.find(present: true).observe
+    #   added: (presence) ->
+    #     return if initiallySuppressPresence
+    #     return if presence.room_name is 'oplog/0'
+    #     # look up a real name, if there is one
+    #     n = Meteor.users.findOne canonical presence.nick
+    #     name = n?.real_name or presence.nick
+    #     model.Messages.insert
+    #       system: true
+    #       nick: presence.nick
+    #       to: null
+    #       presence: 'join'
+    #       body: "#{name} joined the room."
+    #       bodyIsHtml: false
+    #       room_name: presence.room_name
+    #       timestamp: presence.timestamp
+    #   removed: (presence) ->
+    #     return if initiallySuppressPresence
+    #     return if presence.room_name is 'oplog/0'
+    #     # look up a real name, if there is one
+    #     n = Meteor.users.findOne canonical presence.nick
+    #     name = n?.real_name or presence.nick
+    #     model.Messages.insert
+    #       system: true
+    #       nick: presence.nick
+    #       to: null
+    #       presence: 'part'
+    #       body: "#{name} left the room."
+    #       bodyIsHtml: false
+    #       room_name: presence.room_name
+    #       timestamp: model.UTCNow()
+    # # turn on presence notifications once initial observation set has been
+    # # processed. (observe doesn't return on server until initial observation
+    # # is complete.)
+    # initiallySuppressPresence = false
 
   stop: ->
     @handle.stop()
