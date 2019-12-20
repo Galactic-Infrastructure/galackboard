@@ -17,6 +17,9 @@
 </template>
 
 <template name="header_breadcrumb_blackboard">
+  <li>
+    <a href="/" class="home-link"><span style='font-weight: bold; font-size: 1.2rem;'>&#x2708; Galackboard &#x2708;</span></a>
+  </li>
   <li class="{{#if active}}active{{/if}}">
     <a href="/" class="home-link"><i class="fa fa-home"></i><span class="bb-omit-when-narrow"> Home </span></a>
   </li>
@@ -160,62 +163,61 @@
 <!-- login/mute buttons -->
   <div class="bb-buttonbar {{#unless compactHeader}}pull-right{{/unless}}">
    <div>
-    <div class="btn-group">
-     <button data-original-title="{{connectStatus.status}}{{#if connectStatus.retryTime}} until {{pretty_ts connectStatus.retryTime}}{{/if}}"
-             title="connecting" class="{{connectStatus.status}} btn btn-small btn-inverse">
-        <span class="bb-statuslight"></span>
-     </button>
-    </div>
+       {{#if currentPageEquals "blackboard"}}
+       <div class="btn-group">
+        <button title="Normal mode" data-canEdit="false"
+                class="bb-protect btn btn-small btn-inverse {{#unless canEdit}}active{{/unless}}">
+         <i class="fas fa-grin-beam"></i>
+        </button>
+        <button title="Structure edit mode" data-canEdit="true"
+                class="bb-unprotect btn btn-small btn-inverse {{#if canEdit}}active{{/if}} {{#unless sessionNick}}disabled{{/unless}}">
+         <i class="fas fa-wrench"></i>
+        </button>
+       </div>
+       {{/if}}
+       {{#if currentPageEquals "chat"}}
+       <div class="btn-group">
+        <button title="{{botTitle}}" class="nobot btn btn-small btn-inverse">
+         <span class="{{botIcon}}"></span>
+        </button>
+       </div>
+       {{/if}}
 
-    {{#if sessionNick}}
-     <div class="btn-group{{#if compactHeader}} bb-login{{/if}}">
-      <a class="btn btn-small btn-inverse dropdown-toggle"
-         data-toggle="dropdown" href="#">
-       {{#if sessionNick.gravatar}}
-       {{gravatar id=sessionNick.gravatar size=16 image="wavatar"}}
-       {{else}}
-       <i class="fas fa-user"></i>
-       {{/if}}
-       {{#if sessionNick.realname}}
-         {{sessionNick.realname}}
-       {{else}}
-         {{sessionNick.name}}
-       {{/if}}
-       <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu pull-right">
-       <li><a href="#" class="bb-logout"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
-      </ul>
-     </div>
-    {{else}}
-    <button class="btn btn-small btn-inverse bb-login">
-     <i class="fas fa-user"></i>
-     Log in to {{#if currentPageEquals "chat"}}chat{{else}}edit{{/if}}
-    </button>
-    {{/if}}
+        <div class="btn-group">
+         <button data-original-title="{{connectStatus.status}}{{#if connectStatus.retryTime}} until {{pretty_ts connectStatus.retryTime}}{{/if}}"
+                 title="connecting" class="{{connectStatus.status}} btn btn-small btn-inverse">
+            <span class="bb-statuslight"></span>
+         </button>
+        </div>
+
+        {{#if sessionNick}}
+         <div class="btn-group{{#if compactHeader}} bb-login{{/if}}">
+          <a class="btn btn-small btn-inverse dropdown-toggle"
+             data-toggle="dropdown" href="#">
+           {{#if sessionNick.gravatar}}
+           {{gravatar id=sessionNick.gravatar size=16 image="wavatar"}}
+           {{else}}
+           <i class="fas fa-user"></i>
+           {{/if}}
+           {{#if sessionNick.realname}}
+             {{sessionNick.realname}}
+           {{else}}
+             {{sessionNick.name}}
+           {{/if}}
+           <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu pull-right">
+           <li><a href="#" class="bb-logout"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
+          </ul>
+         </div>
+        {{else}}
+        <button class="btn btn-small btn-inverse bb-login">
+         <i class="fas fa-user"></i>
+         Log in to {{#if currentPageEquals "chat"}}chat{{else}}edit{{/if}}
+        </button>
+        {{/if}}
    </div>
-   <div class="btn-toolbar">
-{{#if currentPageEquals "blackboard"}}
-    <div class="btn-group">
-     <button title="Protect page" data-canEdit="false"
-             class="bb-protect btn btn-small btn-inverse {{#unless canEdit}}active{{/unless}}">
-      <i class="fas fa-lock"></i>
-     </button>
-     <button title="Allow edits to puzzles" data-canEdit="true"
-             class="bb-unprotect btn btn-small btn-inverse {{#if canEdit}}active{{/if}} {{#unless sessionNick}}disabled{{/unless}}">
-      <i class="fas fa-lock-open"></i>
-     </button>
-    </div>
-{{/if}}
-{{#if currentPageEquals "chat"}}
-    <div class="btn-group">
-     <button title="{{botTitle}}" class="nobot btn btn-small btn-inverse">
-      <span class="{{botIcon}}"></span>
-     </button>
-    </div>
-{{/if}}
-   </div>
-  </div>
+ </div>
 </template>
 
 <template name="header_lastupdates">
