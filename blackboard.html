@@ -87,7 +87,8 @@
     <table class="table table-bordered table-condensed bb-puzzle">
       <thead>
         {{#unless compactMode}}
-        <tr>
+        <tr style="border-top: 0px;">
+          <th class="puzzle-sidebar"></th>
           <th class="puzzle-name">Name</th>
           <th class="puzzle-answer">Solution</th>
           <th class="puzzle-status">Status</th>
@@ -233,6 +234,7 @@
 </template>
 
 <template name="blackboard_puzzle_cells">
+<td class="puzzle-sidebar" style="background: {{sidebarColor}};"><div>{{! div needed to establish relative pos }}</div></td>
 <td class="puzzle-name"><div>{{! div needed to establish relative pos }}
   <div class="bb-editable bb-puzzle-title" data-bbedit="puzzles/{{puzzle._id}}/title">
     {{#if editing "puzzles" puzzle._id "title"}}
@@ -386,8 +388,10 @@
             <i class="bb-delete-icon fas fa-times pull-left"
                 title="Delete the status message for this puzzle"></i>
           {{/if}}
+          {{tag "status"}}
+        {{else}}
+        solved!
         {{/unless}}
-        {{tag "status"}}
       {{/if}}
     </td>
     {{#unless canEdit}}
@@ -420,10 +424,12 @@
 
 <template name="blackboard_meta">
   {{#if showMeta}}
-  <tbody class="meta" id="m{{puzzle._id}}" data-puzzle-id="{{puzzle._id}}"
-         style="{{#unless boringMode}}background-color: {{color}}{{/unless}}">
+  <tbody class="meta" id="m{{puzzle._id}}" data-puzzle-id="{{puzzle._id}}">
+    <tr class="puzzle-color-header" style="background: {{color}};">
+        <td colspan="100"></td>
+    </tr>
     <tr class="meta {{#if stuck puzzle}}bb-status-stuck{{/if}}">
-      {{> blackboard_puzzle_cells}}
+      {{> blackboard_puzzle_cells puzzle=puzzle sidebarColor=color }}
     </tr>
     {{#each puzzles}}
       {{> blackboard_puzzle}}
@@ -454,7 +460,7 @@
 </template>
 
 <template name="blackboard_puzzle">
-  <tr class="puzzle {{#if stuck puzzle}}bb-status-stuck{{/if}}" draggable="{{canEdit}}" data-puzzle-id="{{puzzle._id}}">
+  <tr class="puzzle {{#if puzzle.solved}}bb-status-solved{{else if stuck puzzle}}bb-status-stuck{{/if}}" draggable="{{canEdit}}" data-puzzle-id="{{puzzle._id}}">
     {{> blackboard_puzzle_cells}}
  </tr>
 </template>

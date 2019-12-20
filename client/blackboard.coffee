@@ -417,6 +417,9 @@ Template.blackboard_meta.events
         round: roundId,
       (error,r)-> throw error if error
 
+Template.blackboard_puzzle_cells.helpers
+  color: -> puzzleColor @puzzle if @puzzle?
+
 Template.blackboard_meta.helpers
   color: -> puzzleColor @puzzle if @puzzle?
   showMeta: -> ('true' isnt reactiveLocalStorage.getItem 'hideSolvedMeta') or (!this.puzzle?.solved?)
@@ -425,6 +428,7 @@ Template.blackboard_meta.helpers
     p = ({
       _id: id
       puzzle: model.Puzzles.findOne(id) or { _id: id }
+      sidebarColor: puzzleColor this.puzzle
     } for id, index in this.puzzle.puzzles)
     editing = Meteor.userId() and (Session.get 'canEdit')
     hideSolved = 'true' is reactiveLocalStorage.getItem 'hideSolved'

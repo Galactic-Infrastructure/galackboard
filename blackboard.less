@@ -18,6 +18,11 @@
   width: 100% !important;
 }
 
+.puzzle-color-header {
+  height: 6px;
+  border-bottom: 0px;
+}
+
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -144,10 +149,12 @@ body.has-emojis {
   }
   .bb-left-content, .bb-top-right-content {
     background: rgba(255,255,255,0.85);
-    .bb-status-stuck { background: repeating-linear-gradient(45deg, #FF0, #FF0 20px, rgba(0,0,0,0) 20px, rgba(0,0,0,0) 40px); }
+    .bb-status-stuck { background: #CC0; }
+    .bb-status-solved { background: #4F4; }
     .boring & {
       background: white;
-      .bb-status-stuck { background: #FF0; }
+      .bb-status-stuck { background: #CC0; }
+      .bb-status-solved { background: #4F4; }
     }
     .bb-mechanics-dropdown .btn {
       font-size: 10.5px;
@@ -319,10 +326,10 @@ body.has-emojis {
       text-align: center;
     }
     .bb-status-solved {
-      background:#AAFF99;
+      background:#4F4;
     }
     .bb-status-stuck {
-      background:#FFFF00;
+      background:#CCCC00;
     }
     .bb-status-unsolved {
       background:#FCFCFC;
@@ -456,8 +463,12 @@ body.has-emojis {
       .bb-edit-icon, .bb-delete-icon { margin-top: 3px; }
     }
   }
-  tr.bb-status-stuck {
-    background-color: #FF0;
+  tr.bb-status-stuck .puzzle-status {
+    background-color: #FF3;
+  }
+  tr.bb-status-solved .puzzle-status {
+    padding-left: 6px;
+    background-color: #4F4;
   }
   .bb-puzzle {
     margin-bottom: 0;
@@ -465,7 +476,6 @@ body.has-emojis {
       --tr-bg: rgba(255,255,255,0.75);
       .boring & {
         background: #f8f8f8;
-        &.bb-status-stuck { background: #CC0; }
       }
       .bb-puzzle-title {
         font-weight: bold;
@@ -477,11 +487,9 @@ body.has-emojis {
       --tr-bg: rgba(255,255,255,0.85);
       .boring & {
         background: white;
-        &.bb-status-stuck { background: #FF0; }
       }
     }
     tr.meta, tr.puzzle, tr.metafooter, tr.round-empty {
-      &.bb-status-stuck { background: repeating-linear-gradient(45deg, #FF0, #FF0 10px, var(--tr-bg) 10px, var(--tr-bg) 20px); }
       background: var(--tr-bg);
     }
     .bb-edit-icon, .bb-delete-icon {
@@ -490,6 +498,11 @@ body.has-emojis {
     td .bb-delete-icon.pull-left {
       margin-left: -2px;
       margin-right: 3px;
+    }
+    .puzzle-sidebar {
+      width: 10px;
+      border-top: 0px;
+      border-bottom: 0px;
     }
     .puzzle-name {
       .bb-favorite-button { float: right; }
