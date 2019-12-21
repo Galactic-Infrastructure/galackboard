@@ -153,11 +153,11 @@ body.has-emojis {
   }
   .bb-left-content, .bb-top-right-content {
     background: rgba(255,255,255,0.85);
-    .bb-status-stuck { background: #FF3; }
-    .bb-status-solved { background: #4F4; }
+    .bb-status-stuck { background: #ffd333; }
+    .bb-status-solved { background: #bcffa6; }
     .boring & {
       background: white;
-      .bb-status-stuck { background: #FF3; }
+      .bb-status-stuck { background: #ffd333; }
       .bb-status-solved { background: #4F4; }
     }
     .bb-mechanics-dropdown .btn {
@@ -330,10 +330,10 @@ body.has-emojis {
       text-align: center;
     }
     .bb-status-solved {
-      background:#4F4;
+      background:#bcffa6;
     }
     .bb-status-stuck {
-      background:#FFFF33;
+      background:#ffd333;
     }
     .bb-status-unsolved {
       background:#FCFCFC;
@@ -374,6 +374,10 @@ body.has-emojis {
   /* tweak table column to make room for add tag/up/down icons */
   td.puzzle-name > div { padding-right: (14px)*3; }
 }
+.bb-puzzle-title {
+  font-size: 14px;
+}
+
 #bb-tables {
   background: white;
   margin-top: 10px;
@@ -467,12 +471,12 @@ body.has-emojis {
       .bb-edit-icon, .bb-delete-icon { margin-top: 3px; }
     }
   }
-  tr.bb-status-stuck .puzzle-status {
-    background-color: #FF3;
+  tr.bb-status-stuck td {
+    background-color: #ffd333;
   }
-  tr.bb-status-solved .puzzle-status {
+  tr.bb-status-solved td {
     padding-left: 6px;
-    background-color: #4F4;
+    background-color: #bcffa6;
   }
   .bb-puzzle {
     margin-bottom: 0;
@@ -484,6 +488,7 @@ body.has-emojis {
       .bb-puzzle-title {
         font-weight: bold;
         text-transform: uppercase;
+        font-size: 1.2em;
       }
     }
     tr.metafooter .num-hidden { font-size: 10.5px }
@@ -561,6 +566,7 @@ body.has-emojis {
     /* try to make table spacing more-or-less consistent */
     td,th {
       position: relative; /* fix z-order issues, make whole width clickable */
+      padding: 4px;
     }
 
     .puzzle-working {
