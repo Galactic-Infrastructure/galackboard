@@ -165,6 +165,21 @@ Template.puzzle.events
     # strip leading/trailing whitespace from text (cancel if text is empty)
     text = hexToCssColor event.currentTarget.value.replace /^\s+|\s+$/, ''
     processBlackboardEdit[type]?(text, id, rest...) if text
+  "click .bb-delete-icon": (event, template) ->
+    event.stopPropagation() # keep .bb-editable from being processed!
+    [type, id, rest...] = share.find_bbedit(event)
+    message = "Are you sure you want to delete "
+    if (type is'tags') or (rest[0] is 'title')
+      message += "this #{model.pretty_collection(type)}?"
+    else
+      message += "the #{rest[0]} of this #{model.pretty_collection(type)}?"
+    share.confirmationDialog
+      ok_button: 'Yes, delete it'
+      no_button: 'No, cancel'
+      message: message
+      ok: ->
+        processBlackboardEdit[type]?(null, id, rest...) # process delete
+
 
 okCancelEvents = share.okCancelEvents = (selector, callbacks) ->
   ok = callbacks.ok or (->)
@@ -236,8 +251,13 @@ moveWithinMeta = (pos) -> (event, template) ->
 Template.puzzle.events okCancelEvents('.bb-editable input[type=text]',
   ok: (text, evt) ->
     # find the data-bbedit specification for this field
+    console.log('hellooooo')
     edit = $(evt.currentTarget).closest('*[data-bbedit]').attr('data-bbedit')
+    console.log(edit)
     [type, id, rest...] = edit.split('/')
+    console.log(type)
+    console.log(id)
+    console.log(rest)
     # strip leading/trailing whitespace from text (cancel if text is empty)
     text = text.replace /^\s+|\s+$/, ''
     processBlackboardEdit[type]?(text, id, rest...) if text

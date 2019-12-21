@@ -11,30 +11,44 @@
   {{/if}}
   {{/with}}
 </div>
-<table><tbody>
+<table cellpadding="4px" style="margin-top: 20px;"><tbody>
 {{#with puzzle}}
   {{#each incorrectAnswers}}
     <tr><td class="wronganswer">IncorrectAnswer:</td><td class="answer">{{answer}}</td></tr>
     <tr><td class="backsolve">{{#if backsolve}}(backsolved){{/if}}</td><td class="timestamp">{{pretty_ts timestamp}}</td></tr>
   {{/each}}
-  <tr><td>Mechanics:</td><td>{{> puzzle_mechanics}}</td></tr>
+  <tr><td>Solution:</td>
+      <td class="puzzle-answer gCanEdit bb-editable edit-puzzle-field"
+        data-bbedit="tags/{{_id}}/answer/value">
+      {{#if editing "tags" _id "answer" "value"}}
+        <input type="text" id="tags-{{_id}}-answer-value"
+                value="{{tag "answer"}}"
+                class="input-block-level" />
+      {{else}}
+        {{#if tag "answer"}}
+          <i class="bb-delete-icon fas fa-times pull-left"
+              title="Delete the solution for this puzzle"></i>
+        {{/if}}
+        {{tag "answer"}}
+      {{/if}}
+    </td></tr>
+
   <tr><td>Status:</td>
-      <td class="puzzle-status gCanEdit {{#unless puzzle.solved}}bb-editable{{/unless}}"
-        data-bbedit="tags/{{puzzle._id}}/status/value">
-      {{#if editing "tags" puzzle._id "status" "value"}}
-        <input type="text" id="tags-{{puzzle._id}}-status-value"
+      <td class="puzzle-status gCanEdit bb-editable edit-puzzle-field"
+        data-bbedit="tags/{{_id}}/status/value">
+      {{#if editing "tags" _id "status" "value"}}
+        <input type="text" id="tags-{{_id}}-status-value"
                 value="{{tag "status"}}"
                 class="input-block-level" />
       {{else}}
-        {{#unless puzzle.solved}}
-          {{#if tag "status"}}
-            <i class="bb-delete-icon fas fa-times pull-left"
-                title="Delete the status message for this puzzle"></i>
-          {{/if}}
-        {{/unless}}
+        {{#if tag "status"}}
+          <i class="bb-delete-icon fas fa-times pull-left"
+              title="Delete the status message for this puzzle"></i>
+        {{/if}}
         {{tag "status"}}
       {{/if}}
     </td></tr>
+  <tr><td>Mechanics:</td><td>{{> puzzle_mechanics}}</td></tr>
 {{/with}}
 {{#each cares in unsetcaredabout}}
   <tr><td>{{cares.name}}:</td><td class="wanted">(wanted by {{cares.meta}})</td></tr>

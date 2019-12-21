@@ -23,6 +23,10 @@
   border-bottom: 0px;
 }
 
+.edit-puzzle-field {
+  border: 1px dotted #aaa;
+}
+
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -149,11 +153,11 @@ body.has-emojis {
   }
   .bb-left-content, .bb-top-right-content {
     background: rgba(255,255,255,0.85);
-    .bb-status-stuck { background: #CC0; }
+    .bb-status-stuck { background: #FF3; }
     .bb-status-solved { background: #4F4; }
     .boring & {
       background: white;
-      .bb-status-stuck { background: #CC0; }
+      .bb-status-stuck { background: #FF3; }
       .bb-status-solved { background: #4F4; }
     }
     .bb-mechanics-dropdown .btn {
@@ -329,7 +333,7 @@ body.has-emojis {
       background:#4F4;
     }
     .bb-status-stuck {
-      background:#CCCC00;
+      background:#FFFF33;
     }
     .bb-status-unsolved {
       background:#FCFCFC;

@@ -102,9 +102,11 @@
       {{#let faves=favorites}}
         {{#if faves.count}}
           <tbody>
-            <tr><th colspan="{{nCols}}" id="favorites"><h2>Favorite Puzzles</h2></th></tr>
+            <tr><th colspan="{{nCols}}" id="favorites"><h2>Suggested for You</h2></th></tr>
             {{#each faves}}
+              {{# unless solved }}
               {{>blackboard_puzzle _id=_id puzzle=this}}
+              {{/unless}}
             {{/each}}
           </tbody>
         {{/if}}
@@ -140,8 +142,7 @@
         <i class="bb-edit-icon fas fa-pencil-alt pull-right"
           title="Edit the name of this round"></i>
       {{else}}
-        {{link id=_id title="Chat room for round" chat=true icon="fas fa-comments" class="pull-right bb-round-chat"}}
-        {{#if link}}<a class="pull-right" href="{{link}}" title="Link to hunt site"><i class="fas fa-link"></i></a>{{/if}}
+        {{#if link}}<a class="pull-right" href="{{link}}" title="Link to hunt site"><i class="fas fa-puzzle-piece"></i></a>{{/if}}
       {{/if}}
     {{name}}
     {{/if}}
