@@ -266,6 +266,14 @@
     {{/if}}
     {{#with puzzle}}
       {{#unless compactMode}}
+      {{#unless canEdit}}
+        {{#if mechanics.length}}
+          {{#each mechanics}}
+            <span class="mechanic-bubble {{#if yourFavoriteMechanic}}favorite-mechanic{{/if}}">{{mechanicName}}</span>
+          {{/each}}
+        {{/if}}
+      {{/unless}}
+
       <table class="bb-tag-table"><tbody>
         {{#each tags}}
         <tr>
@@ -345,16 +353,6 @@
             <td class="comma-list">{{#each this}}{{> blackboard_othermeta_link}} {{/each}}</td>
           </tr>
           {{/with}}
-          {{#if mechanics.length}}
-          <tr>
-            <td>Mechanics:</td>
-            <td class="comma-list">
-              {{#each mechanics}}
-                <span class="{{#if yourFavoriteMechanic}}favorite-mechanic{{/if}}">{{mechanicName}}</span>
-              {{/each}}
-            </td>
-          </tr>
-          {{/if}}
         {{/if}}
       </tbody></table>
         {{/unless}}
