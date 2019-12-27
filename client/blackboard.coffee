@@ -74,9 +74,9 @@ Template.registerHelper 'nCols', ->
   if compactMode()
     2
   else if Meteor.userId() and (Session.get 'canEdit')
-    3
+    4
   else
-    5
+    6
 
 Template.registerHelper 'compactMode', compactMode
 
