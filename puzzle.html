@@ -153,10 +153,14 @@
 </template>
 
 <template name="puzzle_summon_button">
+{{#if mynick}}
 <button class="btn {{#if currentPageEquals "chat"}}btn-small{{/if}} bb-summon-btn {{#if stuck}}stuck{{else}}unstuck{{/if}} btn-inverse">
 {{#unless currentPageEquals "chat"}}<i class="fas fa-{{#if stuck}}exclama{{else}}ques{{/if}}tion-circle"></i>{{/unless}}
 {{#if stuck}}Clear STUCK status{{else}}Flag as STUCK{{/if}}
 </button>
+{{else}}
+<button class="btn btn-primary" disabled>Must be logged in</button>
+{{/if}}
 </template>
 <template name="puzzle_summon_modal">
 <div class="modal hide fade" id="summon_modal">

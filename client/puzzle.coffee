@@ -97,21 +97,33 @@ Template.puzzle_summon_button.helpers
   stuck: -> model.isStuck this
 
 Template.puzzle_summon_button.events
-  "click .bb-summon-btn.stuck": (event, template) ->
-    share.confirmationDialog
-      message: 'Are you sure you want to cancel this request for help?'
-      ok_button: "Yes, this #{model.pretty_collection(Session.get 'type')} is no longer stuck"
-      no_button: 'Nevermind, this is still STUCK'
-      ok: ->
-        Meteor.call 'unsummon',
-          type: Session.get 'type'
-          object: Session.get 'id'
   "click .bb-summon-btn.unstuck": (event, template) ->
-    $('#summon_modal .stuck-at').val('at start')
-    $('#summon_modal .stuck-need').val('ideas')
-    $('#summon_modal .stuck-other').val('')
-    $('#summon_modal .bb-callin-submit').focus()
-    $('#summon_modal').modal show: true
+    how = "Stuck"
+    Meteor.call 'summon',
+      type: Session.get 'type'
+      object: Session.get 'id'
+      how: how
+  "click .bb-summon-btn.stuck": (event, template) ->
+    Meteor.call 'unsummon',
+      type: Session.get 'type'
+      object: Session.get 'id'
+
+# Template.puzzle_summon_button.events
+#   "click .bb-summon-btn.stuck": (event, template) ->
+#     share.confirmationDialog
+#       message: 'Are you sure you want to cancel this request for help?'
+#       ok_button: "Yes, this #{model.pretty_collection(Session.get 'type')} is no longer stuck"
+#       no_button: 'Nevermind, this is still STUCK'
+#       ok: ->
+#         Meteor.call 'unsummon',
+#           type: Session.get 'type'
+#           object: Session.get 'id'
+#   "click .bb-summon-btn.unstuck": (event, template) ->
+#     $('#summon_modal .stuck-at').val('at start')
+#     $('#summon_modal .stuck-need').val('ideas')
+#     $('#summon_modal .stuck-other').val('')
+#     $('#summon_modal .bb-callin-submit').focus()
+#     $('#summon_modal').modal show: true
 
 Template.puzzle_summon_modal.events
   "click .bb-summon-submit, submit form": (event, template) ->
