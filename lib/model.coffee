@@ -453,7 +453,7 @@ doc_id_to_link = (id) ->
     newPuzzle: (args) ->
       check @userId, NonEmptyString
       check args, ObjectWith
-        round: Match.Optional [NonEmptyString]
+        round: Match.Optional NonEmptyString
         feedsInto: Match.Optional [NonEmptyString]
         puzzles: Match.Optional [NonEmptyString]
         mechanics: Match.Optional [IsMechanic]
