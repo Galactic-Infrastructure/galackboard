@@ -219,6 +219,7 @@ BlackboardRouter = Backbone.Router.extend
   routes:
     "": "BlackboardPage"
     "edit": "EditPage"
+    "newPuzzle/:n/:l": "NewPuzzlePage"
     "rounds/:round": "RoundPage"
     "puzzles/:puzzle": "PuzzlePage"
     "puzzles/:puzzle/:view": "PuzzlePage"
@@ -242,6 +243,11 @@ BlackboardRouter = Backbone.Router.extend
       Session.set
         canEdit: true
         editing: undefined
+
+  NewPuzzlePage: (n, l) ->
+    Meteor.call 'newPuzzle', {name: decodeURIComponent(n), link: decodeURIComponent(l)}, (error,r) ->
+      throw error if error
+    this.navigate "/", trigger: true
 
   PuzzlePage: (id, view=null) ->
     this.Page("puzzle", "puzzles", id)
