@@ -270,7 +270,9 @@
       {{#unless canEdit}}
         {{#if mechanics.length}}
           {{#each mechanics}}
+            {{#if mechanicName}} <!-- check for mechanics that have been removed -->
             <span class="mechanic-bubble {{#if yourFavoriteMechanic}}favorite-mechanic{{/if}}">{{mechanicName}}</span>
+            {{/if}}
           {{/each}}
         {{/if}}
       {{/unless}}
