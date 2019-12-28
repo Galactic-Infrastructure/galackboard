@@ -453,10 +453,11 @@ doc_id_to_link = (id) ->
     newPuzzle: (args) ->
       check @userId, NonEmptyString
       check args, ObjectWith
-        round: NonEmptyString
+        round: Match.Optional [NonEmptyString]
         feedsInto: Match.Optional [NonEmptyString]
         puzzles: Match.Optional [NonEmptyString]
         mechanics: Match.Optional [IsMechanic]
+      args.round = args.round or Rounds.findOne({}, {sort: { createdAt: -1 }})._id
       throw new Meteor.Error(404, "bad round") unless Rounds.findOne(args.round)?
       puzzle_prefix = PuzzleUrlPrefix.get()
       link = if puzzle_prefix
