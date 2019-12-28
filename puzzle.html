@@ -1,6 +1,6 @@
 <template name="puzzle_info">
 <div class="{{#if stuck}}bb-status-stuck{{else if puzzle.solved}}bb-status-solved{{/if}}">
-  <h1><a href="{{puzzle.link}}" target="_blank">{{puzzle.name}}</a></h1>
+  <h1><a href="{{puzzle.link}}" target="_blank" style="text-decoration: underline;">{{puzzle.name}}</a></h1>
   {{#with puzzle}}
   {{#if solved}}
     <b>SOLVED! Answer: {{tag "answer"}}{{#if tag "backsolved"}} (backsolved){{/if}}</b>

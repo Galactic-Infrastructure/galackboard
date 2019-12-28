@@ -142,7 +142,7 @@
         <i class="bb-edit-icon fas fa-pencil-alt pull-right"
           title="Edit the name of this round"></i>
       {{else}}
-        {{#if link}}<a class="pull-right" href="{{link}}" title="Link to hunt site"><i class="fas fa-puzzle-piece"></i></a>{{/if}}
+        {{#if link}}<a class="pull-right" href="{{link}}" title="Link to hunt site" target="_blank"><i class="fas fa-puzzle-piece"></i></a>{{/if}}
       {{/if}}
     {{name}}
     {{/if}}
@@ -249,7 +249,7 @@
         <i class="bb-edit-icon fas fa-pencil-alt pull-right"
             title="Edit the name of this puzzle"></i>
       {{else}}
-        {{#if puzzle.link}}<a class="pull-right" href="{{puzzle.link}}" title="Link to hunt site"><i class="fas fa-puzzle-piece"></i></a>{{/if}}
+        {{#if puzzle.link}}<a class="pull-right" href="{{puzzle.link}}" title="Link to hunt site" target="_blank"><i class="fas fa-puzzle-piece"></i></a>{{/if}}
       {{/if}}
       {{link id=puzzle._id editing=canEdit}}
     {{/if}}
