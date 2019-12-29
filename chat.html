@@ -93,7 +93,7 @@
         {{else if message.mail}}
           Mail from {{#with message.mail.sender_name}}{{this}}{{else}}{{message.nick}}{{/with}} <i class="fas fa-envelope"></i> {{message.mail.subject}}
         {{else}}
-          <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span>
+          <span title="{{message.nick}}">{{nickOrName message.nick}}</span>
               {{#if message.to}}
         <small>(Private message to {{nickOrName message.to}})</small>
               {{/if}}
@@ -158,7 +158,7 @@
             <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
             {{> message_delete_button}}
             {{gravatar id=email image="wavatar" size=14 }}
-            <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span> {{cleanup message.body}}
+            <span title="{{message.nick}}">{{nickOrName message.nick}}</span> {{cleanup message.body}}
           </div>
         {{else}}
           {{> media_message }}
