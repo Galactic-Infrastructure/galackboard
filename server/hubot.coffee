@@ -12,8 +12,8 @@ import 'coffeescript/register'
 # Log messages?
 DEBUG = !Meteor.isProduction
 
-BOTNAME = Meteor.settings?.botname or process.env.BOTNAME or 'Codexbot'
-BOT_GRAVATAR = Meteor.settings?.botgravatar or process.env.BOTGRAVATAR or 'codex@printf.net'
+BOTNAME = Meteor.settings?.botname or process.env.BOTNAME or 'Galackbot'
+BOT_GRAVATAR = Meteor.settings?.botgravatar or process.env.BOTGRAVATAR or 'galactictrendsetters@gmail.com'
 
 SKIP_SCRIPTS = Meteor.settings?.skip_scripts ? process.env.SKIP_SCRIPTS?.split(',') ? []
 EXTERNAL_SCRIPTS = Meteor.settings?.external_scripts ? process.env.EXTERNAL_SCRIPTS?.split(',') ? []

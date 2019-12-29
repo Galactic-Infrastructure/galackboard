@@ -565,22 +565,6 @@ describe 'codex hubot script', ->
         room_name: 'callins/0'
         useful: true
 
-  describe 'newQuip', ->
-    it 'adds quip', ->
-      model.Messages.insert
-        nick: 'torgen'
-        room_name: 'general/0'
-        timestamp: Date.now()
-        body: 'bot new quip Codex is my co-dump stat'
-      waitForDocument model.Quips, { text: 'Codex is my co-dump stat' },
-        created: 7
-        created_by: 'torgen'
-        touched: 7
-        touched_by: 'torgen'
-        name: 'Garth Shelkoff'  # from a hash of the text, so it's consistent.
-        last_used: 0
-        use_count: 0
-
   describe 'setTag', ->
     describe 'in puzzle room', ->
       it 'infers puzzle', ->
