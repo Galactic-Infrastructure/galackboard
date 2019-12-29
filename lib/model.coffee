@@ -547,7 +547,7 @@ doc_id_to_link = (id) ->
           touched_by: @userId
       , multi: true
       # delete google drive folder
-      deleteDriveFolder drive if drive?
+      # deleteDriveFolder drive if drive?
       # XXX: delete chat room logs?
       return r
 
