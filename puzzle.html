@@ -59,15 +59,17 @@
 {{/each}}
 {{#with puzzle}}
   {{#each tags}}
-  {{#unless equal name "Status"}}
-    <tr>
-      <td class="tagname">{{name}}:</td>
-      <td class="tagvalue">
-        {{#if equal canon "color"}}<span class="bb-colorbox" style="background-color: {{value}}"></span>{{/if}}
-        {{value}}
-      </td>
-    </tr>
-  {{/unless}}
+    {{#if equal name "Status"}}
+    {{else if equal name "Stuckness"}}
+    {{else}}
+      <tr>
+        <td class="tagname">{{name}}:</td>
+        <td class="tagvalue">
+          {{#if equal canon "color"}}<span class="bb-colorbox" style="background-color: {{value}}"></span>{{/if}}
+          {{value}}
+        </td>
+      </tr>
+    {{/if}}
   {{/each}}
 {{/with}}
 </tbody></table>

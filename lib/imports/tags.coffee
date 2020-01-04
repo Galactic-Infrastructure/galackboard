@@ -6,7 +6,7 @@ import { ObjectWith, NonEmptyString } from './match.coffee'
 export getTag = (object, name) -> object?.tags?[canonical(name)]?.value
 
 export isStuck = (object) ->
-  object? and /^stuck\b/i.test(getTag(object, 'Status') or '')
+  object? and /^stuck\b/i.test(getTag(object, 'Stuckness') or '')
 
 export canonicalTags = (tags, who) ->
   check tags, [ObjectWith(name:NonEmptyString,value:Match.Any)]

@@ -1013,7 +1013,7 @@ doc_id_to_link = (id) ->
       Meteor.call 'setTag',
         object: id
         type: 'puzzles'
-        name: 'Status'
+        name: 'Stuckness'
         value: how
         now: UTCNow()
       if isStuck obj
@@ -1044,11 +1044,11 @@ doc_id_to_link = (id) ->
       if not (isStuck obj)
         return "puzzle #{obj.name} isn't stuck"
       oplog "Help request cancelled for", 'puzzles', id, @userId
-      sticker = obj.tags.status?.touched_by
+      sticker = obj.tags.stuckness?.touched_by
       Meteor.call 'deleteTag',
         object: id
         type: 'puzzles'
-        name: 'status'
+        name: 'Stuckness'
         now: UTCNow()
       body = "has arrived to help"
       if @userId is sticker
