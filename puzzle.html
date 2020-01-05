@@ -7,6 +7,7 @@
   {{else}}
   <li class="bb-drive-buttons">
     {{> puzzle_summon_button}}
+    {{> puzzle_add_tag}}
   </li>
   {{/if}}
   {{/with}}
@@ -64,9 +65,22 @@
     {{else}}
       <tr>
         <td class="tagname">{{name}}:</td>
-        <td class="tagvalue">
+        <!-- <td class="tagvalue">
           {{#if equal canon "color"}}<span class="bb-colorbox" style="background-color: {{value}}"></span>{{/if}}
           {{value}}
+        </td> -->
+        <td class="tagvalue gCanEdit bb-editable edit-puzzle-field"
+            data-bbedit="tags/{{id}}/{{canon}}/value">
+          {{#if editing "tags" id canon "value"}}
+            <input type="text" id="tags-{{id}}-{{canon}}-value"
+                    value="{{value}}"
+                    class="input-block-level" />
+          {{else}}
+            <i class="bb-delete-icon fas fa-times pull-left"
+                title="Delete this tag"></i>
+            {{#if equal canon "color"}}<span class="bb-colorbox" style="background-color: {{value}}"></span>{{/if}}
+            {{value}}
+          {{/if}}
         </td>
       </tr>
     {{/if}}
@@ -152,6 +166,14 @@
 {{/with}}
 </div>
 {{/with}}
+</template>
+
+<template name="puzzle_add_tag">
+  <button class="btn btn-link bb-add-tag"
+        title="Add tag to puzzle">
+    <i class="fas fa-tags"></i>
+    <i class="fas fa-plus"></i>
+  </button>
 </template>
 
 <template name="puzzle_summon_button">
