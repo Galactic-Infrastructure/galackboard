@@ -1287,6 +1287,14 @@ doc_id_to_link = (id) ->
         name: NonEmptyString
       id = args.object._id or args.object
       newDriveFolder id, args.name
+
+    shareFolder: (email) ->
+      check @userId, NonEmptyString
+      check email, NonEmptyString
+      # check @userId, NonEmptyString
+      # check email, NonEmptyString
+      share.drive.shareFolder email
+
 )()
 
 UTCNow = -> Date.now()

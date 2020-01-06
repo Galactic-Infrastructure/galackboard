@@ -334,3 +334,15 @@ share.hubot.codex = (robot) ->
       msg.reply useful: true, "OK, set #{setting_name} to #{value}"
     catch error
       msg.reply useful: true, "Sorry, there was an error: #{error}"
+
+# share email
+
+  robot.commands.push 'bot share <email> - share files to your drive account to deanonymize'
+  robot.respond (rejoin /share /, thingRE,/$/i), (msg) ->
+    emailAddress = strip msg.match[1]
+    try
+      callAs 'shareFolder', msg.envelope.user.id, emailAddress
+      msg.reply useful: true, "OK, sharing files to #{emailAddress}. Please refresh to apply changes."
+    catch error
+      msg.reply useful: true, "Sorry, there was an error: #{error}"
+

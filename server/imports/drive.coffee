@@ -80,6 +80,21 @@ ensurePermissions = (drive, id) ->
         resource: p
   'ok'
 
+ensureNamedPermissions = (drive, id, email) =>
+  # same as above, but grants specific permission to the given email,
+  # thus allowing them to appear named instead of anonymous in the spreadsheets.
+  console.log("drive.coffee")
+  console.log(email)
+  resp = apiThrottle drive.permissions, 'getIdForEmail', email: email
+  apiThrottle drive.permissions, 'insert',
+    fileId: id
+    sendNotificationEmails: false
+    resource:
+      type: 'user'
+      role: 'writer'
+      id: resp.id
+  'ok'
+
 spreadsheetSettings =
   titleFunc: WORKSHEET_NAME
   driveMimeType: GDRIVE_SPREADSHEET_MIME_TYPE
@@ -264,6 +279,8 @@ export class Drive
 
   deletePuzzle: (id) -> rmrfFolder @drive, id
 
+  shareFolder: (email) -> ensureNamedPermissions @drive, @rootFolder, email
+
   # purge `rootFolder` and everything in it
   purge: -> rmrfFolder @drive, rootFolder
 
@@ -276,4 +293,5 @@ export class FailDrive
   listPuzzles: skip 'listPuzzles'
   renamePuzzle: skip 'renamePuzzle'
   deletePuzzle: skip 'deletePuzzle'
+  shareFolder: skip 'shareFolder'
   purge: skip 'purge'
