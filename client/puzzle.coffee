@@ -100,7 +100,6 @@ Template.puzzle_add_tag.events
   "click .bb-add-tag": (event, template) ->
     alertify.prompt "Name of new tag:", (e,str) =>
       return unless e # bail if cancelled
-      console.log('is this thing working')
       Meteor.call 'setTag',
         type: "puzzles"
         object: Session.get 'id'

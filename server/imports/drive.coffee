@@ -83,8 +83,6 @@ ensurePermissions = (drive, id) ->
 ensureNamedPermissions = (drive, id, email) =>
   # same as above, but grants specific permission to the given email,
   # thus allowing them to appear named instead of anonymous in the spreadsheets.
-  console.log("drive.coffee")
-  console.log(email)
   resp = apiThrottle drive.permissions, 'getIdForEmail', email: email
   apiThrottle drive.permissions, 'insert',
     fileId: id
