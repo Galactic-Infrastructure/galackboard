@@ -171,6 +171,10 @@ Template.header_loginmute.onRendered ->
     container: '.bb-buttonbar'
 
 Template.header_loginmute.events
+  "click .bb-share": (event, template) ->
+    alertify.prompt "Enter email of Google Account you wish to share the folder to:", (e,str) =>
+      return unless e # bail if cancelled
+      Meteor.call 'shareFolder', str
   "click .bb-logout": (event, template) ->
     event.preventDefault()
     Meteor.logout()
