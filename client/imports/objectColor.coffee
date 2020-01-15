@@ -9,7 +9,7 @@ export default colorFromThingWithTags = (thing) ->
     hue = parseInt(hash.substring(0, 4), 16) % (360 - 150)
     if hue > 30
         hue += 150
-    saturation = ((parseInt(hash.substring(4, 6), 16)/ 255.0) ** 0.5) * 100
+    saturation = ((parseInt(hash.substring(4, 6), 16)/ 255.0) ** 0.5) * 50 + 50
     lightness = ((parseInt(hash.substring(6, 8), 16) / 255.0) ** 0.5) * 50
     "hsl(#{hue}, #{saturation}%, #{lightness}%)"
 

@@ -1,14 +1,12 @@
 <template name="puzzle_info">
-<div class="{{#if stuck}}bb-status-stuck{{else if puzzle.solved}}bb-status-solved{{/if}}">
+<div>
   <h1><a href="{{puzzle.link}}" target="_blank" style="text-decoration: underline;">{{puzzle.name}}</a></h1>
   {{#with puzzle}}
   {{#if solved}}
     <b>SOLVED! Answer: {{tag "answer"}}{{#if tag "backsolved"}} (backsolved){{/if}}</b>
   {{else}}
-  <li class="bb-drive-buttons">
-    {{> puzzle_summon_button}}
-    {{> puzzle_add_tag}}
-  </li>
+  {{> puzzle_summon_button}}
+  {{> puzzle_add_tag}}
   {{/if}}
   {{/with}}
 </div>
@@ -145,7 +143,7 @@
   {{else}}
   <div class="bb-vsplitter" style="{{#unless currentViewIs "info"}}padding-bottom: {{vsizePlusHandle}}px{{/unless}}">{{! start right of splitter }}
     {{#unless currentViewIs "info"}}
-    <div class="bb-top-right-content">{{! start top right splitter }}
+    <div class="bb-top-right-content {{#if puzzle.solved}}bb-status-solved{{else if stuck}}bb-status-stuck{{/if}}">{{! start top right splitter }}
       {{> puzzle_info }}
     </div>
     <div class="bb-splitter-handle" style="bottom: {{vsize}}px"></div>

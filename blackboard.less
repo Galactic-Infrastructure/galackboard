@@ -153,8 +153,8 @@ body.has-emojis {
   }
   .bb-left-content, .bb-top-right-content {
     background: rgba(255,255,255,0.85);
-    .bb-status-stuck { background: #ffd333; }
-    .bb-status-solved { background: #bcffa6; }
+    &.bb-status-stuck { background: #ffd333; }
+    &.bb-status-solved { background: #bcffa6; }
     .boring & {
       background: white;
       .bb-status-stuck { background: #ffd333; }
@@ -245,6 +245,8 @@ body.has-emojis {
 
   .answer {
     text-transform: uppercase;
+    font-family: monospace;
+    font-size: 1rem;
   }
   .bb-colorbox {
     display: inline-block;

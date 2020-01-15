@@ -431,7 +431,7 @@
     <tr class="puzzle-color-header" style="background: {{color}};">
         <td colspan="100"></td>
     </tr>
-    <tr class="meta {{#if stuck puzzle}}bb-status-stuck{{/if}}">
+    <tr class="meta {{#if stuck puzzle}}bb-status-stuck{{else if puzzle.solved}}bb-status-solved{{/if}}">
       {{> blackboard_puzzle_cells puzzle=puzzle sidebarColor=color }}
     </tr>
     {{#each puzzles}}
