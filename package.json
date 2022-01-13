@@ -4,7 +4,8 @@
   "description": "codex-blackboard ================",
   "main": "index.js",
   "dependencies": {
-    "@babel/runtime": "^7.2.0",
+    "@babel/runtime": "^7.16.7",
+    "bcrypt": "^5.0.1",
     "coffeescript": "^2.4.1",
     "css-color-names": "0.0.4",
     "delay": "^4.3.0",

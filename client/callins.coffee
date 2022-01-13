@@ -46,10 +46,6 @@ Template.callins.helpers
 
 Template.callins.onRendered ->
   $("title").text("Answer queue")
-  this.clipboard = new Clipboard '.copy-and-go'
-
-Template.callins.onDestroyed ->
-  this.clipboard.destroy()
 
 Template.callins.events
   "click .bb-addquip-btn": (event, template) ->
