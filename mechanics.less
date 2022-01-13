@@ -1,5 +1,18 @@
 .bb-mechanics-dropdown {
   text-align: left;
+
+  &.open .dropdown-menu {
+    display: flex;
+    width: 800px;
+    flex-wrap: wrap;
+    left: -330px !important;
+    right: 0;
+  }
+
+  li {
+    display: inline-flex;
+    flex-basis: 33%;
+  }
 }
 
 .mechanic-bubble {
@@ -10,6 +23,7 @@
   border: 1px solid #aaa;
   border-radius: 999px;
   text-transform: lowercase;
+  white-space: nowrap;
 
   &.favorite-mechanic {
     font-weight: bold;
