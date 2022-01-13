@@ -106,7 +106,7 @@ body.has-emojis {
 }
 
 #bb-blackboard {
-  max-width: 1000px;
+  max-width: calc(100% - 50px);
   margin: auto;
 }
 
@@ -621,6 +621,13 @@ body.has-emojis {
     td.puzzle-update {
       font-size: 85%;
     }
+  }
+}
+
+.dropdown-menu {
+  background-color: var(--bg-color);
+  & > li > a {
+    color: var(--text-color);
   }
 }
 

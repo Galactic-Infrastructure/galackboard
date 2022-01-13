@@ -1,33 +1,6 @@
 <template name="blackboard">
-<div class="bb-menu-button">
-<button class="btn btn-inverse btn-small">
-<i class="fas fa-list"></i>
-</button>
-</div>
-<div class="bb-menu-drawer fade">
-  <ul class="nav nav-list bb-sidenav">
-    <li><a class="callins-link" href="/callins"><i class="fas fa-phone"></i> Callin Queue</a></li>
-    <li><a href="https://www.github.com/{{whoseGitHub}}/codex-blackboard/issues" target="_blank"><i class="fab fa-github"></i> Issues</a></li>
-    <li class="separator"></li>
-    {{#if favorites.count}}
-      <li><a href="#favorites"><i class="fas fa-chevron-right"></i>Favorites</a></li>
-    {{/if}}
-    {{#each rounds}}
-    <li class="nav-header">{{name}}</li>
-    {{#each metas}}
-    <li><a href="#m{{puzzle._id}}"><i class="fas fa-chevron-right"></i>
-    {{puzzle.name}}</a></li>
-    {{/each}}
-    {{#if unassigned.length}}
-    <li><a href="#unassigned{{_id}}"><i class="fas fa-chevron-right"></i>Unassigned</a></li>
-    {{/if}}
-    {{/each}}
-  </ul>
-</div>
-<!-- puzzles w/ index -->
 <div id="bb-blackboard" class="row-fluid">
   <div id="bb-tables" class="{{#if hideStatus}}span12{{else}}span9{{/if}} {{#if canEdit}}bb-canEdit{{/if}}">
-    <!-- content div -->
     <div class="row-fluid">
       <div class="btn-toolbar text-right bb-top-buttons span7 width100">
         {{> favorite_mechanics}}
