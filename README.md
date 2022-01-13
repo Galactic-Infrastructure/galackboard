@@ -1,10 +1,7 @@
-codex-blackboard
-================
+galackboard
+===========
 
-[![Build Status](https://travis-ci.org/Torgen/codex-blackboard.svg?branch=master)](https://travis-ci.org/Torgen/codex-blackboard)
-[![Coverage Status](https://coveralls.io/repos/github/Torgen/codex-blackboard/badge.svg?branch=master)](https://coveralls.io/github/Torgen/codex-blackboard?branch=master)
-
-Meteor app for coordinating solving for our MIT Mystery Hunt team. See the wiki for instructions on:
+Meteor app for coordinating solving for Galactic Trendsetters. See the wiki for instructions on:
 * [Building and managing a server](https://github.com/Torgen/codex-blackboard/wiki/Operations)
 * [Using the server as a solver](https://github.com/Torgen/codex-blackboard/wiki/Solving)
 * [Updating data on the server as an on-call](https://github.com/Torgen/codex-blackboard/wiki/Oncall)
@@ -14,7 +11,7 @@ Developing
 
 To run in development mode:
 
-    $ cd codex-blackboard
+    $ cd galackboard
     $ meteor
     <browse to localhost:3000>
 
@@ -42,7 +39,7 @@ settings.json file on the virtual Linux filesystem.
 
 ## Installing Meteor
 
-Our blackboard app currently requires Meteor 1.8.
+Galackboard currently uses Meteor 2.5.
 
 At the moment the two ways to install Meteor are:
 
@@ -75,7 +72,3 @@ to its binary; a symlink can't point to another symlink.  If you use a
 git checkout, you will be responsible for updating your checkout to
 the latest version of meteor when `codex-blackboard/.meteor/release`
 changes.
-
-You should probably watch the screencast at http://meteor.com to get a sense
-of the framework; you might also want to check out the examples they've
-posted, too.
