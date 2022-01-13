@@ -63,6 +63,35 @@ body {
   input, button, select, textarea {
     font-family: "Noto Sans", sans-serif, "Noto Color Emoji", "Open Sans Emoji";
   }
+
+  --bg-color: white;
+  --text-color: #333;
+  --slightly-lighter: rgba(255,255,255,0.75);
+  --much-lighter: rgba(255,255,255,0.85);
+  --stuck-yellow: #ffd333;
+  --solved-green: #bcffa6;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  @media (prefers-color-scheme: dark) {
+    background-blend-mode: soft-light;
+    --bg-color: #333;
+    --text-color: #f8f8f8;
+    --slightly-lighter: rgba(0,0,0,0.65);
+    --much-lighter: rgba(0,0,0,0.3);
+    --stuck-yellow: #a98e06;
+    --solved-green: #008e05;
+    a {
+      color: hsl(200,100%,80%);
+      &:hover {color: hsl(200.2,100%,95.1%);}
+    }
+    .modal, .modal-footer {
+      color: var(--text-color);
+      background-color: var(--bg-color);
+    }
+    .help-inline, .help-block {
+      color: #aaa;
+    }
+  }
 }
 // For mobile devices which actually support native emojis:
 body.has-emojis {
@@ -152,13 +181,13 @@ body.has-emojis {
     float: right; margin-top: 4px; margin-right: 3px;
   }
   .bb-left-content, .bb-top-right-content {
-    background: rgba(255,255,255,0.85);
-    &.bb-status-stuck { background: #ffd333; }
-    &.bb-status-solved { background: #bcffa6; }
+    background: var(--much-lighter);
+    &.bb-status-stuck { background: var(--stuck-yellow); }
+    &.bb-status-solved { background: var(--solved-green); }
     .boring & {
-      background: white;
-      .bb-status-stuck { background: #ffd333; }
-      .bb-status-solved { background: #4F4; }
+      background: var(--bg-color);
+      .bb-status-stuck { background: var(--stuck-yellow); }
+      .bb-status-solved { background: var(--solved-green); }
     }
     .bb-mechanics-dropdown .btn {
       font-size: 10.5px;
@@ -252,7 +281,7 @@ body.has-emojis {
     display: inline-block;
     width: 1em;
     height:1em;
-    border: 0.1em solid black;
+    border: 0.1em solid var(--text-color);
     vertical-align: text-bottom;
   }
   .bb-othermeta {
@@ -292,7 +321,7 @@ body.has-emojis {
   }
 
   .bb-status-grid {
-    background: white;
+    background: var(--bg-color);
     margin-top: 10px;
     margin-left: -7px;
     margin-right: -7px;
@@ -332,16 +361,25 @@ body.has-emojis {
       text-align: center;
     }
     .bb-status-solved {
-      background:#bcffa6;
+      background:var(--solved-green);
     }
     .bb-status-stuck {
-      background:#ffd333;
+      background: var(--stuck-yellow);
     }
     .bb-status-unsolved {
-      background:#FCFCFC;
+      background: var(--bg-color);
     }
   }
 }
+
+.table-bordered {
+  &,td,th {
+    @media (prefers-color-scheme: dark) {
+      border: 1px solid #3f3f3f;
+    }
+  }
+}
+    
 
 .gCanEdit.bb-editable {
   &:hover {
@@ -381,7 +419,7 @@ body.has-emojis {
 }
 
 #bb-tables {
-  background: white;
+  background: var(--bg-color);
   margin-top: 10px;
   padding-bottom: 15px;
   padding-left: 15px;
@@ -390,6 +428,9 @@ body.has-emojis {
      -moz-border-radius: 6px;
           border-radius: 6px;
   border: 1px solid #e5e5e5;
+  @media (prefers-color-scheme: dark) {
+    border: 1px solid #bbb;
+  }
   -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.065);
      -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.065);
           box-shadow: 0 1px 4px rgba(0,0,0,0.065);
@@ -455,7 +496,7 @@ body.has-emojis {
     margin-top: 7px;
   }
   a i.fas, button.btn-link i.fas {
-    color: black;
+    color: var(--text-color);
     margin-left: 2px;
   }
   dl {
@@ -474,18 +515,21 @@ body.has-emojis {
     }
   }
   tr.bb-status-stuck td {
-    background-color: #ffd333;
+    background-color: var(--stuck-yellow);
   }
   tr.bb-status-solved td {
     padding-left: 6px;
-    background-color: #bcffa6;
+    background-color: var(--solved-green);
   }
   .bb-puzzle {
     margin-bottom: 0;
     tr.meta, tr.metafooter {
-      --tr-bg: rgba(255,255,255,0.75);
+      --tr-bg: var(--slightly-lighter);
       .boring & {
         background: #f8f8f8;
+        @media (prefers-color-scheme: dark) {
+          background: #333;
+        }
       }
       .bb-puzzle-title {
         font-weight: bold;
@@ -495,13 +539,13 @@ body.has-emojis {
     }
     tr.metafooter .num-hidden { font-size: 10.5px }
     tr.puzzle, tr.round-empty {
-      --tr-bg: rgba(255,255,255,0.85);
+      --tr-bg: var(--much-lighter);
       .boring & {
-        background: white;
+        background: var(--bg-color);
+        &.bb-status-stuck { background: var(--stuck-yellow); }
       }
     }
     tr.meta, tr.puzzle, tr.metafooter, tr.round-empty {
-      background: var(--tr-bg);
     }
     .bb-edit-icon, .bb-delete-icon {
       margin-top: 3px;
@@ -583,7 +627,7 @@ body.has-emojis {
 .bb-hide-status {
   position: fixed;
   right: 0;
-  background: white;
+  background: var(--bg-color);
   margin-top: 10px;
   padding-top: 25px;
   padding-bottom: 25px;
