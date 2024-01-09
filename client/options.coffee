@@ -10,6 +10,8 @@ Template.options.events
     doBoolean 'hideSolvedMeta', event.target.checked
   "change .bb-compact-mode input": (event, template) ->
     doBoolean 'compactMode', event.target.checked
+  "change .bb-compact-header input": (event, template) ->
+    doBoolean 'compactHeader', event.target.checked
   "change .bb-boring-mode input": (event, template) ->
     doBoolean 'boringMode', event.target.checked
 

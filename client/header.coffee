@@ -594,7 +594,7 @@ do ->
     Template[t].onRendered ->
       $(this.findAll('.right a[title]')).tooltip placement: 'left'
 
-RECENT_GENERAL_LIMIT = 2
+RECENT_GENERAL_LIMIT = 1
 
 ############## chat log in header ####################
 Template.header_lastchats.helpers

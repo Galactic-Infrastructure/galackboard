@@ -1057,9 +1057,12 @@ doc_id_to_link = (id) ->
         action: true
         body: body
         room_name: "puzzles/#{id}"
-      body = "#{body} in puzzle #{obj.name}"
+      objUrl = # see Router.urlFor
+        Meteor._relativeToSiteRootUrl "/puzzles/#{id}"
+      body = "#{body} in puzzle <a class=\"puzzles-link\" href=\"#{objUrl}\">#{UI._escape obj.name}</a>"
       Meteor.call 'newMessage',
         action: true
+        bodyIsHtml: true
         body: body
       return
 

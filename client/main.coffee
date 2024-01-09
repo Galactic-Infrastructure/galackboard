@@ -42,7 +42,8 @@ Template.registerHelper 'linkify', (contents) ->
   contents = chat.convertURLsToLinksAndImages(UI._escape(contents))
   return new Spacebars.SafeString(contents)
 
-Template.registerHelper 'compactHeader', () -> true
+Template.registerHelper 'compactHeader', ->
+  'true' is reactiveLocalStorage.getItem 'compactHeader'
 
 Template.registerHelper 'teamName', -> settings.TEAM_NAME
 
