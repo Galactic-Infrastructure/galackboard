@@ -472,6 +472,11 @@
   }
 }
 
+/* hack to fix a strange issue where bootstrap adds a text-shadow in dark mode even when not hovering */
+.nav-list > li > a:not(:hover) {
+	text-shadow: none;
+}
+
 /* Responsive
 -------------------------------------------------- */
 
