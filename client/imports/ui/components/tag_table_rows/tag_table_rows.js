@@ -74,7 +74,7 @@ Template.tag_table_rows.helpers({
               (this.type !== "rounds" && canon === "answer"))) ||
           ((Session.equals("currentPage", "puzzle") ||
             Session.equals("currentPage", "logistics_page")) &&
-            (canon === "answer" || canon === "backsolve"))
+            (canon === "answer" || canon === "backsolve" || canon === "status"))
         )
       ) {
         const t = tags[canon];

@@ -13,8 +13,11 @@
 {{>calendar_puzzle_events puzzle}}
 <table class="bb-puzzle-info-tags"><tbody>
 {{#with puzzle}}
+  <tr><td><strong>Answer:</strong></td>
+    {{#edit_tag_value type="puzzles" id=_id name="Answer" editable=true}}
+    {{/edit_tag_value}}
+  </tr>
   {{#if solved}}
-    <tr><td class="rightanswer">Answer:</td><td class="answer">{{tag "answer"}}</td></tr>
     <tr>
       <td class="backsolve">{{#if tag "backsolved"}}(backsolved){{/if}}{{#if tag "provided"}}(provided){{/if}}</td>
       <td class="timestamp">{{pretty_ts solved}}</td>
@@ -22,6 +25,11 @@
   {{else if answers}}
     <tr><td class="rightanswer">Answers so far:</td><td class="answer">{{#each pa in answers}}{{pa}}; {{/each}}⋯</td></tr>
   {{/if}}
+  <tr><td>Status:</td>
+    {{#edit_tag_value type="puzzles" id=_id name="Status" editable=true}}
+      {{#if tag "status"}} &mdash; by {{>gravatar_with_badges nick=set_by size=16}}{{/if}}
+    {{/edit_tag_value}}
+  </tr>
   <tr><td>Mechanics:</td><td>{{> puzzle_mechanics}}{{#each mechanics}}<span class="label">{{mechanicName}}</span>{{/each}}</td></tr>
   <tr><td>Hunt site URL:</td>{{>edit_field type="puzzles" id=_id field="link"}}</tr>
 {{/with}}
