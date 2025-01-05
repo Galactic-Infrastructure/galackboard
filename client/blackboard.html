@@ -398,7 +398,7 @@
       {{#each puzzle.answers}}<span data-partial-answer="{{this}}" class="label label-inverse partial-answer">{{this}} <i class="bb-delete-icon fas fa-times" title="Delete this partial answer"></i></span> {{/each}}⋯
     </td>
   {{else}}
-    {{#edit_tag_value type="puzzles" id=puzzle._id name="Answer" editable=canEdit class="puzzle-answer answer"}}
+    {{#edit_tag_value type="puzzles" id=puzzle._id name="Answer" editable=true class="puzzle-answer answer"}}
       {{#if all (not puzzle.solved) puzzle.answers}}
         {{#each pa in puzzle.answers}}{{pa}}; {{/each}}⋯
       {{/if}}
@@ -407,7 +407,7 @@
 </template>
 
 <template name="blackboard_column_body_status">{{!
-  }}{{#edit_tag_value type="puzzles" id=puzzle._id name="Status" editable=canEdit class="puzzle-status"}}{{!
+  }}{{#edit_tag_value type="puzzles" id=puzzle._id name="Status" editable=true class="puzzle-status"}}{{!
     }}{{#if status}}<span class="bb-who-stuck">&mdash; by {{>gravatar_with_badges nick=set_by size=16}} {{nickAndName set_by}}</span>{{/if}}{{!
   }}{{/edit_tag_value}}{{!
 }}</template>
