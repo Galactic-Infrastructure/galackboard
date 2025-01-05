@@ -1,48 +1,4 @@
 <template name="blackboard">
-<div class="bb-menu-button">
-<button class="btn btn-inverse btn-small bb-show-menu">
-<i class="fas fa-list"></i>
-</button>
-<div class="btn-group bb-unlock-group">
-  <a href="/" title="Protect page" data-canEdit="false"
-          class="bb-protect btn btn-small btn-inverse {{#unless canEdit}}active{{/unless}}">
-    <i class="fas fa-lock"></i>
-  </a>
-  <a href="/edit" title="Allow edits to puzzles" data-canEdit="true"
-          class="bb-unprotect btn btn-small btn-inverse {{#if canEdit}}active{{/if}}">
-    <i class="fas fa-lock-open"></i>
-  </a>
-</div>
-</div>
-<div class="bb-menu-drawer fade">
-  <ul class="nav nav-list bb-sidenav">
-    <li><a href="/logistics"><i class="fas fa-dolly"></i> Logistics</a></li>
-    <li><a href="https://www.github.com/{{whoseGitHub}}/codex-blackboard/issues" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> Issues</a></li>
-    {{#with driveFolder}}
-      <li><a href="{{drive_link this}}" target="_blank" rel="noopener noreferrer"><i class="fab fa-google-drive"></i> Google Drive Folder</a></li>
-    {{/with}}
-    <li class="separator"></li>
-    {{>calendar_link}}
-    {{#if favorites.count}}
-      <li><a href="#favorites"><i class="fas fa-chevron-right"></i>Favorites</a></li>
-    {{/if}}
-    {{#each rounds}}
-    <li class="nav-header">{{name}}</li>
-    {{#each metas}}
-    <li><a href="#m{{puzzle._id}}"><i class="fas fa-chevron-right"></i>
-    {{puzzle.name}}</a></li>
-    {{/each}}
-    {{#if unassigned.length}}
-    <li><a href="#unassigned{{_id}}"><i class="fas fa-chevron-right"></i>Unassigned</a></li>
-    {{/if}}
-    {{/each}}
-    <li class="fill"></li>
-    {{#if hasJitsiLocalStorage}}
-      <li class="nav-header">Troubleshooting</li>
-      <li><a href="#" class="bb-clear-jitsi-storage" title="Jitsi can sometimes store so much data in local storage that when it tries to pass it to the iframe, it exceeds the browser's URL size limit. Click here to clear that storage.">Clear Jitsi Local Storage</a></li>
-    {{/if}}
-  </ul>
-</div>
 <!-- puzzles w/ index -->
   <div id="bb-tables" class="{{#if canEdit}}bb-canEdit{{/if}}">
     <!-- content div -->
