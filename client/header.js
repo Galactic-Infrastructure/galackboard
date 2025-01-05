@@ -248,14 +248,6 @@ function generate_crumbs(leaf_type, leaf_id) {
     return crumbs;
   }
   if (leaf_type === "puzzles") {
-    const metas = min_meta_paths(leaf_id);
-    // Deepest are last here, so...
-    metas.reverse();
-    // One breadcrumb for each level of meta.
-    // Consider grouping together beyond some number of levels
-    for (let meta of metas) {
-      crumbs.push({ page: "metas", type: "puzzles", id: meta });
-    }
     crumbs.push({ page: "puzzle", type: "puzzles", id: leaf_id });
   } else if (leaf_type === "rounds") {
     crumbs.push({ page: "round", type: "rounds", id: leaf_id });
@@ -273,17 +265,25 @@ function generate_crumbs(leaf_type, leaf_id) {
 // Otherwise generate them only if the current type/id appears in the new trail.
 // This stops the current crumb from vanishing if you're viewing a meta above a
 // puzzle when the puzzle is removed from the meta.
+//
+// GALACKBOARD NOTE: Upstream codex-blackboard uses breadcrumbs as the name
+// would suggest: the list of breadcrumbs is maintained to be a hierarchically
+// nested sequence, rooted at the home page. But we use them like tabs in a
+// tabbed browser, apparently, greatly abusing the name.
 Tracker.autorun(function () {
   const leaf_type = Session.get("breadcrumbs_leaf_type");
   const leaf_id = Session.get("breadcrumbs_leaf_id");
-  const crumbs = generate_crumbs(leaf_type, leaf_id);
   const type = Session.get("type");
   const id = Session.get("id");
-  if (type !== leaf_type || id !== leaf_id) {
-    if (!in_crumbs(crumbs, type, id)) {
-      return;
-    }
+
+  let crumbs = breadcrumbs_var.get().slice();
+  for (let crumb of crumbs) {
+    if (crumb.id === leaf_id) return;
   }
+  if (leaf_type === undefined) return;
+
+  crumbs.push({page: 'puzzle', type: leaf_type, id: leaf_id});
+
   breadcrumbs_var.set(crumbs);
 });
 
@@ -365,6 +365,24 @@ Template.header_breadcrumb_puzzle.helpers({
     }
   },
   active,
+});
+
+Template.header_breadcrumb_puzzle.events({
+  "click .bb-close-puzzle"(event, template) {
+    let crumbs = breadcrumbs_var.get().slice();
+    crumbs = crumbs.filter(w => w.id !== this.id && w.id !== undefined).map(w => ({...w}));
+    let lastCrumb = crumbs.at(-1);
+    Session.set({
+      type: lastCrumb.type,
+      id: lastCrumb.id,
+      breadcrumbs_leaf_type: lastCrumb.type,
+      breadcrumbs_leaf_id: lastCrumb.id,
+    });
+    breadcrumbs_var.set(crumbs);
+    if (crumbs.length === 1) {
+      share.Router.navigate("/", {trigger: true});
+    }
+  }
 });
 
 Template.header_breadcrumbs.helpers({
