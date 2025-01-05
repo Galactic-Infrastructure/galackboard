@@ -3,44 +3,6 @@ import { MUTE_SOUND_EFFECTS } from "./imports/settings.js";
 import { CallIns } from "/lib/imports/collections.js";
 import * as callin_types from "/lib/imports/callin_types.js";
 
-Meteor.startup(function () {
-  const newCallInSound = new Audio(
-    Meteor._relativeToSiteRootUrl("/sound/new_callin.wav")
-  );
-
-  // note that this observe 'leaks'; that's ok, the set of callins is small
-  Tracker.autorun(function () {
-    const sub = Meteor.subscribe("pending-callins");
-    if (!sub.ready()) {
-      return;
-    } // reactive, will re-execute when ready
-    let initial = true;
-    const query = { status: "pending" };
-    if (!Session.equals("currentPage", "logistics")) {
-      query.callin_type = {
-        $in: [callin_types.ANSWER, callin_types.PARTIAL_ANSWER],
-      };
-    }
-    CallIns.find(query).observe({
-      async added(doc) {
-        if (initial) {
-          return;
-        }
-        console.log("ding dong");
-        if (MUTE_SOUND_EFFECTS.get()) {
-          return;
-        }
-        try {
-          await newCallInSound.play();
-        } catch (err) /* istanbul ignore next */ {
-          console.error(err.message, err);
-        }
-      },
-    });
-    initial = false;
-  });
-});
-
 Template.callin_copy_and_go.events({
   // Browser security model won't let us test this from inside the browser.
   // istanbul ignore next
