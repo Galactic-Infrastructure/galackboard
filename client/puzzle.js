@@ -282,50 +282,19 @@ Template.puzzle.onCreated(function () {
 });
 
 Template.puzzle_summon_button.events({
-  async "click .bb-summon-btn.stuck"(event, template) {
-    if (
-      await confirm({
-        message: "Are you sure you want to cancel this request for help?",
-        ok_button: `Yes, this ${pretty_collection(
-          Session.get("type")
-        )} is no longer stuck`,
-        no_button: "Nevermind, this is still STUCK",
-      })
-    ) {
-      Meteor.serializeCall("unsummon", {
-        type: Session.get("type"),
-        object: Session.get("id"),
-      });
-    }
+  "click .bb-summon-btn.stuck"(event, template) {
+    Meteor.serializeCall("unsummon", {
+      type: Session.get("type"),
+      object: Session.get("id"),
+    });
   },
   "click .bb-summon-btn.unstuck"(event, template) {
-    $("#summon_modal .stuck-at").val("at start");
-    $("#summon_modal .stuck-need").val("ideas");
-    $("#summon_modal .stuck-other").val("");
-    $("#summon_modal .bb-callin-submit").focus();
-    $("#summon_modal").modal({ show: true });
-  },
-});
-
-Template.puzzle_summon_modal.events({
-  "click .bb-summon-submit, submit form"(event, template) {
-    event.preventDefault(); // don't reload page
-    const at = template.$(".stuck-at").val();
-    const need = template.$(".stuck-need").val();
-    const other = template.$(".stuck-other").val();
-    let how = `Stuck ${at}`;
-    if (need !== "other") {
-      how += `, need ${need}`;
-    }
-    if (other !== "") {
-      how += `: ${other}`;
-    }
+    const how = "Stuck";
     Meteor.serializeCall("summon", {
       type: Session.get("type"),
       object: Session.get("id"),
       how,
     });
-    template.$(".modal").modal("hide");
   },
 });
 
