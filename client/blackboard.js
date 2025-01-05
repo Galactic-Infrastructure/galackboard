@@ -352,7 +352,7 @@ Template.blackboard.events({
 
 Template.blackboard.onRendered(function () {
   //  page title
-  $("title").text(`${TEAM_NAME} Puzzle Blackboard`);
+  $("title").text("Galackboard");
   $("#bb-tables .bb-puzzle .puzzle-name > a").tooltip({ placement: "left" });
 });
 
