@@ -11,12 +11,7 @@
 
 <template name="header_breadcrumb_blackboard">
   <li class="{{#if active}}active{{/if}}">
-    <a href="/"><i class="fas fa-chalkboard"></i><span class="bb-omit-when-narrow"> Blackboard      
-    <i class="fas fa-th-list {{#if currentPageEquals "blackboard"}}current{{/if}}"></i></span></a>
-    {{#if expertMode}}
-      <a href="/logistics" title="Logistics"><i class="fas fa-dolly {{#if currentPageEquals "logistics_page"}}current{{/if}}"></i></a>
-    {{/if}}
-    {{> header_breadcrumb_chat}}
+    <a href="/">✈<span class="bb-omit-when-narrow"> Home</span></a>
   </li>
 </template>
 
@@ -26,20 +21,6 @@
       <i class="fas fa-puzzle-piece"></i>
     </a>
   {{/if}}
-  {{#if spreadsheet}}
-    <a class="{{../type}}-link {{#if active}}{{#if currentViewIs "spreadsheet"}}current{{/if}}{{/if}}" href="/{{../type}}/{{../id}}/spreadsheet" title="Spreadsheet">
-      <i class="fas fa-th"></i>
-    </a>
-  {{/if}}
-  {{#if doc}}
-    <a class="{{../type}}-link {{#if active}}{{#if currentViewIs "doc"}}current{{/if}}{{/if}}" href="/{{../type}}/{{../id}}/doc" title="Document">
-      <i class="fas fa-file"></i>
-    </a>
-  {{/if}}
-  <a class="{{../type}}-link {{#if active}}{{#if currentViewIs "info"}}current{{/if}}{{/if}}" href="/{{../type}}/{{../id}}/info"  title="Info">
-    <i class="fas fa-info-circle"></i>
-  </a>
-  {{> header_breadcrumb_chat ..}}
 </template>
 
 <template name="header_breadcrumb_round">
@@ -95,7 +76,7 @@
 <template name="header_breadcrumb_puzzle">
   <li class="{{#if active}}active{{/if}} {{#if puzzle.solved}}solved{{/if}}">
     <a href="/puzzles/{{id}}">
-      <i class="fas fa-book"></i><span class="bb-omit-when-narrow"> Puzzle:</span> <span class="bb-puzzle-name bb-abbrev-when-narrow" data-full="{{puzzle.name}}" data-abbrev="{{abbrev puzzle.name}}"></span>
+      <span class="bb-abbrev-when-narrow" data-full="{{puzzle.name}}" data-abbrev="{{abbrev puzzle.name}}"></span>
     </a>
     {{> header_breadcrumb_extra_links puzzle}}
   </li>
