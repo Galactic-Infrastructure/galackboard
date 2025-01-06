@@ -95,7 +95,7 @@
           {{#let faves=favorites}}
             {{#if faves.count}}
               <tbody>
-                <tr><th colspan="{{nCols}}" id="favorites"><h2>Favorite Puzzles</h2></th></tr>
+                <tr><th colspan="{{nCols}}" id="favorites"><h2>Suggested for You</h2></th></tr>
                 {{#each faves}}
                   {{#unless solved}}
                   {{>blackboard_favorite_puzzle}}
