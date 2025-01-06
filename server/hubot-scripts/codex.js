@@ -628,7 +628,7 @@ export default scripts.codex = function (robot) {
   robot.commands.push(
     "bot global set <setting> to <value> - changes a dynamic setting"
   );
-  return robot.respond(
+  robot.respond(
     rejoin(/global set /, thingRE, / to /, thingRE, /$/i),
     async function (msg) {
       const setting_name = strip(msg.match[1]);
@@ -646,6 +646,28 @@ export default scripts.codex = function (robot) {
         await msg.reply(
           { useful: true },
           `OK, set ${setting_name} to ${value}`
+        );
+      } catch (error) {
+        await msg.reply(
+          { useful: true },
+          `Sorry, there was an error: ${error}`
+        );
+      }
+    }
+  );
+
+  robot.commands.push(
+    "bot share <email> - share files to your drive account to deanonymize"
+  );
+  robot.respond(
+    rejoin(/share /, thingRE, /$/i),
+    async function (msg) {
+      const emailAddress = strip(msg.match[1]);
+      try {
+        await callAs("shareFolder", msg.envelope.user.id, emailAddress);
+        await msg.reply(
+          { useful: true },
+          `OK, sharing files to ${emailAddress}. Please refresh to apply changes.`
         );
       } catch (error) {
         await msg.reply(

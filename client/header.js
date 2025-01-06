@@ -97,6 +97,13 @@ function clickOutsideAvatarDropdownHandler(event) {
 }
 
 Template.header_loginmute.events({
+  "click .bb-share"(event, template) {
+    const str = prompt("Enter email of Google Account you wish to share the folder to:");
+    if (str === null) {
+      return;
+    }
+    Meteor.call("shareFolder", str.trim());
+  },
   "click .bb-logout"(event, template) {
     event.preventDefault();
     Meteor.logout();

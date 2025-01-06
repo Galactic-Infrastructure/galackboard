@@ -80,6 +80,27 @@ async function ensurePermissions(drive, id) {
   return "ok";
 }
 
+async function ensureNamedPermissions(drive, id, email) {
+  // same as above, but grants specific permission to the given email,
+  // thus allowing them to appear named instead of anonymous in the spreadsheets.
+  const p = {
+    sendNotificationEmail: false,
+    resource: {
+      role: "writer",
+      type: "user",
+      emailAddress: email,
+    },
+  };
+  const resp = (
+    await drive.permissions.list({ fileId: id, fields: PERMISSION_LIST_FIELDS })
+  ).data;
+  const exists = resp.permissions.some((pp) => samePerm(p.resource, pp));
+  if (!exists) {
+    await drive.permissions.create({ fileId: id, ...p });
+  }
+  return "ok";
+}
+
 const spreadsheetSettings = {
   titleFunc: WORKSHEET_NAME,
   driveMimeType: GDRIVE_SPREADSHEET_MIME_TYPE,
@@ -349,6 +370,10 @@ export class Drive {
     return await rmrfFolder(this.drive, id);
   }
 
+  async shareFolder(email) {
+    await ensureNamedPermissions(this.drive, this.rootFolder, email);
+  }
+
   // purge `rootFolder` and everything in it
   async purge() {
     return await rmrfFolder(this.drive, rootFolder);
@@ -367,6 +392,7 @@ export var FailDrive = (function () {
       this.prototype.listPuzzles = skip("listPuzzles");
       this.prototype.renamePuzzle = skip("renamePuzzle");
       this.prototype.deletePuzzle = skip("deletePuzzle");
+      this.prototype.shareFolder = skip("shareFolder");
       this.prototype.purge = skip("purge");
     }
   };
