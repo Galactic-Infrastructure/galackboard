@@ -819,7 +819,7 @@ Template.blackboard_column_body_update.helpers({
   },
 });
 
-Template.blackboard_column_body_working.helpers({
+Template.blackboard_whos_working.helpers({
   whos_working(jitsi) {
     if (this.puzzle == null) {
       return [];

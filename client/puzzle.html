@@ -12,6 +12,18 @@
 </header>
 {{>calendar_puzzle_events puzzle}}
 <table class="bb-puzzle-info-tags"><tbody>
+  <tr>
+    <td>
+      <span class="label label-inverse">
+      Hunters present:
+      </span>
+    </td>
+    <td>
+      <span>
+      {{> blackboard_whos_working}}
+      </span>
+    </td>
+  </tr>
 {{#with puzzle}}
   <tr><td><strong>Answer:</strong></td>
     {{#edit_tag_value type="puzzles" id=_id name="Answer" editable=true}}

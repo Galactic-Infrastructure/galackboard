@@ -412,7 +412,9 @@
   }}{{/edit_tag_value}}{{!
 }}</template>
 
-<template name="blackboard_column_body_working"><td class="puzzle-working"><div class="in-jitsi {{#if equal whosWorkingStyle "nicks-only"}}comma-list{{/if}}" title="In Jitsi">{{#each whos_working 1}}{{> nick_presence }} {{/each}}</div><div class="in-chat {{#if equal whosWorkingStyle "nicks-only"}}comma-list{{/if}}" title="In Chat">{{#each whos_working 0}}{{> nick_presence }} {{/each}}</div></td></template>
+<template name="blackboard_whos_working"><div class="in-jitsi {{#if equal whosWorkingStyle "nicks-only"}}comma-list{{/if}}" title="In Jitsi">{{#each whos_working 1}}{{> nick_presence }} {{/each}}</div><div class="in-chat {{#if equal whosWorkingStyle "nicks-only"}}comma-list{{/if}}" title="In Chat">{{#each whos_working 0}}{{> nick_presence }} {{/each}}</div></template>
+
+<template name="blackboard_column_body_working"><td class="puzzle-working">{{> blackboard_whos_working}}</td></template>
 
 <template name="blackboard_column_body_added">
   <td class="puzzle-added">
