@@ -7,6 +7,28 @@
     overflow-y: auto;
   }
 }
-.favorite-mechanic {
-  font-weight: bold;
+.mechanic-bubble {
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  color: #555;
+  background: #eee;
+  line-height: 1.8rem;
+  .darkMode & {
+    color: #eee;
+    background: #000;
+    border: 1px solid #666;
+  }
+  border: 1px solid #aaa;
+  border-radius: 999px;
+  white-space: nowrap;
+
+  &.favorite-mechanic {
+    font-weight: bold;
+    background: #ebb;
+    border-color: #f99;
+    .darkMode & {
+      background: #933;
+      border-color: #b88;
+    }
+  }
 }
