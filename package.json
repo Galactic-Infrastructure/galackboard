@@ -38,10 +38,10 @@
   "devDependencies": {
     "@playwright/browser-chromium": "^1.49.1",
     "@playwright/browser-firefox": "^1.49.1",
-    "@types/chai": "^4.3.11",
+    "@types/chai": "^5.0.1",
     "@types/sinon": "^17.0.3",
     "babel-plugin-istanbul": "^7.0.0",
-    "chai": "^5.0.0",
+    "chai": "^5.1.2",
     "drag-mock": "^1.4.0",
     "eslint": "^9.17.0",
     "eslint-plugin-jsonc": "^2.18.2",
