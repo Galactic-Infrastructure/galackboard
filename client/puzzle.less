@@ -42,6 +42,10 @@ h2, .bb-round-title {
   color: #AAA;
 }
 .bb-puzzle-info {
+  min-height: 100%;
+  &.bb-status-stuck { background: var(--stuck-yellow); }
+  &.bb-status-solved { background: var(--solved-green); }
+  h2 { margin-top: 0; }
   h1, h2, h3, .bb-puzzle-title {
     font-size: 24px;
     line-height: 24px;
@@ -56,7 +60,6 @@ h2, .bb-round-title {
       margin-top: 0;
     }
   }
-  .bb-status-stuck { background: repeating-linear-gradient(45deg, var(--stuck-yellow), var(--stuck-yellow) 20px, rgba(0,0,0,0) 20px, rgba(0,0,0,0) 40px); }
   .boring & {
     background: var(--bg-color);
     .bb-status-stuck { background: var(--stuck-yellow); }

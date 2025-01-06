@@ -75,6 +75,9 @@ Template.puzzle_info.helpers({
   tag(name) {
     return getTag(this, name) || "";
   },
+  stuck() {
+    return this.puzzle && isStuck(this.puzzle);
+  },
   getPuzzle(id) {
     return Puzzles.findOne(id);
   },

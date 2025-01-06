@@ -124,7 +124,7 @@
     text-align: center;
   }
   .bb-status-solved {
-    background:#AAFF99;
+    background: var(--solved-green);
     .darkMode & {
       background: hsl(110,100%,30%);
     }
@@ -347,10 +347,10 @@
     tr.meta, tr.puzzle, tr.metafooter, tr.round-empty, tr.unassigned {
       --tr-bg: linear-gradient(var(--tint), var(--tint));
       background: var(--tr-bg), var(--meta-color);
-      &.bb-status-stuck { --tr-bg: repeating-linear-gradient(45deg, var(--stuck-yellow), var(--stuck-yellow) 10px, var(--tint) 10px, var(--tint) 20px); }
+      &.bb-status-solved { background: var(--solved-green); }
+      &.bb-status-stuck { background: var(--stuck-yellow); }
       .boring & {
         background: var(--bg-color);
-        &.bb-status-stuck { background: var(--stuck-yellow); }
       }
     }
     .bb-edit-icon, .bb-delete-icon, .bb-fix-drive, .bb-drive-status {

@@ -457,7 +457,7 @@
   {{#let nh=numHidden ps=puzzles}}
   <tbody class="meta" id="m{{puzzle._id}}" data-puzzle-id="{{puzzle._id}}"
         style="{{#unless boringMode}}--meta-color: {{color}}{{/unless}}">
-    <tr class="meta {{#if stuck puzzle}}bb-status-stuck{{/if}} {{#if collapsed}}collapsed{{/if}}">
+    <tr class="meta {{#if stuck puzzle}}bb-status-stuck{{else if puzzle.solved}}bb-status-solved{{/if}} {{#if collapsed}}collapsed{{/if}}">
       {{> blackboard_puzzle_cells _id=_id parent=parent puzzle=puzzle reorderable=reorderable collapse=true}}
     </tr>
     {{#if any canEdit (not collapsed)}}
@@ -497,7 +497,7 @@
 </template>
 
 <template name="blackboard_puzzle">
-  <tr class="puzzle {{#if stuck puzzle}}bb-status-stuck{{/if}}" draggable="{{all canEdit reorderable}}" data-puzzle-id="{{puzzle._id}}">
+  <tr class="puzzle {{#if puzzle.solved}}bb-status-solved{{else if stuck puzzle}}bb-status-stuck{{/if}}" draggable="{{all canEdit reorderable}}" data-puzzle-id="{{puzzle._id}}">
     {{> blackboard_puzzle_cells}}
  </tr>
 </template>
