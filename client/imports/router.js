@@ -40,6 +40,12 @@ page("/", BlackboardPage);
 page("/edit", EditPage);
 page("/graph", GraphPage);
 page("/map", MapPage);
+// Page.js does URL decoding before matching routes or setting params. This
+// means that puzzle links (which usually contain forward slashes via https://
+// etc.) will fail to match the previous Backbone newPuzzle route (/newPuzzle/:n/:l).
+// Rather than rely on Page.js to split the request path into puzzle name and link,
+// we'll grab the whole encoded path and split it inside the callback.
+page("/newPuzzle/*", ({ path }) => NewPuzzlePage(path));
 page("/rounds/:round", ({ params: { round } }) => RoundPage(round));
 page("/puzzles/:puzzle", ({ params: { puzzle } }) => PuzzlePage(puzzle));
 page("/puzzles/:puzzle/:view", ({ params: { puzzle, view } }) =>
@@ -73,6 +79,12 @@ export function EditPage() {
       topRight: "blackboard_status_grid",
     });
   });
+}
+
+export function NewPuzzlePage(path) {
+  [_, name, link] = path.match(/\/newPuzzle\/(.+)\/(.+)/);
+  Meteor.callAsync("newPuzzle", {name: decodeURIComponent(name), link: decodeURIComponent(link)})
+    .then(() => navigate("/"));
 }
 
 export function GraphPage() {
