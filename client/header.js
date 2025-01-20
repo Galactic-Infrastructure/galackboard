@@ -6,6 +6,7 @@ import {
 } from "/lib/imports/collections.js";
 import { hashFromNickObject } from "/lib/imports/nickEmail.js";
 import { GENERAL_ROOM_NAME } from "/lib/imports/server_settings.js";
+import { navigate } from './imports/router.js';
 import "./imports/timestamp.js";
 import "./imports/ui/components/connection_button/connection_button.js";
 
@@ -387,7 +388,7 @@ Template.header_breadcrumb_puzzle.events({
     });
     breadcrumbs_var.set(crumbs);
     if (crumbs.length === 1) {
-      share.Router.navigate("/", {trigger: true});
+      navigate("/");
     }
   }
 });
