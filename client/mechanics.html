@@ -24,6 +24,9 @@
 
 <template name="favorite_mechanics">
   {{# mechanics currentUser.favorite_mechanics}}
-    {{nullToZero currentUser.favorite_mechanics.length}} Favorite Mechanic{{#if plural currentUser.favorite_mechanics.length}}s{{/if}}
+    <i class="{{#if nullToZero currentUser.favorite_mechanics.length}}fas{{else}}far{{/if}} fa-star"></i>
+    <span class="bb-omit-when-narrow">
+      {{nullToZero currentUser.favorite_mechanics.length}} Favorite Mechanic{{#if plural currentUser.favorite_mechanics.length}}s{{/if}}
+    </span>
   {{/mechanics}}
 </template>
