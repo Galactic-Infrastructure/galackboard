@@ -78,6 +78,9 @@ Template.puzzle_info.helpers({
   stuck() {
     return this.puzzle && isStuck(this.puzzle);
   },
+  set_by() {
+    return this?.tags?.status?.touched_by;
+  },
   getPuzzle(id) {
     return Puzzles.findOne(id);
   },

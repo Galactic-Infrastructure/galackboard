@@ -39,7 +39,7 @@
   {{/if}}
   <tr><td>Status:</td>
     {{#edit_tag_value type="puzzles" id=_id name="Status" editable=true}}
-      {{#if tag "status"}}<span class="bb-who-stuck"> &mdash; by {{>gravatar_with_badges nick=set_by size=16}}</span>{{/if}}
+      {{#if tag "status"}}<span class="bb-who-stuck"> &mdash; by {{>gravatar_with_badges nick=set_by size=16}} {{nickAndName set_by}}</span>{{/if}}
     {{/edit_tag_value}}
   </tr>
   <tr><td>Mechanics:</td><td>{{> puzzle_mechanics}}{{#each mechanics}}<span class="label">{{mechanicName}}</span>{{/each}}</td></tr>
