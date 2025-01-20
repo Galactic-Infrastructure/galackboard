@@ -25,6 +25,9 @@ class PresenceManager {
         { "clients.timestamp": { $lt: removeBefore } },
         { $pull: { clients: { timestamp: { $lt: removeBefore } } } }
       );
+      await Presence.removeAsync({
+        clients: { $size: 0 },
+      });
     }, 60 * 1000);
 
     return this;
