@@ -4,6 +4,7 @@ import {
   HIDE_SOLVED,
   HIDE_SOLVED_FAVES,
   HIDE_SOLVED_METAS,
+  HIDE_TAB_SWITCHER,
   STUCK_TO_TOP,
   HIDE_USELESS_BOT_MESSAGES,
   MUTE_SOUND_EFFECTS,
@@ -39,6 +40,9 @@ Template.options_dropdown.events({
   },
   "change .bb-hide-solved-faves input"(event, template) {
     HIDE_SOLVED_FAVES.set(event.target.checked);
+  },
+  "change .bb-hide-tab-switcher input"(event, template) {
+    HIDE_TAB_SWITCHER.set(event.target.checked);
   },
   "change .bb-compact-mode input"(event, template) {
     COMPACT_MODE.set(event.target.checked);

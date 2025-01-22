@@ -9,6 +9,7 @@ import { GENERAL_ROOM_NAME } from "/lib/imports/server_settings.js";
 import { navigate } from './imports/router.js';
 import "./imports/timestamp.js";
 import "./imports/ui/components/connection_button/connection_button.js";
+import { HIDE_TAB_SWITCHER } from "./imports/settings.js";
 
 const privateMessageTransform = (msg) => ({
   _id: msg._id,
@@ -86,6 +87,15 @@ Template.header_loginmute.helpers({
   },
   isVisible(tabname) {
     return Template.instance().visibleTab.get() === tabname;
+  },
+  showTabSwitcher() {
+    return !HIDE_TAB_SWITCHER.get();
+  },
+  breadcrumbs() {
+    return breadcrumbs_var.get();
+  },
+  crumb_template() {
+    return `header_breadcrumb_${this.page}`;
   },
 });
 

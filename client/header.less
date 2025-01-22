@@ -96,19 +96,21 @@
     flex-grow: 1;
     flex-shrink: 1;
   }
+  & > .nav {
+    width: 100%;
+    border-bottom: 1px solid black;
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.5);
+    & > .nav {
+      overflow-y: scroll;
+    }
+  }
   .nav {
     height: @nav-height;
     display: flex;
-    width: -webkit-max-content;
-    width: -moz-max-content;
-    width: max-content;
-    min-width: 100%;
     flex-flow: row nowrap;
     justify-content: stretch;
     float: none;
     margin: 0px;
-    border-bottom: 1px solid black;
-    box-shadow: 0px 2px 4px rgba(0,0,0,0.5);
     & > li {
       display: flex;
       flex-grow: 0;
@@ -382,5 +384,32 @@ ul.typeahead { z-index: 1099; }
   content: attr(data-full);
   @media (max-width: 1200px)  {
     content: attr(data-abbrev);
+  }
+}
+
+.bb-tab-switcher {
+  &.open > .dropdown-menu {
+    display: flex;
+    background: url('/img/irongrip.png');
+    color: #c4c4c4;
+    flex-flow: column nowrap;
+    & > li {
+      display: flex;
+      flex-flow: row nowrap;
+      color: #c4c4c4;
+      a[href] {
+        width: 100%;
+        color: #c4c4c4;
+        &:hover { background: none; color: white;}
+      }
+      .bb-close-puzzle,
+      .puzzles-link {
+        display: none;
+      }
+    }
+  }
+
+  .bb-abbrev-when-narrow::before {
+    content: attr(data-full);
   }
 }

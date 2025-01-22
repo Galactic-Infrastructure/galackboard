@@ -27,6 +27,7 @@ export const CAP_JITSI_HEIGHT = new DefaultFalseSetting(
 export const HIDE_SOLVED = new DefaultFalseSetting("hideSolved");
 export const HIDE_SOLVED_FAVES = new DefaultFalseSetting("hideSolvedFaves");
 export const HIDE_SOLVED_METAS = new DefaultFalseSetting("hideSolvedMeta");
+export const HIDE_TAB_SWITCHER = new DefaultFalseSetting("hideTabSwitcher");
 export const STUCK_TO_TOP = new DefaultFalseSetting("stuckToTop");
 export const HIDE_USELESS_BOT_MESSAGES = new DefaultFalseSetting(
   "nobot",

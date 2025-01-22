@@ -103,16 +103,18 @@
 
 <template name="header_breadcrumbs">
 <div class='bb-breadcrumbs'>
+<div class="nav">
 <ul class="nav">
   {{#each breadcrumbs}}
     {{> Template.dynamic template=crumb_template}}
   {{/each}}
-  <li class="fill">
-    {{> header_lastchats}}
-  </li>
-  <li class="divider-vertical"></li>
-{{> header_loginmute}}
 </ul>
+<div class="fill">
+  {{> header_lastchats}}
+</div>
+<div class="divider-vertical"></div>
+{{> header_loginmute}}
+</div>
 <div class="fill"></div>
 </div>
 </template>
@@ -127,16 +129,32 @@
   <li class="loginmute">
 <!-- login/mute buttons -->
   <div class="bb-buttonbar">
+{{#if showTabSwitcher}}
+  <div class="bb-tab-switcher dropdown btn-group">
+    <button class="btn btn-small btn-inverse dropdown-toggle" data-toggle="dropdown" title="Tabs">
+      <i class="fas fa-bars-staggered"></i>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu pull-right bb-display-settings-list nav-list">
+      {{#each breadcrumbs}}
+        {{> Template.dynamic template=crumb_template}}
+      {{/each}}
+    </ul>
+  </div>
+{{/if}}
 {{#if currentPageEquals "blackboard"}}
     <div class="btn-group bb-unlock-group">
+     {{#if canEdit}}
      <a href="/" title="Protect page" data-canEdit="false"
-             class="bb-protect btn btn-small btn-inverse {{#unless canEdit}}active{{/unless}}">
+             class="bb-protect btn btn-small btn-inverse active">
       <i class="fas fa-lock"></i>
      </a>
+     {{else}}
      <a href="/edit" title="Allow edits to puzzles" data-canEdit="true"
-             class="bb-unprotect btn btn-small btn-inverse {{#if canEdit}}active{{/if}} {{#unless sessionNick}}disabled{{/unless}}">
+             class="bb-unprotect btn btn-small btn-inverse {{#unless sessionNick}}disabled{{/unless}}">
       <i class="fas fa-lock-open"></i>
      </a>
+     {{/if}}
     </div>
 {{else}}
     {{> calendar_dropdown}}
