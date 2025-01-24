@@ -150,15 +150,28 @@
       <i class="fas fa-lock"></i>
      </a>
      {{else}}
-     <a href="/edit" title="Allow edits to puzzles" data-canEdit="true"
+     <a href="/edit" title="Edit puzzles on this page" data-canEdit="true"
              class="bb-unprotect btn btn-small btn-inverse {{#unless sessionNick}}disabled{{/unless}}">
       <i class="fas fa-lock-open"></i>
      </a>
      {{/if}}
+     <a href="/logistics" title="Open big board to edit puzzles"
+             class="btn btn-small btn-inverse {{#unless sessionNick}}disabled{{/unless}}">
+      <i class="fas fa-pencil"></i>
+     </a>
     </div>
 {{else}}
+  {{#if currentPageEquals "logistics_page"}}
+    <div class="btn-group bb-unlock-group">
+    <a href="/" title="Back to home"
+            class="btn btn-small btn-inverse {{#unless sessionNick}}disabled{{/unless}}">
+      <i class="fas fa-home"></i>
+    </a>
+    </div>
+  {{else}}
     {{> calendar_dropdown}}
     {{> options_dropdown}}
+  {{/if}}
 {{/if}}
     <div class="btn-group">
      {{> connection_button style="btn-small btn-inverse"}}
