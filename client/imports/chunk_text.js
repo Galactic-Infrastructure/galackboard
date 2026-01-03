@@ -1,3 +1,5 @@
+import { collection } from "/lib/imports/collections.js";
+
 const urlRE =
   /\b(?:[a-z][\w\-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]|\((?:[^\s()<>]|(?:\([^\s()<>]+\)))*\))+(?:\((?:[^\s()<>]|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'\".,<>?«»“”‘’])/gi;
 
@@ -42,6 +44,33 @@ const linkify = extractAll(
   roomify
 );
 
+export function plain_text(text) {
+  const chunks = chunk_text(text);
+  return chunks
+    .map(({ type, content }) => {
+      switch (type) {
+        case "url":
+          return content.url;
+        case "break":
+          return "\n";
+        case "room":
+          const obj = collection(content.type)?.findOne(
+            { _id: content.id },
+            { fields: { name: 1 } }
+          );
+          if (obj) {
+            return obj.name;
+          }
+          return `#${content.type}/${content.id}`;
+        case "mention":
+          return `@${content}`;
+        default:
+          return content;
+      }
+    })
+    .join("");
+}
+
 export function chunk_text(text) {
   if (!text) {
     return [];
@@ -56,7 +85,7 @@ export function chunk_text(text) {
     if (paragraph) {
       // Pass 2: mentions
       let tail_start = 0;
-      for (let mention of paragraph.matchAll(/([\s]|^)@([a-zA-Z0-9_]*)/g)) {
+      for (let mention of paragraph.matchAll(/([\s]|^)@([a-zA-Z0-9_]+)/g)) {
         if (mention.index > tail_start || mention[1].length) {
           const interval =
             paragraph.slice(tail_start, mention.index) + mention[1];

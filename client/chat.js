@@ -27,7 +27,6 @@ import {
 import { TypingIndicatorCharacters } from "/lib/imports/settings.js";
 import {
   CAP_JITSI_HEIGHT,
-  HIDE_OLD_PRESENCE,
   HIDE_USELESS_BOT_MESSAGES,
   MUTE_SOUND_EFFECTS,
 } from "./imports/settings.js";
@@ -37,6 +36,11 @@ import { confirm } from "./imports/modal.js";
 import isVisible from "/client/imports/visible.js";
 import Favico from "favico.js";
 import { hsize } from "/client/imports/ui/components/splitter/splitter.js";
+import {
+  selectionWithin,
+  selectWithin,
+  textContent,
+} from "./imports/contenteditable_selection.js";
 
 const GENERAL_ROOM = GENERAL_ROOM_NAME;
 const GENERAL_ROOM_REGEX = new RegExp(`^${GENERAL_ROOM}$`, "i");
@@ -98,7 +102,6 @@ function assignReadMarker(element) {
 
 // Globals
 var instachat = {};
-instachat["UTCOffset"] = new Date().getTimezoneOffset() * 60000;
 instachat["alertWhenUnreadMessages"] = false;
 instachat["scrolledToBottom"] = true;
 instachat["readMarker"] = $('<div class="bb-message-last-read">read</div>');
@@ -148,7 +151,7 @@ Template.starred_messages.helpers({
       { room_name: starred_messages_room(), starred: true },
       {
         sort: [["timestamp", "asc"]],
-        transform: messageTransform,
+        transform: messageTransform(Template.currentData().canModify),
       }
     );
   },
@@ -241,23 +244,26 @@ Template.poll.events({
   },
 });
 
-function messageTransform(m) {
-  return {
-    _id: m._id,
-    message: m,
+function messageTransform(canModifyStar) {
+  return function (m) {
+    return {
+      _id: m._id,
+      message: m,
+      canModifyStar,
 
-    read() {
-      // Since a message can go from unread to read, but never the other way,
-      // use a nonreactive read at first. If it's unread, then do a reactive read
-      // to create the tracker dependency.
-      const result = Tracker.nonreactive(
-        () => m.timestamp <= Session.get("lastread")
-      );
-      if (!result) {
-        Session.get("lastread");
-      }
-      return result;
-    },
+      read() {
+        // Since a message can go from unread to read, but never the other way,
+        // use a nonreactive read at first. If it's unread, then do a reactive read
+        // to create the tracker dependency.
+        const result = Tracker.nonreactive(
+          () => m.timestamp <= Session.get("lastread")
+        );
+        if (!result) {
+          Session.get("lastread");
+        }
+        return result;
+      },
+    };
   };
 }
 
@@ -282,7 +288,7 @@ Template.messages.helpers({
     // test Session.get('nobot') last to get a fine-grained dependency
     // on the `nobot` session variable only for 'useless' messages
     const myNick = Meteor.userId();
-    const botnick = botuser()._id;
+    const botnick = botuser()?._id;
     if (m.nick === myNick) {
       return true;
     }
@@ -297,20 +303,6 @@ Template.messages.helpers({
     }
     return !HIDE_USELESS_BOT_MESSAGES.get();
   },
-  presence_too_old() {
-    if (!HIDE_OLD_PRESENCE.get()) {
-      return false;
-    }
-    // If a message is too old, it will always be too old unless the option changes,
-    // so don't re-evaluate the calculation every minute.
-    const result = Tracker.nonreactive(() => {
-      return this.message.timestamp < Session.get("currentTime") - 3600000;
-    });
-    if (!result) {
-      Session.get("currentTime");
-    }
-    return result;
-  },
   messages() {
     if (!Template.instance().waitForObservers.get()) {
       return [];
@@ -324,7 +316,7 @@ Template.messages.helpers({
       { room_name, from_chat_subscription: true },
       {
         sort: [["timestamp", "asc"]],
-        transform: messageTransform,
+        transform: messageTransform(true),
       }
     );
   },
@@ -360,6 +352,7 @@ function cleanupChat() {
   instachat.mutationObserver?.disconnect();
   instachat.readObserver?.disconnect();
   instachat.bottomObserver?.disconnect();
+  instachat.resizeObserver?.disconnect();
 }
 
 Template.messages.onDestroyed(function () {
@@ -443,6 +436,13 @@ Template.messages.onCreated(function () {
 });
 
 Template.messages.onRendered(function () {
+  const parent = this.view.firstNode()?.parentElement;
+  if (parent) {
+    instachat.resizeObserver = new ResizeObserver(function () {
+      maybeScrollMessagesView();
+    });
+    instachat.resizeObserver.observe(parent);
+  }
   const chatBottom = document.getElementById("chat-bottom");
   instachat.bottomObserver = new IntersectionObserver(function (entries) {
     if (selfScroll != null) {
@@ -820,9 +820,6 @@ Template.chat_format_body.helpers({
 });
 
 Template.messages_input.helpers({
-  show_presence() {
-    return Template.instance().show_presence.get();
-  },
   whos_here: whos_here_helper,
   typeaheadResults() {
     return Template.instance().queryCursor.get();
@@ -843,6 +840,19 @@ const MSG_AT_START_PATTERN = /^\/m(sg)? /;
 const AT_MENTION_PATTERN = /(^|[\s])@([A-Za-z_0-9]*)$/;
 const ROOM_MENTION_PATTERN = /(^|[\s])#([A-Za-z_0-9/]*)$/;
 
+Template.messages_presence.onRendered(function () {
+  this.hideHandle = Meteor.setTimeout(() => {
+    this.$(".inner-nick").animate({ width: "toggle" }, "fast");
+    delete this.hideHandle;
+  }, 5000);
+});
+
+Template.messages_presence.onDestroyed(function () {
+  if (this.hideHandle) {
+    Meteor.clearTimeout(this.hideHandle);
+  }
+});
+
 Template.messages_input.onCreated(function () {
   this.autorun(() => {
     const room_name = Session.get("room_name");
@@ -852,7 +862,6 @@ Template.messages_input.onCreated(function () {
     this.subscribe("presence-for-room", room_name);
   });
 
-  this.show_presence = new ReactiveVar(false);
   this.query = new ReactiveVar(null);
   this.queryType = new ReactiveVar(null);
   this.queryCursor = new ReactiveVar(null);
@@ -881,10 +890,10 @@ Template.messages_input.onCreated(function () {
       this.selected.set(null);
       return;
     }
-    const qdoc = { $regex: query, $options: "i" };
     let c, l;
     switch (type) {
       case "users":
+        const qdoc = { $regex: query, $options: "i" };
         c = Meteor.users.find(
           { $or: [{ _id: qdoc }, { real_name: qdoc }] },
           {
@@ -896,12 +905,21 @@ Template.messages_input.onCreated(function () {
         l = c.map((x) => x._id);
         break;
       case "rooms":
-        const orList = [{ name: qdoc }];
+        let orList;
         const [type, id] = query.split("/", 2);
         if (!id) {
-          orList.push({ type: { $regex: type, $options: "i" } });
+          orList = [
+            { type: { $regex: type, $options: "i" } },
+            {
+              type: { $in: ["rounds", "puzzles"] },
+              name: { $regex: type, $options: "i" },
+            },
+          ];
         } else {
-          orList.push({ type, _id: { $regex: id, $options: "i" } });
+          orList = [
+            { type, _id: { $regex: id } },
+            { type, name: { $regex: id, $options: "i" } },
+          ];
         }
         c = Names.find(
           { $or: orList },
@@ -990,16 +1008,20 @@ Template.messages_input.onCreated(function () {
 
   this.updateTypeahead = function () {
     const i = this.$("#messageInput");
-    const v = i.val();
-    const ss = i.prop("selectionStart");
-    const se = i.prop("selectionEnd");
-    if (ss !== se) {
+    const selection = selectionWithin(i[0]);
+    if (selection === null) {
+      return;
+    }
+    if (selection[0] !== selection[1]) {
       this.setQuery(null, null);
       return;
     }
-    const tv = v.substring(ss);
+    const position = selection[0];
+    const v = textContent(i[0]);
+    const tv = v.substring(position);
     const nextSpace = tv.search(/[\s]/);
-    const consider = nextSpace === -1 ? v : v.substring(0, ss + nextSpace);
+    const consider =
+      nextSpace === -1 ? v : v.substring(0, position + nextSpace);
     let match = consider.match(MSG_PATTERN);
     if (match) {
       this.setQuery(match[2], "users");
@@ -1024,39 +1046,44 @@ Template.messages_input.onCreated(function () {
   };
 
   this.confirmTypeahead = function (nick) {
-    console.log(nick);
     let newCaret;
     this.setQuery(null, null);
     const i = this.$("#messageInput");
-    const v = i.val();
-    const ss = i.prop("selectionStart");
+    const selection = selectionWithin(i[0]);
+    if (selection === null) {
+      return;
+    }
+    const v = textContent(i[0]);
+    const ss = selection[0];
     const tv = v.substring(ss);
     const nextSpace = tv.search(/[\s]/);
     const consider = nextSpace === -1 ? v : v.substring(0, ss + nextSpace);
     let match = consider.match(MSG_PATTERN);
     if (match) {
-      i.val(
+      i.prop(
+        "innerText",
         v.substring(0, match[0].length - match[2].length) +
           nick +
           " " +
           v.substring(consider.length)
       );
       newCaret = match[0].length - match[2].length + nick.length + 1;
-      i[0].setSelectionRange(newCaret, newCaret);
+      selectWithin(i[0], newCaret);
       i.focus();
       return;
     }
     for (const pattern of [AT_MENTION_PATTERN, ROOM_MENTION_PATTERN]) {
       match = consider.match(pattern);
       if (match) {
-        i.val(
+        i.prop(
+          "innerText",
           v.substring(0, consider.length - match[2].length) +
             nick +
             " " +
             v.substring(consider.length)
         );
         newCaret = consider.length - match[2].length + nick.length + 1;
-        i[0].setSelectionRange(newCaret, newCaret);
+        selectWithin(i[0], newCaret);
         i.blur();
         i.focus();
         return;
@@ -1068,7 +1095,7 @@ Template.messages_input.onCreated(function () {
     this.typing.set(null);
     let to;
     let n;
-    if (!message) {
+    if (!message?.trim().length) {
       return false;
     }
     const args = {
@@ -1109,8 +1136,11 @@ Template.messages_input.onCreated(function () {
           }
           if (to === "bot") {
             // allow 'bot' as a shorthand for 'codexbot'
-            to = botuser()._id;
-            continue;
+            const bot = botuser();
+            if (bot) {
+              to = bot._id;
+              continue;
+            }
           }
           [extra, rest] = rest.split(/\s+([^]*)/, 2);
           to += " " + extra;
@@ -1164,18 +1194,14 @@ function format_body(msg) {
 }
 
 Template.messages_input.events({
-  "click .bb-show-whos-here"(event, template) {
-    const rvar = template.show_presence;
-    rvar.set(!rvar.get());
-  },
-  "keydown textarea"(event, template) {
+  "keydown #messageInput"(event, template) {
     let msg, query, s;
     template.error.set(null);
     if (["Up", "ArrowUp"].includes(event.key)) {
       if (template.query.get() != null) {
         event.preventDefault();
         template.moveActive(-1);
-      } else if (event.target.selectionEnd === 0) {
+      } else if (selectionWithin(event.target)?.[1] === 0) {
         // Checking that the cursor is at the start of the box.
         query = {
           room_name: Session.get("room_name"),
@@ -1191,8 +1217,8 @@ Template.messages_input.events({
         msg = Messages.findOne(query, { sort: { timestamp: -1 } });
         if (msg != null) {
           template.history_ts = msg.timestamp;
-          event.target.value = format_body(msg);
-          event.target.setSelectionRange(0, 0);
+          event.target.innerText = format_body(msg);
+          selectWithin(event.target, 0);
         }
         return;
       }
@@ -1201,7 +1227,9 @@ Template.messages_input.events({
       if (template.query.get() != null) {
         event.preventDefault();
         template.moveActive(1);
-      } else if (event.target.selectionStart === event.target.value.length) {
+      } else if (
+        selectionWithin(event.target)?.[0] === textContent(event.target).length
+      ) {
         // 40 is arrow down. Checking that the cursor is at the end of the box.
         if (template.history_ts == null) {
           return;
@@ -1220,11 +1248,11 @@ Template.messages_input.events({
         if (msg != null) {
           template.history_ts = msg.timestamp;
           const body = format_body(msg);
-          event.target.value = body;
-          event.target.setSelectionRange(body.length, body.length);
+          event.target.innerText = body;
+          selectWithin(event.target, body.length);
         } else {
           template.typing.set(null);
-          event.target.value = "";
+          event.target.innerText = "";
           template.history_ts = null;
         }
         return;
@@ -1240,9 +1268,9 @@ Template.messages_input.events({
       } else {
         // implicit submit on enter (but not shift-enter or ctrl-enter)
         const $message = $(event.currentTarget);
-        const message = $message.val();
+        const message = textContent($message[0]);
         if (template.submit(message)) {
-          $message.val("");
+          $message.prop("innerText", "");
         }
       }
     }
@@ -1251,7 +1279,6 @@ Template.messages_input.events({
     if (event.key === "Tab") {
       s = template.selected.get();
       if (s != null) {
-        console.log(s);
         event.preventDefault();
         template.confirmTypeahead(s);
       }
@@ -1271,7 +1298,7 @@ Template.messages_input.events({
   },
   "input #messageInput"(event, template) {
     const minChars = TypingIndicatorCharacters.get();
-    const value = event.currentTarget.value;
+    const value = textContent(event.currentTarget);
     let time = null;
     if (
       minChars > 0 &&

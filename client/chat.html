@@ -11,7 +11,7 @@
 </template>
 
 <template name="embedded_chat">
-  <div style="{{#with jitsiSize}}--jitsi-height: {{this}}px;{{/with}}">
+  <div style="{{#with jitsiSize}}--jitsi-height: {{this}}px;{{/with}}" class="bb-embedded-chat">
     <div class="bb-message-container">
       {{> messages }}
     </div>
@@ -51,25 +51,18 @@ Click here to stay in this meeting instead.{{/if}}">
   </div>
 </template>
 
+<template name="messages_presence">
+  <span class="nick {{#if nickNear nick}}near{{/if}}" title="{{nickAndName nick}}">
+    {{> gravatar nick=nick size=16}}
+    {{#unless (equal nick mynick)}}<span class="inner-nick">{{nickOrName nick}}</span>{{/unless}}
+  </span>
+</template>
+
 <template name="messages_input">
-  {{#if show_presence}}
-    <table class="bb-chat-presence-block" title="Who's here?">
-      <tbody>
-        {{#each whos_here}}
-        <tr>
-          <td class="bb-avatar">{{>gravatar nick=nick size=48}}</td>
-          <td>{{nickAndName nick}}</td>
-          <td>{{nickLocation nick}}</td>
-        </tr>
-        {{/each}}
-      </tbody>
-    </table>
-  {{/if}}
+  <div class="bb-chat-presence-block" title="Who's here?">
+    {{#each whos_here}}{{> messages_presence}}{{/each}}
+  </div>
   <div class="bb-chat-input bb-chat-footer">
-    <button class="btn btn-mini btn-inverse bb-show-whos-here {{#if show_presence}}active{{/if}}" title="See who's here">
-      <i class="fas fa-angle-double-{{#if show_presence}}down{{else}}up{{/if}}"></i>
-      <i class="fas fa-address-card"></i>
-    </button>
     {{>Template.contentBlock}}
     <form id="messageForm" class="navbar-form dropup">
       {{#with typeaheadResults}}
@@ -87,16 +80,15 @@ Click here to stay in this meeting instead.{{/if}}">
           {{/each}}
         </ul>
       {{/with}}
-      <textarea id="messageInput" class="input-block-level {{#if error}}error{{/if}}" rows="1"
-              placeholder="Type your message and press enter..."
-              autocomplete="off"></textarea>
+      <div id="messageInput" class="input-block-level {{#if error}}error{{/if}}" contenteditable="plaintext-only"
+          role="textbox" data-placeholder="Type your message and press enter..."></div>
       <div class="tooltip fade top {{#if error}}in{{else}}out{{/if}}" style="top: -33px; left: 114.094px; display: block;"><div class="tooltip-arrow"></div><div class="tooltip-inner">{{error}}</div></div>
     </form>
   </div>
 </template>
 
 <template name="message_delete_button">
-  <div class="bb-delete-message"></div>
+  <div class="bb-delete-message" title="Delete this message" role="button"></div>
 </template>
 
 <template name="starred_messages">
@@ -122,11 +114,13 @@ Click here to stay in this meeting instead.{{/if}}">
     {{/if}}
     <div class="media-body bb-message-body">
       <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
-      {{#unless message.to}}
-        {{! can't star a PM. }}
-        <div class="bb-message-star"></div>
-      {{/unless}}
-      {{> message_delete_button}}
+      <div class="bb-message-hover-controls">
+        {{#unless message.to}}
+          {{! can't star a PM. }}
+          <div class="bb-message-star" title="{{#unless canModifyStar}}Unlock the page to {{/unless}}{{#if message.starred}}Unstar{{else}}Star{{/if}} this message" role="button" aria-pressed="{{message.starred}}" aria-disabled="{{#unless canModifyStar}}true{{/unless}}"></div>
+        {{/unless}}
+        {{> message_delete_button}}
+      </div>
       <h5 class="media-heading">
         {{#if message.tweet}}
           <i class="fab fa-twitter"></i> @<a href="https://twitter.com/{{message.nick}}" target="_blank">{{message.nick}}</a> <a href="https://twitter.com/{{message.nick}}/status/{{message.tweet.id_str}}" target="_blank">tweeted</a>:
@@ -196,15 +190,10 @@ Click here to stay in this meeting instead.{{/if}}">
     {{#each messages}}{{scrollHack}}
       {{#if message.dawn_of_time}}<!-- Channel creation -->
       {{else if message.presence}}
-        {{#unless presence_too_old}}
-          <div class="bb-message-presence {{message.presence}}" title="{{pretty_ts message.timestamp}}: {{message.body}}" data-read="{{#unless read}}un{{/unless}}read">
-            {{>gravatar nick=message.nick size=16 }}{{message.nick}}
-          </div>
-        {{/unless}}
       {{else if message.system}}
         <div class="bb-message-system" data-read="{{#unless read}}un{{/unless}}read">
           <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
-          {{> message_delete_button}}
+          <div class="bb-message-hover-controls">{{> message_delete_button}}</div>
           {{#with message.file_upload}}
             <span data-mime-type="{{mimeType}}">{{fileType mimeType}}</span> "<a target="_blank" href="{{webViewLink}}" rel="noopener noreferrer">{{name}}</a>" added to drive folder.
           {{else}}
@@ -215,7 +204,7 @@ Click here to stay in this meeting instead.{{/if}}">
         {{#if message.action}}
           <div class="bb-message-action {{#if includes message.mention mynick}}bb-message-mention-me{{/if}}" data-nick="{{message.nick}}" data-read="{{#unless read}}un{{/unless}}read">
             <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
-            {{> message_delete_button}}
+            <div class="bb-message-hover-controls">{{> message_delete_button}}</div>
             {{>gravatar nick=message.nick size=16 }}
             <span title="{{message.nick}}{{nickLocation message.nick}}" class="{{#if nickNear message.nick}}near{{/if}}">{{nickOrName message.nick}}</span> {{>chat_format_body body=message.body bodyIsHtml=message.bodyIsHtml}}
           </div>

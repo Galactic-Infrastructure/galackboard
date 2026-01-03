@@ -31,11 +31,11 @@ jobs:
           submodules: recursive
       - name: Read Meteor version
         run: sed -e "s/@/_VERSION=/" < .meteor/release >> "$GITHUB_ENV"
-      - name: Use Node.js 14.x
+      - name: Use Node.js 20.x
         uses: actions/setup-node@master
         with:
-          node-version: 14.x
-      - uses: actions/cache@v4
+          node-version: 20.x
+      - uses: actions/cache@v5
         id: cache-meteor
         with:
           path: ~/.meteor
@@ -45,7 +45,7 @@ jobs:
         if: steps.cache-meteor.outputs.cache-hit != 'true'
         with:
           meteor-release: ${{ env.METEOR_VERSION }}
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: cache-npm
         with:
           path: ~/.npm
@@ -61,7 +61,7 @@ jobs:
         env:
           PLAYWRIGHT_BROWSER: ${{ matrix.browser }}
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5.1.2
+        uses: codecov/codecov-action@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           name: run-${{ matrix.test_script }}-${{ matrix.browser }}

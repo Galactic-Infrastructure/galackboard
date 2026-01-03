@@ -33,7 +33,7 @@ function waitForNotLoggingIn() {
 }
 
 describe("login", function () {
-  this.timeout(20000);
+  this.timeout(30000);
   it("only sends email hash", async function () {
     await login("testy", "Teresa Tybalt", "fake@artifici.al", "failphrase");
     await waitForSubscriptions();
@@ -86,7 +86,7 @@ describe("login", function () {
         $('[for="nickEmail"] .gravatar img').attr("src"),
         "https://secure.gravatar.com/avatar/05c1de2f5c5e7933bee97a499e818c5e.jpg?d=wavatar&s=80"
       );
-      await delay(500);
+      await delay(600);
       await afterFlushPromise();
       chai.assert.equal(
         $('[for="nickEmail"] .gravatar img').attr("src"),

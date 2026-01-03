@@ -1,18 +1,5 @@
-import canonical from "/lib/imports/canonical.js";
 import { PRESENCE_KEEPALIVE_MINUTES } from "/lib/imports/constants.js";
-import { Messages, Presence, Puzzles } from "/lib/imports/collections.js";
-
-// look up a real name, if there is one
-async function maybe_real_name(nick) {
-  const n = await Meteor.users.findOneAsync(canonical(nick));
-  return n?.real_name || nick;
-}
-
-const common_presence_fields = {
-  system: true,
-  to: null,
-  bodyIsHtml: false,
-};
+import { Presence, Puzzles } from "/lib/imports/collections.js";
 
 class PresenceManager {
   async start() {

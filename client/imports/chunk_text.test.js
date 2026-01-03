@@ -1,5 +1,7 @@
-import { chunk_text, chunk_html } from "./chunk_text.js";
+import { chunk_text, chunk_html, plain_text } from "./chunk_text.js";
 import chai from "chai";
+import sinon from "sinon";
+import { BBCollection } from "/lib/imports/collections.js";
 
 describe("chunk_text", function () {
   it("inserts newline before mention", () =>
@@ -15,6 +17,11 @@ describe("chunk_text", function () {
     chai.assert.deepEqual(chunk_text("@test_1x: yo"), [
       { type: "mention", content: "test_1x" },
       { type: "text", content: ": yo" },
+    ]));
+
+  it("empty @ is plain text", () =>
+    chai.assert.deepEqual(chunk_text("foo @ bar"), [
+      { type: "text", content: "foo @ bar" },
     ]));
 
   it("matches urls without protocol", () =>
@@ -103,6 +110,47 @@ describe("chunk_text", function () {
         ]
       );
     });
+  });
+});
+
+describe("plain_text", () => {
+  before(function () {
+    const puzzles = sinon.replace(
+      BBCollection,
+      "puzzles",
+      new Mongo.Collection(null)
+    );
+    puzzles.insert({ _id: "sixteenletters16", name: "Mentioned Puzzle Name" });
+  });
+  after(function () {
+    sinon.verifyAndRestore();
+  });
+  it("restores breaks", function () {
+    chai.assert.equal(plain_text("foo\n\nbar"), "foo\n\nbar");
+  });
+  it("restores people mentions", function () {
+    chai.assert.equal(
+      plain_text("hello @foo, how are you?"),
+      "hello @foo, how are you?"
+    );
+  });
+  it("restores urls", function () {
+    chai.assert.equal(
+      plain_text("a link to www.foo.com/bar.gif in the chat"),
+      "a link to http://www.foo.com/bar.gif in the chat"
+    );
+  });
+  it("replaces room mentions", function () {
+    chai.assert.equal(
+      plain_text("go to #puzzles/sixteenletters16 and see if they need help"),
+      "go to Mentioned Puzzle Name and see if they need help"
+    );
+  });
+  it("restores nonexistent room mentions", function () {
+    chai.assert.equal(
+      plain_text("go to #puzzles/seventeenletters and see if they need help"),
+      "go to #puzzles/seventeenletters and see if they need help"
+    );
   });
 });
 

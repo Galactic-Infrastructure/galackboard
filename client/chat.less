@@ -20,11 +20,49 @@
       border-bottom-right-radius: 5px;
     }
 }
+@gravatar-size: 48px;
+.bb-embedded-chat {
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
 .bb-chat-messages {
+  position: relative;
   margin-bottom: 41px; /* 41px navbar - 15px padding on #bb-body */
   @chat-arrow-size: 6px;
   @chat-arrow-height: 15px;
-  @gravatar-size: 48px;
+  .bb-message-hover-controls {
+    height: 20px;
+    position: absolute;
+    right: 5px;
+    bottom: calc(100% - 5px);
+    display: none;
+    background-color: var(--bg-color);
+    padding: 2px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    z-index: 1;
+  }
+  .media-object.pull-left {
+    float: none;
+    position: absolute;
+  }
+  .bb-message {
+    overflow: visible;
+  }
+  .bb-message, .bb-message-system, .bb-message-action {
+    position: relative;
+    &:hover .bb-message-hover-controls {
+      display: flex;
+    }
+  }
   .media + .media.bb-message-followup {
       margin-top: -9px;
       &:before, &:after {
@@ -49,10 +87,17 @@
     padding: 0px;
     margin-bottom: 0px;
     clear: both;
+    .bb-message-hover-controls {
+      position: static;
+      display: flex;
+      float: right;
+      border: none;
+      background: none;
+      padding: none;
+    }
   }
   .bb-message-star {
     display: inline-block;
-    float: right;
     padding-right: 0.3em;
     position: relative;
     width: 1em;
@@ -68,7 +113,6 @@
   }
   .bb-delete-message {
     position: relative;
-    float: right;
     cursor: pointer;
     padding-right: 0.3em;
     height: 1em;
@@ -91,6 +135,9 @@
     color: transparent;
   }
   &.can-modify-star {
+    .bb-message-star {
+      cursor: pointer;
+    }
     .bb-message-star::after {
       color: var(--text-color);
     }
@@ -125,6 +172,7 @@
     }
   }
   .bb-message-body {
+    margin-left: @gravatar-size + 10px;
     min-height: @gravatar-size; /* match gravatar height */
     background-color: var(--bg-color);
     box-sizing: border-box;
@@ -156,22 +204,6 @@
       --bg-color: rgb(31, 54, 28);
     }
   }
-  .bb-message-presence {
-    display: inline-block;
-    padding-right: 10px;
-    &:before {
-      .glyphicon;
-    }
-    &.join:before {
-      content: "\f067"
-    }
-    &.part:before {
-      content: "\f068"
-    }
-    & > img {
-      padding-right: 3px;
-    }
-  }
   .bb-message-system {
     color: #888;
     font-size: 12px;
@@ -188,12 +220,18 @@
     }
   }
   .bb-message-action {
-    font-weight: bold; background: #eee; color: #444;
+    &, & .bb-message-hover-controls {
+      background: #eee;
+      color: #444;
+    }
+    font-weight: bold; 
     padding: 2px 0;
     
     .darkMode & {
-      background: #444;
-      color: #eee;
+      &, & .bb-message-hover-controls {
+        background: #444;
+        color: #eee;
+      }
     }
     &.bb-message-mention-me {
       background:#ded;
@@ -327,7 +365,7 @@ table.poll {
       /* hide chat bubble arrows when display gets too narrow */
       &:before, &:after { display: none; }
       .timestamp { float: right; /* still */ }
-      .media-object.pull-left { float: left; /* still */ margin: 0px; }
+      .media-object.pull-left { margin: 0px; }
       .img-rounded {
                 border-radius: 0px;
           -moz-border-radius: 0px;
@@ -338,10 +376,15 @@ table.poll {
     .bb-message-action, .bb-message-system { padding-left: 6px; }
     .bb-message-last-read { margin-left: 0px; margin-right: 0px; }
     .bb-message-body {
+      margin-left: @gravatar-size;
       /* min-height: 0; */
               border-radius: 0px;
         -moz-border-radius: 0px;
       -webkit-border-radius: 0px;
+    }
+    .bb-message-hover-controls {
+      right: 0;
+      border-radius: 0;
     }
   }
 }
@@ -359,48 +402,60 @@ table.poll {
 */
 
 .bb-chat-presence-block {
-  display: block;
-  position: absolute;
-  bottom: calc(36px + var(--jitsi-height, 0px));
-  left: 0;
-  right: 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: clip;
   width: 100%;
-  max-height: 150px;
-  overflow: auto;
   background: var(--bg-color);
-  opacity: .85;
   border-top: 1px solid var(--text-color);
-  .bb-avatar {
-    width: 48px;
+  .nick {
+    height: 20px;
+    align-items: center;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-right: 2px;
+    .inner-nick {
+      white-space: nowrap;
+    }
   }
 }
 
 .bb-chat-footer {
-  height: 36px;
   background: url('/img/irongrip.png');
   display: flex;
   flex-direction: row;
-  .bb-show-whos-here {
-    flex-grow: 0;
-    i {display: block; }
-  }
 }
 
 #messageForm {
   flex-grow: 1;
-  padding-left: 0;
-  padding-right: 10px;
-  textarea {
-    overflow: hidden;
-    margin-bottom: 0; margin-top: 5px;
-    resize: none; height: 30px;
+  padding-left: 10px;
+  button + & {
+    padding-left: 0px;
   }
+  padding-right: 10px;
   .typeahead {
     display: block;
   }
 }
 #messageInput {
   margin-top: 3px;
+  overflow: hidden;
+  margin-bottom: 0;
+  margin-top: 5px;
+  resize: none;
+  min-height: 30px;
+  background-color: var(--bg-color);
+  padding: 5px;
+  white-space: -moz-pre-space;
+  &:empty::before {
+    content: attr(data-placeholder);
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    opacity: .5;
+  }
   &.error {
     background-color: pink;
     border: 1px solid red;
