@@ -9,6 +9,8 @@ export const SHARE_GROUP = () =>
   Meteor.settings.drive_share_group || process.env.DRIVE_SHARE_GROUP;
 export const SHARED_DRIVE = () =>
   Meteor.settings.shared_drive || process.env.SHARED_DRIVE;
+export const SHEET_TEMPLATE_ID = () =>
+  Meteor.settings.sheet_template_id || process.env.SHEET_TEMPLATE_ID;
 
 // Because sometimes user rate limits are 403 instead of 429, we have to retry them.
 export const RETRY_RESPONSE_CODES = [

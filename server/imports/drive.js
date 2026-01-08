@@ -5,6 +5,7 @@ import {
   CODEX_ACCOUNT,
   SHARE_GROUP,
   SHARED_DRIVE,
+  SHEET_TEMPLATE_ID,
 } from "./googlecommon.js";
 import * as batch from "/server/imports/batch.js";
 
@@ -18,7 +19,7 @@ const XLSX_MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 const MAX_RESULTS = 200;
 const SPREADSHEET_TEMPLATE = Assets.getBinaryAsync("spreadsheet-template.xlsx");
-const GOOGLE_SHEET_TEMPLATE_ID = null;
+const GOOGLE_SHEET_TEMPLATE_ID = SHEET_TEMPLATE_ID();
 
 const PERMISSION_LIST_FIELDS =
   "permissions(role,type,emailAddress,allowFileDiscovery)";
