@@ -425,6 +425,30 @@ export class Drive {
     await ensureNamedPermissions(this.drive, this.rootFolder, email);
   }
 
+  async uploadImage(nick, mimeType, b64data) {
+    const imageFolder = await awaitOrEnsureFolder(
+      this.drive,
+      "Images",
+      this.rootFolder
+    );
+    const name = `${nick}-${Date.now()}.${mimeType.split("/")[1]}`;
+    const resp = (
+      await this.drive.files.create({
+        resource: {
+          name,
+          mimeType,
+          parents: [imageFolder.id],
+        },
+        media: {
+          mimeType,
+          body: Buffer.from(b64data, "base64"),
+        },
+        supportsAllDrives: true,
+      })
+    ).data;
+    return { id: resp.id, name, webViewLink: resp.webViewLink };
+  }
+
   // purge `rootFolder` and everything in it
   async purge() {
     return await rmrfFolder(this.drive, rootFolder);

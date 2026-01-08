@@ -1312,6 +1312,26 @@ Template.messages_input.events({
   "keyup/click/touchend/mouseup #messageInput"(event, template) {
     template.updateTypeahead();
   },
+  /** @param {ClipboardEvent} event */
+  async "paste #messageInput"(event, template) {
+    const item = (await navigator.clipboard.read())?.[0];
+    const mimeType = item?.types.find((t) => t.startsWith("image/"));
+    if (mimeType) {
+      const blob = await item.getType(mimeType);
+      const dataURL = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+      const b64Data = dataURL.split(",")[1];
+      await Meteor.callAsync("uploadImage", {
+        roomName: Session.get("room_name"),
+        nick: Meteor.userId(),
+        mimeType,
+        b64Data,
+      });
+    }
+  },
   "click #messageInputTypeahead a[data-value]"(event, template) {
     event.preventDefault();
     template.confirmTypeahead(event.currentTarget.dataset.value);
