@@ -30,6 +30,10 @@
   align-items: stretch;
   overflow: hidden;
 }
+#bb-logistics-edit-dialog.modal {
+  top: 10%;
+  transition: opacity 0.15s ease-in-out;
+}
 #bb-logistics-edit-dialog .modal-body {
   background-color: var(--much-lighter);
   border-radius: 6px;
@@ -56,7 +60,7 @@
   flex-shrink: 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-template-rows: repeat(auto-fill, 20px);
+  // grid-template-rows: repeat(auto-fill, fit-content);
   gap: 4px;
   padding: 4px;
   overflow-y: auto;
@@ -131,10 +135,10 @@
 }
 .bb-logistics-controls {
   display: flex;
-  justify-content: space-around;
   .btn-group {
-    display: block;
+    display: contents;
     > .btn-mini {
+      flex-grow: 1;
       line-height: 18px;
     }
   }
@@ -159,7 +163,7 @@
 }
 .bb-logistics-meta {
   border: 1px solid black;
-  --num-rows: calc(2 + (var(--num-feeders, 0))/2);
+  // --num-rows: calc(2 + (var(--num-feeders, 0))/2);
   background-color: var(--meta-color);
   .dragover-highlight(var(--meta-color));
   &.solved {
@@ -201,7 +205,7 @@
       position: absolute;
       top: 0px;
       right: 0px;
-      font-size: 8px;
+      font-size: 16px;
       line-height: 10px;
       padding: 0px 2px;
     }
@@ -226,7 +230,7 @@
   margin: 0px;
 }
 .bb-logistics-standalone {
-  --num-rows: calc(var(--num-feeders, 0)/2);
+  // --num-rows: calc(var(--num-feeders, 0)/2);
   gap: 4px;
   margin-right: 1px;
   a.puzzle, div.bb-puzzle-title {
@@ -246,7 +250,7 @@
 }
 .bb-logistics-meta, .bb-logistics-standalone {
   border-collapse: collapse;
-  grid-row-end: span var(--num-rows);
+  // grid-row-end: span var(--num-rows);
 }
 
 .bb-logistics-info {

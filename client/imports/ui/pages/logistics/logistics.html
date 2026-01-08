@@ -4,9 +4,8 @@
       <section class="bb-logistics-metas">
         <div class="bb-logistics-controls">
           <div class="btn-group">
-            <span class="btn btn-mini btn-success disabled active"><i class="fas fa-plus"></i> New</span>
-            <span id="bb-logistics-new-round" class="btn btn-mini btn-inverse {{#if creatingRound}}open{{/if}}">
-              <i class="fas fa-folder-open"></i> Round
+            <button id="bb-logistics-new-round" class="btn btn-mini btn-inverse {{#if creatingRound}}open{{/if}}">
+              <i class="fas fa-folder-open"></i> Add Round
               {{#if creatingRound}}
                 <ul class="dropdown-menu stay-open">
                   <li>{{> create_object type="rounds" done=doneCreatingRound tooltipPosition="right" clickToCommit=true params=newRoundParams}}</li>
@@ -18,17 +17,17 @@
                   <li><a data-create-placeholder-meta="true">With Placeholder Meta</a></li>
                 </ul>
               {{/if}}
-            </span>
+            </button>
             <button id="bb-logistics-new-meta" class="btn btn-mini btn-primary" data-toggle="dropdown" data-target="#bb-logistics-new-meta">
-              <i class="fas fa-filter"></i> Meta
+              <i class="fas fa-filter"></i> Add Meta
               {{>logistics_round_menu}}
             </button>
             <button id="bb-logistics-new-standalone" class="btn btn-mini" data-toggle="dropdown" data-target="#bb-logistics-new-standalone">
-              <i class="fas fa-puzzle-piece"></i> Puzzle
+              <i class="fas fa-puzzle-piece"></i> Add Puzzle
               {{>logistics_round_menu}}
             </button>
           </div>
-          <span id="bb-logistics-delete" class="btn btn-mini btn-danger disabled active" title="Drag a puzzle here to delete it."><i class="fas fa-trash"></i> Delete</span>
+          <span id="bb-logistics-delete" class="btn btn-mini btn-danger disabled active" title="Drag a puzzle here to delete it."><i class="fas fa-trash"></i> Drag here to delete</span>
         </div>
         {{#each r in rounds}}
           {{#each m in (metas r)}}
