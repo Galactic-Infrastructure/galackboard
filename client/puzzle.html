@@ -201,11 +201,10 @@
     <a href="#" class="bb-go-fullscreen" title="Full screen"><i class='fas fa-expand-arrows-alt'></i></a>
   {{/if}}
 </div>
-{{#if puzzle.spreadsheet}}
-  {{! hide iframe when not current view for faster tab change }}
-  <iframe class="bb-spreadsheet-frame" frameborder='0' src='{{spread_link puzzle.spreadsheet}}?widget=true&chrome=false&rm=embedded'
-          style="{{#unless currentViewIs "spreadsheet"}}display:none{{/unless}}"></iframe>
-{{/if}}
+{{! we don't render the actual iframe via meteor template; instead we do some
+    black magic to cache and load iframes
+    hide iframe when not current view for faster tab change }}
+<div class="bb-spreadsheet-frame" style="{{#if currentViewIs "spreadsheet"}}display:contents{{else}}display:none{{/if}}"></div>
 {{#if puzzle.doc}}
   {{! Because of a bug in google docs when you load a doc in ain iframe with
       display: none, then make it visible, we have to load the doc lazily.

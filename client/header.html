@@ -147,17 +147,17 @@
      {{#if canEdit}}
      <a href="/" title="Protect page" data-canEdit="false"
              class="bb-protect btn btn-small btn-inverse active">
-      <i class="fas fa-lock"></i>
+      <i class="fas fa-floppy-disk"></i>
      </a>
      {{else}}
      <a href="/edit" title="Edit puzzles on this page" data-canEdit="true"
              class="bb-unprotect btn btn-small btn-inverse {{#unless sessionNick}}disabled{{/unless}}">
-      <i class="fas fa-lock-open"></i>
+      <i class="fas fa-pen-to-square"></i>
      </a>
      {{/if}}
      <a href="/logistics" title="Open big board to edit puzzles"
              class="btn btn-small btn-inverse {{#unless sessionNick}}disabled{{/unless}}">
-      <i class="fas fa-pencil"></i>
+      <i class="fas fa-chart-simple"></i>
      </a>
     </div>
 {{else}}

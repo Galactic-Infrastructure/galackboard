@@ -258,6 +258,60 @@ Template.header_breadcrumb_extra_links.helpers({
   },
 });
 
+// Black magic spreadsheet iframe restoration...
+function writeSpreadsheetIframe(id) {
+  const frameParent = document.getElementsByClassName("bb-spreadsheet-frame")[0];
+  if (!frameParent || !id) {
+    return null;
+  }
+  let iframe = document.getElementById(`bb-spreadsheet-${id}`);
+  if (!iframe) {
+    iframe = document.createElement("iframe");
+    iframe.id = `bb-spreadsheet-${id}`;
+    iframe.frameBorder = 0;
+    iframe.src = `https://docs.google.com/spreadsheets/d/${id}/edit?widget=true&chrome=false&rm=embedded`;
+    document.body.appendChild(iframe);
+  }
+  const existingIframe = frameParent.firstChild;
+  if (existingIframe) {
+    const theirId = existingIframe.id;
+    if (theirId !== `bb-spreadsheet-${id}`) {
+      removeSpreadsheetIframe(existingIframe);
+      frameParent.moveBefore(iframe, null);
+    }
+  } else {
+    frameParent.moveBefore(iframe, null);
+  }
+  return iframe;
+}
+
+function removeSpreadsheetIframe(elt, id) {
+  elt = elt || document.getElementById(`bb-spreadsheet-${id}`);
+  if (!elt) {
+    return;
+  }
+  const storage = document.getElementById("bb-sheets-iframe-storage");
+  storage.moveBefore(elt, null);
+  // Keep max 10 iframes at a time. No one's that hard of a power user right?
+  if (storage.childNodes.length > 10) {
+    storage.firstChild.remove();
+  }
+}
+
+Template.puzzle.onRendered(function () {
+  this.autorun(function () {
+    const id = Session.get("id");
+    const puzzle = Puzzles.findOne(id);
+    this.spreadsheetIframe = writeSpreadsheetIframe(puzzle?.spreadsheet);
+  });
+});
+
+Template.puzzle.onDestroyed(function () {
+  const id = Session.get("id");
+  const puzzle = Puzzles.findOne(id);
+  removeSpreadsheetIframe(this.spreadsheetIframe, puzzle?.spreadsheet);
+});
+
 Template.puzzle.onCreated(function () {
   this.docLoaded = new ReactiveVar(false);
   this.autorun(() => {
@@ -274,9 +328,11 @@ Template.puzzle.onCreated(function () {
     const puzzle = Puzzles.findOne(id);
     const name = puzzle?.name || id;
     $("title").text(`${capType(puzzle)}: ${name}`);
+    this.spreadsheetIframe = writeSpreadsheetIframe(puzzle?.spreadsheet);
   });
   this.autorun(function () {
     if (!Session.equals("type", "puzzles")) {
+      removeSpreadsheetIframe(this.spreadsheetIframe, undefined);
       return;
     }
     if (currentViewIs(Puzzles.findOne(Session.get("id")), "info")) {

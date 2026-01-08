@@ -400,6 +400,12 @@ Template.header_breadcrumb_puzzle.events({
     if (crumbs.length === 1) {
       navigate("/");
     }
+    // See puzzle.js for the iframe black magic we're doing here.
+    const spreadsheetId = this.id && Puzzles.findOne(this.id)?.spreadsheet;
+    if (spreadsheetId) {
+      const spreadsheetIframe = document.getElementById(`bb-spreadsheet-${spreadsheetId}`)
+      spreadsheetIframe.remove();
+    }
   }
 });
 
