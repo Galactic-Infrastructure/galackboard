@@ -18,6 +18,7 @@ const XLSX_MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 const MAX_RESULTS = 200;
 const SPREADSHEET_TEMPLATE = Assets.getBinaryAsync("spreadsheet-template.xlsx");
+const GOOGLE_SHEET_TEMPLATE_ID = null;
 
 const PERMISSION_LIST_FIELDS =
   "permissions(role,type,emailAddress,allowFileDiscovery)";
@@ -142,16 +143,26 @@ async function ensure(drive, name, folder, settings) {
       mimeType: settings.driveMimeType,
       parents: [folder.id],
     };
-    doc = (
-      await drive.files.create({
-        resource: doc,
-        media: {
-          mimeType: settings.uploadMimeType,
-          body: await settings.uploadTemplate(),
-        },
-        supportsAllDrives: true,
-      })
-    ).data;
+    if (GOOGLE_SHEET_TEMPLATE_ID !== null) {
+      doc = (
+        await drive.files.copy({
+          fileId: GOOGLE_SHEET_TEMPLATE_ID,
+          requestBody: doc,
+          supportsAllDrives: true,
+        })
+      ).data;
+    } else {
+      doc = (
+        await drive.files.create({
+          resource: doc,
+          media: {
+            mimeType: settings.uploadMimeType,
+            body: await settings.uploadTemplate(),
+          },
+          supportsAllDrives: true,
+        })
+      ).data;
+    }
   }
   await ensurePermissions(drive, doc.id);
   return doc;
