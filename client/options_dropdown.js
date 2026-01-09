@@ -7,6 +7,7 @@ import {
   HIDE_TAB_SWITCHER,
   STUCK_TO_TOP,
   HIDE_USELESS_BOT_MESSAGES,
+  HIDE_UNREAD_FAVICON_BADGE,
   MUTE_SOUND_EFFECTS,
   LESS_COLORFUL,
   START_VIDEO_MUTED,
@@ -54,6 +55,9 @@ Template.options_dropdown.events({
   },
   "change .bb-bot-mute input"(event, template) {
     HIDE_USELESS_BOT_MESSAGES.set(event.target.checked);
+  },
+  "change .bb-hide-unread-favicon-badge input"(event, template) {
+    HIDE_UNREAD_FAVICON_BADGE.set(event.target.checked);
   },
   "change .bb-sfx-mute input"(event, template) {
     MUTE_SOUND_EFFECTS.set(event.target.checked);

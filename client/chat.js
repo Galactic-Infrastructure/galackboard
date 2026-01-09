@@ -27,6 +27,7 @@ import {
 import { TypingIndicatorCharacters } from "/lib/imports/settings.js";
 import {
   CAP_JITSI_HEIGHT,
+  HIDE_UNREAD_FAVICON_BADGE,
   HIDE_USELESS_BOT_MESSAGES,
   MUTE_SOUND_EFFECTS,
 } from "./imports/settings.js";
@@ -1382,7 +1383,7 @@ const updateNotice = _.debounce(function (unread, mention) {
     if (mention !== lastMention) {
       favicon.badge(mention, { bgColor: "#00f" });
     }
-  } else {
+  } else if (!HIDE_UNREAD_FAVICON_BADGE.get()) {
     if (unread !== lastUnread) {
       favicon.badge(unread, { bgColor: "#000" });
     }

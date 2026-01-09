@@ -33,6 +33,9 @@ export const HIDE_USELESS_BOT_MESSAGES = new DefaultFalseSetting(
   "nobot",
   "noBot"
 );
+export const HIDE_UNREAD_FAVICON_BADGE = new DefaultFalseSetting(
+  "hideUnreadFaviconBadge"
+);
 export const MUTE_SOUND_EFFECTS = new DefaultFalseSetting("mute", "sfxMute");
 export const LESS_COLORFUL = new DefaultFalseSetting("boringMode");
 export const SORT_REVERSE = new DefaultFalseSetting("sortReverse");
