@@ -446,7 +446,11 @@ export class Drive {
         supportsAllDrives: true,
       })
     ).data;
-    return { id: resp.id, name, webViewLink: resp.webViewLink };
+    return {
+      id: resp.id,
+      name,
+      webViewLink: `https://drive.google.com/file/d/${resp.id}/view?usp=sharing`,
+    };
   }
 
   // purge `rootFolder` and everything in it
