@@ -449,6 +449,7 @@ export class Drive {
     return {
       id: resp.id,
       name,
+      // resp.webViewLink is a lie: https://stackoverflow.com/q/13652364/1797728
       webViewLink: `https://drive.google.com/file/d/${resp.id}/view?usp=sharing`,
     };
   }
