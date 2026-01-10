@@ -1,4 +1,4 @@
-import { Readable } from "stream";
+import { PassThrough, Readable } from "stream";
 import delay from "delay";
 import {
   ROOT_FOLDER_NAME,
@@ -423,6 +423,35 @@ export class Drive {
 
   async shareFolder(email) {
     await ensureNamedPermissions(this.drive, this.rootFolder, email);
+  }
+
+  async uploadImage(nick, mimeType, b64data) {
+    const imageFolder = await awaitOrEnsureFolder(
+      this.drive,
+      "Images",
+      this.rootFolder
+    );
+    const name = `${nick}-${Date.now()}.${mimeType.split("/")[1]}`;
+    const resp = (
+      await this.drive.files.create({
+        resource: {
+          name,
+          mimeType,
+          parents: [imageFolder.id],
+        },
+        media: {
+          mimeType,
+          body: new PassThrough().end(Buffer.from(b64data, "base64")),
+        },
+        supportsAllDrives: true,
+      })
+    ).data;
+    return {
+      id: resp.id,
+      name,
+      // resp.webViewLink is a lie: https://stackoverflow.com/q/13652364/1797728
+      webViewLink: `https://drive.google.com/file/d/${resp.id}/view?usp=sharing`,
+    };
   }
 
   // purge `rootFolder` and everything in it

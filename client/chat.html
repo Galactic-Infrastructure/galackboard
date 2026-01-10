@@ -195,7 +195,11 @@ Click here to stay in this meeting instead.{{/if}}">
           <div class="pull-right timestamp">{{pretty_ts message.timestamp}}</div>
           <div class="bb-message-hover-controls">{{> message_delete_button}}</div>
           {{#with message.file_upload}}
+            {{#if nick}}
+            {{nick}} uploaded the image "<a target="_blank" href="{{webViewLink}}" rel="noopener noreferrer">{{name}}</a>" to the drive folder.
+            {{else}}
             <span data-mime-type="{{mimeType}}">{{fileType mimeType}}</span> "<a target="_blank" href="{{webViewLink}}" rel="noopener noreferrer">{{name}}</a>" added to drive folder.
+            {{/if}}
           {{else}}
             {{>chat_format_body body=message.body bodyIsHtml=message.bodyIsHtml}}
           {{/with}}
