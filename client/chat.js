@@ -485,6 +485,31 @@ function whos_here_helper() {
   );
 }
 
+const isUploadingImage = new ReactiveVar(false);
+
+/**
+ * @param {string} mimeType
+ * @param {Blob} blob
+ */
+async function uploadImage(mimeType, blob) {
+  isUploadingImage.set(true);
+
+  const dataURL = await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+  const b64Data = dataURL.split(",")[1];
+  await Meteor.callAsync("uploadImage", {
+    roomName: Session.get("room_name"),
+    nick: Meteor.userId(),
+    mimeType,
+    b64Data,
+  });
+
+  isUploadingImage.set(false);
+}
+
 Template.embedded_chat.onCreated(function () {
   this.jitsi = new ReactiveVar(null);
   this.jitsiReady = new ReactiveVar(false);
@@ -526,6 +551,53 @@ function jitsiRoomSubject(type, id) {
     return GENERAL_ROOM_NAME;
   } else {
     return "Video Call";
+  }
+}
+
+/** @param {DragEvent} event */
+function windowDropHandler(event) {
+  if ([...event.dataTransfer.items].some((item) => item.kind === "file")) {
+    event.preventDefault();
+  }
+}
+
+/** @param {DragEvent} event */
+function windowDragOverHandler(event) {
+  const fileItems = [...event.dataTransfer.items].filter(
+    (item) => item.kind === "file"
+  );
+  if (fileItems.length > 0) {
+    event.preventDefault();
+    if (!document.getElementById("bb-file-drop").contains(event.target)) {
+      event.dataTransfer.dropEffect = "none";
+    }
+  }
+}
+
+/** @param {DragEvent} event */
+function dropTargetDragOverHandler(event) {
+  const fileItems = [...(event.dataTransfer?.items ?? [])].filter(
+    (item) => item.kind === "file"
+  );
+  if (fileItems.length > 0) {
+    event.preventDefault();
+    if (fileItems.some((item) => item.type.startsWith("image/"))) {
+      event.dataTransfer.dropEffect = "copy";
+    } else {
+      event.dataTransfer.dropEffect = "none";
+    }
+  }
+}
+
+/** @param {DragEvent} event */
+async function dropTargetDropHandler(event) {
+  $("#bb-file-drop").removeClass("active");
+  event.preventDefault();
+  const files = [...(event.dataTransfer?.items ?? [])]
+    .map((item) => item.getAsFile())
+    .filter((file) => !!file);
+  for (const file of files) {
+    await uploadImage(file.type, file);
   }
 }
 
@@ -630,12 +702,28 @@ Template.embedded_chat.onRendered(function () {
       );
     } catch (error) {}
   });
+  window.addEventListener("drop", windowDropHandler);
+  window.addEventListener("dragover", windowDragOverHandler);
+  document
+    .getElementById("bb-file-drop")
+    .addEventListener("dragover", dropTargetDragOverHandler);
+  document
+    .getElementById("bb-file-drop")
+    .addEventListener("drop", dropTargetDropHandler);
 });
 
 Template.embedded_chat.onDestroyed(function () {
   this.unsetCurrentJitsi();
   $(window).off("unload", this.unsetCurrentJitsi);
   this.jitsi.get()?.dispose();
+  window.removeEventListener("drop", windowDropHandler);
+  window.removeEventListener("dragover", windowDragOverHandler);
+  document
+    .getElementById("bb-file-drop")
+    .removeEventListener("dragover", dropTargetDragOverHandler);
+  document
+    .getElementById("bb-file-drop")
+    .removeEventListener("drop", dropTargetDropHandler);
 });
 
 Template.embedded_chat.helpers({
@@ -716,6 +804,12 @@ Template.embedded_chat.events({
   },
   "click .bb-jitsi-cap-height.capped"(event, template) {
     CAP_JITSI_HEIGHT.set(false);
+  },
+  "dragenter .bb-embedded-chat"(event, template) {
+    $("#bb-file-drop").addClass("active");
+  },
+  "dragleave #bb-file-drop"(event, template) {
+    $("#bb-file-drop").removeClass("active");
   },
 });
 
@@ -833,6 +927,9 @@ Template.messages_input.helpers({
   },
   error() {
     return Template.instance().error.get();
+  },
+  isUploading() {
+    return isUploadingImage.get();
   },
 });
 
@@ -1319,18 +1416,7 @@ Template.messages_input.events({
     const mimeType = item?.types.find((t) => t.startsWith("image/"));
     if (mimeType) {
       const blob = await item.getType(mimeType);
-      const dataURL = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-      });
-      const b64Data = dataURL.split(",")[1];
-      await Meteor.callAsync("uploadImage", {
-        roomName: Session.get("room_name"),
-        nick: Meteor.userId(),
-        mimeType,
-        b64Data,
-      });
+      await uploadImage(mimeType, blob);
     }
   },
   "click #messageInputTypeahead a[data-value]"(event, template) {
