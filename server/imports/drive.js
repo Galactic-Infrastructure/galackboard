@@ -1,4 +1,4 @@
-import { Readable } from "stream";
+import { PassThrough, Readable } from "stream";
 import delay from "delay";
 import {
   ROOT_FOLDER_NAME,
@@ -441,7 +441,7 @@ export class Drive {
         },
         media: {
           mimeType,
-          body: Buffer.from(b64data, "base64"),
+          body: new PassThrough().end(Buffer.from(b64data, "base64")),
         },
         supportsAllDrives: true,
       })
