@@ -555,7 +555,10 @@ Template.logistics_meta.events({
   },
   "dragover .bb-logistics-meta"(event, template) {
     if (event.originalEvent.dataTransfer.types.includes(PUZZLE_MIME_TYPE)) {
-      if (draggedPuzzle.equals("meta", template.data.meta._id)) {
+      if (
+        draggedPuzzle.equals("meta", template.data.meta._id) ||
+        draggedPuzzle.equals("id", template.data.meta._id)
+      ) {
         event.originalEvent.dataTransfer.dropEffect = "none";
       } else {
         event.originalEvent.dataTransfer.dropEffect = "link";
@@ -607,7 +610,10 @@ Template.logistics_meta.events({
       const data = JSON.parse(
         event.originalEvent.dataTransfer.getData(PUZZLE_MIME_TYPE)
       );
-      if (data.meta === template.data.meta._id) {
+      if (
+        data.meta === template.data.meta._id ||
+        data.id === template.data.meta._id
+      ) {
         return;
       }
       Meteor.serializeCall("feedMeta", data.id, template.data.meta._id);
@@ -666,7 +672,10 @@ Template.logistics_meta.helpers({
     );
   },
   fromAnotherMeta() {
-    if (draggedPuzzle.equals("id", undefined)) {
+    if (
+      draggedPuzzle.equals("id", undefined) ||
+      draggedPuzzle.equals("id", this.meta._id)
+    ) {
       return false;
     }
     return !draggedPuzzle.equals("meta", this.meta._id);

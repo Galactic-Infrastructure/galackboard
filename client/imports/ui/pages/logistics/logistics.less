@@ -33,6 +33,12 @@
 #bb-logistics-edit-dialog.modal {
   top: 10%;
   transition: opacity 0.15s ease-in-out;
+  height: 0;
+  width: 0;
+}
+#bb-logistics-edit-dialog.modal.in {
+  height: auto;
+  width: 560px;
 }
 #bb-logistics-edit-dialog .modal-body {
   background-color: var(--much-lighter);
@@ -60,7 +66,6 @@
   flex-shrink: 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  // grid-template-rows: repeat(auto-fill, fit-content);
   gap: 4px;
   padding: 4px;
   overflow-y: auto;
@@ -162,6 +167,7 @@
   }
 }
 .bb-logistics-meta {
+  min-height: 150px;
   border: 1px solid black;
   // --num-rows: calc(2 + (var(--num-feeders, 0))/2);
   background-color: var(--meta-color);
@@ -231,13 +237,14 @@
 }
 .bb-logistics-standalone {
   // --num-rows: calc(var(--num-feeders, 0)/2);
+  grid-template-rows: repeat(auto-fill, minmax(22px, 1fr));
   gap: 4px;
   margin-right: 1px;
   a.puzzle, div.bb-puzzle-title {
     .input-block-level {
       min-height: unset;
     }
-    height: 16px;
+    height: 20px;
     line-height: 16px;
     // This lets us use outline as a black border while still having the left border based on solved/stuck state.
     margin-left: 1px;
