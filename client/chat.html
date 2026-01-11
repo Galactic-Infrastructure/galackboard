@@ -84,13 +84,18 @@ Click here to stay in this meeting instead.{{/if}}">
           {{/each}}
         </ul>
       {{/with}}
-      <div id="messageInput" class="input-block-level {{#if error}}error{{/if}}" contenteditable="plaintext-only"
-          role="textbox" data-placeholder="Type your message and press enter..."></div>
       {{#if isUploading}}
       <div class="bb-upload-spinner">
         <i class="fas fa-spin fa-spinner" title="Uploading image..."></i>
       </div>
+      {{else}}
+      <label class="btn bb-upload-button" title="Upload image">
+        <i class="fas fa-image"></i>
+        <input type="file" accept="image/*" id="bb-file-upload">
+      </label>
       {{/if}}
+      <div id="messageInput" class="input-block-level {{#if error}}error{{/if}}" contenteditable="plaintext-only"
+          role="textbox" data-placeholder="Type your message and press enter..."></div>
       <div class="tooltip fade top {{#if error}}in{{else}}out{{/if}}" style="top: -33px; left: 114.094px; display: block;"><div class="tooltip-arrow"></div><div class="tooltip-inner">{{error}}</div></div>
     </form>
   </div>

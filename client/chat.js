@@ -1429,6 +1429,13 @@ Template.messages_input.events({
   "mouseleave #messageInputTypeahead"(event, template) {
     template.activateFirst();
   },
+  "click .bb-upload-btn"(event, template) {
+    $("#bb-file-upload").click();
+  },
+  "change #bb-file-upload"(event, template) {
+    const file = event.target.files[0];
+    uploadImage(file.type, file);
+  },
 });
 
 var updateLastRead = function () {
