@@ -82,7 +82,7 @@ Meteor.startup(async function () {
         round: civ._id,
         link: "https://www.mit.edu/~puzzle/2011/puzzles/civilization/technological_crisis_at_shikakuro_farms/",
         tags: [{ name: "Technology", value: "Agriculture" }],
-        mechanics: ["nikoli_variants"],
+        mechanics: ["logic_puzzle"],
       });
       const charm = await Meteor.callAsync("newPuzzle", {
         name: "Charm School",
@@ -102,7 +102,7 @@ Meteor.startup(async function () {
         round: civ._id,
         link: "https://www.mit.edu/~puzzle/2011/puzzles/civilization/drafting_table/",
         tags: [{ name: "Technology", value: "Draftsmanship" }],
-        mechanics: ["programming"],
+        mechanics: ["code_monkey"],
       });
       const racking = await Meteor.callAsync("newPuzzle", {
         name: "Racking Your Brains",
@@ -121,7 +121,7 @@ Meteor.startup(async function () {
         round: civ._id,
         link: "https://www.mit.edu/~puzzle/2011/puzzles/civilization/hints_with_a_bit_of_love/",
         tags: [{ name: "Technology", value: "...and Literature" }],
-        mechanics: ["cryptic_clues"],
+        mechanics: ["cryptic_command"],
       });
       const bank = await Meteor.callAsync("newPuzzle", {
         name: "Letter Bank",
@@ -182,7 +182,7 @@ Meteor.startup(async function () {
         round: civ._id,
         link: "https://www.mit.edu/~puzzle/2011/puzzles/civilization/puzzle_box/",
         tags: [{ name: "Technology", value: "Invention" }],
-        mechanics: ["video_game"],
+        mechanics: ["video_games"],
       });
       const magic = await Meteor.callAsync("newPuzzle", {
         name: "Sufficiently Advanced Technology",
@@ -208,7 +208,7 @@ Meteor.startup(async function () {
         round: civ._id,
         link: "https://www.mit.edu/~puzzle/2011/puzzles/civilization/laureate/",
         tags: [{ name: "Technology", value: "Carbon Nanotubules" }],
-        mechanics: ["crossword", "cryptic_clues"],
+        mechanics: ["crossword_clues", "cryptic_command"],
       });
       const princesses = await Meteor.callAsync("newPuzzle", {
         name: "The Sport Of Princesses",
@@ -396,7 +396,7 @@ Meteor.startup(async function () {
         round: emotions._id,
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/clueless.html",
         feedsInto: [disgust._id],
-        mechanics: ["crossword", "cryptic_clues"],
+        mechanics: ["crossword_clues", "cryptic_command"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "In Memoriam",
@@ -410,7 +410,7 @@ Meteor.startup(async function () {
         round: emotions._id,
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/freak_out.html",
         feedsInto: [fear._id],
-        mechanics: ["music_identification"],
+        mechanics: ["music_id"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "Let's Get Ready To Jumble",
@@ -418,7 +418,6 @@ Meteor.startup(async function () {
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/lets_get_ready_to_jumble.html",
         feedsInto: [anger._id],
         tags: [{ name: "Temperature", value: "11" }],
-        mechanics: ["creative_submission"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "AKA",
@@ -438,7 +437,7 @@ Meteor.startup(async function () {
         round: emotions._id,
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/a_learning_path.html",
         feedsInto: [disgust._id, fear._id],
-        mechanics: ["nikoli_variants"],
+        mechanics: ["logic_puzzle"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "Cross Words",
@@ -446,7 +445,7 @@ Meteor.startup(async function () {
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/cross_words.html",
         feedsInto: [anger._id],
         tags: [{ name: "Temperature", value: "1" }],
-        mechanics: ["crossword"],
+        mechanics: ["crossword_clues"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "We Are All Afraid To Die",
@@ -480,7 +479,7 @@ Meteor.startup(async function () {
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/caged.html",
         feedsInto: [joy._id, sadness._id],
         tags: [{ name: "Borders", value: "5" }],
-        mechanics: ["crossword"],
+        mechanics: ["crossword_clues"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "Minority Report",
@@ -494,7 +493,7 @@ Meteor.startup(async function () {
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/asteroids.html",
         feedsInto: [anger._id],
         tags: [{ name: "Temperature", value: "3" }],
-        mechanics: ["video_game"],
+        mechanics: ["video_games"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "Good Fences Make Sad and Disgusted Neighbors",
@@ -502,7 +501,7 @@ Meteor.startup(async function () {
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/good_fences_make_sad_and_disgusted_neighbors.html",
         feedsInto: [sadness._id, disgust._id],
         tags: [{ name: "Borders", value: "2" }],
-        mechanics: ["nikoli_variants"],
+        mechanics: ["logic_puzzle"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "Face Your Fears",
@@ -538,7 +537,7 @@ Meteor.startup(async function () {
         round: emotions._id,
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/crossed_paths.html",
         feedsInto: [joy._id],
-        mechanics: ["crossword"],
+        mechanics: ["crossword_clues"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "On the A Line",
@@ -573,7 +572,7 @@ Meteor.startup(async function () {
         link: "https://web.mit.edu/puzzle/www/2018/full/puzzle/nobody_likes_sad_songs.html",
         feedsInto: [sadness._id],
         tags: [{ name: "Borders", value: "2" }],
-        mechanics: ["music_identification"],
+        mechanics: ["music_id"],
       });
       await Meteor.callAsync("newPuzzle", {
         name: "Irritating Places",
