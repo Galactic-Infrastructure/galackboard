@@ -17,7 +17,7 @@ jobs:
         run: |
           mkdir -p ./pr
           echo ${{ github.event.number }} > ./pr/NR
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: pr
           path: pr/
@@ -41,17 +41,17 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: 14.x
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: cache-meteor
         with:
           path: ~/.meteor
           key: "${{ runner.os }}-meteor-install-\
             ${{ hashFiles('.meteor/versions') }}"
-      - uses: meteorengineer/setup-meteor@v2
+      - uses: meteorengineer/setup-meteor@v3
         if: steps.cache-meteor.outputs.cache-hit != 'true'
         with:
           meteor-release: ${{ env.METEOR_VERSION }}
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: cache-npm
         with:
           path: ~/.npm
@@ -65,7 +65,7 @@ jobs:
       - name: build
         run: "~/.meteor/meteor build --directory ${{ runner.temp }}\
           /build-${{ matrix.name }}"
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.name }}
           path: |
