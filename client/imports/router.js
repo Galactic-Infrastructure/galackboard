@@ -83,8 +83,10 @@ export function EditPage() {
 
 export function NewPuzzlePage(path) {
   [_, name, link] = path.match(/\/newPuzzle\/(.+)\/(.+)/);
-  Meteor.callAsync("newPuzzle", {name: decodeURIComponent(name), link: decodeURIComponent(link)})
-    .then(() => navigate("/"));
+  Meteor.callAsync("newPuzzle", {
+    name: decodeURIComponent(name),
+    link: decodeURIComponent(link),
+  }).then(() => navigate("/"));
 }
 
 export function GraphPage() {

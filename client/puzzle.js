@@ -260,7 +260,9 @@ Template.header_breadcrumb_extra_links.helpers({
 
 // Black magic spreadsheet iframe restoration...
 function writeSpreadsheetIframe(id) {
-  const frameParent = document.getElementsByClassName("bb-spreadsheet-frame")[0];
+  const frameParent = document.getElementsByClassName(
+    "bb-spreadsheet-frame"
+  )[0];
   if (!frameParent || !id) {
     return null;
   }

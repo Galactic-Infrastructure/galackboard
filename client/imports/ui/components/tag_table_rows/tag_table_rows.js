@@ -67,16 +67,14 @@ Template.tag_table_rows.helpers({
         ?.tags || {};
     const result = [];
     for (let canon of Object.keys(tags).sort()) {
-      if (
-        !(
-          (Session.equals("currentPage", "blackboard") &&
-            (canon === "status" ||
-              (this.type !== "rounds" && canon === "answer"))) ||
-          ((Session.equals("currentPage", "puzzle") ||
-            Session.equals("currentPage", "logistics_page")) &&
-            (canon === "answer" || canon === "backsolve" || canon === "status"))
-        )
-      ) {
+      if (!(
+        (Session.equals("currentPage", "blackboard") &&
+          (canon === "status" ||
+            (this.type !== "rounds" && canon === "answer"))) ||
+        ((Session.equals("currentPage", "puzzle") ||
+          Session.equals("currentPage", "logistics_page")) &&
+          (canon === "answer" || canon === "backsolve" || canon === "status"))
+      )) {
         const t = tags[canon];
         result.push({
           _id: `${this.id}/${canon}`,

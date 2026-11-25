@@ -12,7 +12,8 @@ export default function colorFromThingWithTags(thing) {
   // with "stuck yellow" or "solved green"
   let hue = parseInt(hash.substring(0, 4), 16) % (360 - 150);
   if (hue > 30) hue += 150;
-  const saturation = ((parseInt(hash.substring(4, 6), 16)/ 255.0) ** 0.5) * 50 + 50;
+  const saturation =
+    (parseInt(hash.substring(4, 6), 16) / 255.0) ** 0.5 * 50 + 50;
   const lightness =
     Math.pow(parseInt(hash.substring(6, 8), 16) / 255.0, 0.5) * 50;
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;

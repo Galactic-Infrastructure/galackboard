@@ -12,7 +12,7 @@ import { pretty_collection } from "/lib/imports/collections.js";
 import isDuplicateError from "/lib/imports/duplicate.js";
 import * as callin_types from "/lib/imports/callin_types.js";
 
-export default scripts.codex = function (robot) {
+export default (scripts.codex = function (robot) {
   //# ANSWERS
   async function targetByName(msg, name, who) {
     const target = await callAs("getByName", who, {
@@ -659,22 +659,16 @@ export default scripts.codex = function (robot) {
   robot.commands.push(
     "bot share <email> - share files to your drive account to deanonymize"
   );
-  robot.respond(
-    rejoin(/share /, thingRE, /$/i),
-    async function (msg) {
-      const emailAddress = strip(msg.match[1]);
-      try {
-        await callAs("shareFolder", msg.envelope.user.id, emailAddress);
-        await msg.reply(
-          { useful: true },
-          `OK, sharing files to ${emailAddress}. Please refresh to apply changes.`
-        );
-      } catch (error) {
-        await msg.reply(
-          { useful: true },
-          `Sorry, there was an error: ${error}`
-        );
-      }
+  robot.respond(rejoin(/share /, thingRE, /$/i), async function (msg) {
+    const emailAddress = strip(msg.match[1]);
+    try {
+      await callAs("shareFolder", msg.envelope.user.id, emailAddress);
+      await msg.reply(
+        { useful: true },
+        `OK, sharing files to ${emailAddress}. Please refresh to apply changes.`
+      );
+    } catch (error) {
+      await msg.reply({ useful: true }, `Sorry, there was an error: ${error}`);
     }
-  );
-};
+  });
+});

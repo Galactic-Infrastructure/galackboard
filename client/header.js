@@ -6,7 +6,7 @@ import {
 } from "/lib/imports/collections.js";
 import { hashFromNickObject } from "/lib/imports/nickEmail.js";
 import { GENERAL_ROOM_NAME } from "/lib/imports/server_settings.js";
-import { navigate } from './imports/router.js';
+import { navigate } from "./imports/router.js";
 import "./imports/timestamp.js";
 import "./imports/ui/components/connection_button/connection_button.js";
 import { HIDE_TAB_SWITCHER } from "./imports/settings.js";
@@ -109,7 +109,9 @@ function clickOutsideAvatarDropdownHandler(event) {
 
 Template.header_loginmute.events({
   "click .bb-share"(event, template) {
-    const str = prompt("Enter email of Google Account you wish to share the folder to:");
+    const str = prompt(
+      "Enter email of Google Account you wish to share the folder to:"
+    );
     if (str === null) {
       return;
     }
@@ -300,7 +302,7 @@ Tracker.autorun(function () {
   }
   if (leaf_type === undefined) return;
 
-  crumbs.push({page: 'puzzle', type: leaf_type, id: leaf_id});
+  crumbs.push({ page: "puzzle", type: leaf_type, id: leaf_id });
 
   breadcrumbs_var.set(crumbs);
 });
@@ -388,7 +390,9 @@ Template.header_breadcrumb_puzzle.helpers({
 Template.header_breadcrumb_puzzle.events({
   "click .bb-close-puzzle"(event, template) {
     let crumbs = breadcrumbs_var.get().slice();
-    crumbs = crumbs.filter(w => w.id !== this.id && w.id !== undefined).map(w => ({...w}));
+    crumbs = crumbs
+      .filter((w) => w.id !== this.id && w.id !== undefined)
+      .map((w) => ({ ...w }));
     let lastCrumb = crumbs.at(-1);
     Session.set({
       type: lastCrumb.type,
@@ -403,10 +407,12 @@ Template.header_breadcrumb_puzzle.events({
     // See puzzle.js for the iframe black magic we're doing here.
     const spreadsheetId = this.id && Puzzles.findOne(this.id)?.spreadsheet;
     if (spreadsheetId) {
-      const spreadsheetIframe = document.getElementById(`bb-spreadsheet-${spreadsheetId}`)
+      const spreadsheetIframe = document.getElementById(
+        `bb-spreadsheet-${spreadsheetId}`
+      );
       spreadsheetIframe.remove();
     }
-  }
+  },
 });
 
 Template.header_breadcrumbs.helpers({
