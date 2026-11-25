@@ -1,4 +1,18 @@
 .current-onduty {
+  display: inline-block;
+  padding-left: 6px;
+  padding-right: 6px;
+  border: 1px solid var(--barely-darker);
+  border-radius: 3px;
+  &.nobody {
+    background-color: var(--stuck-yellow);
+  }
+  .onduty-control > & {
+    // Match the claim/release button it's attached to
+    border-right-width: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
   font-size: 16px;
   line-height: 16px;
   height: 16px;
