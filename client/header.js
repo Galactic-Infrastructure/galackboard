@@ -300,7 +300,7 @@ Tracker.autorun(function () {
   for (let crumb of crumbs) {
     if (crumb.id === leaf_id) return;
   }
-  if (leaf_type === undefined) return;
+  if (leaf_type !== "puzzles") return;
 
   crumbs.push({ page: "puzzle", type: leaf_type, id: leaf_id });
 
@@ -394,15 +394,14 @@ Template.header_breadcrumb_puzzle.events({
       .filter((w) => w.id !== this.id && w.id !== undefined)
       .map((w) => ({ ...w }));
     let lastCrumb = crumbs.at(-1);
+    const closingCurrent = Session.equals("id", this.id);
     Session.set({
-      type: lastCrumb.type,
-      id: lastCrumb.id,
       breadcrumbs_leaf_type: lastCrumb.type,
       breadcrumbs_leaf_id: lastCrumb.id,
     });
     breadcrumbs_var.set(crumbs);
-    if (crumbs.length === 1) {
-      navigate("/");
+    if (closingCurrent) {
+      navigate(crumbs.length === 1 ? "/" : `/puzzles/${lastCrumb.id}`);
     }
     // See puzzle.js for the iframe black magic we're doing here.
     const spreadsheetId = this.id && Puzzles.findOne(this.id)?.spreadsheet;
@@ -410,7 +409,7 @@ Template.header_breadcrumb_puzzle.events({
       const spreadsheetIframe = document.getElementById(
         `bb-spreadsheet-${spreadsheetId}`
       );
-      spreadsheetIframe.remove();
+      spreadsheetIframe?.remove();
     }
   },
 });
