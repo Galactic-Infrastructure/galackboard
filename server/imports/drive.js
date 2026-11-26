@@ -473,6 +473,7 @@ export var FailDrive = (function () {
       this.prototype.renamePuzzle = skip("renamePuzzle");
       this.prototype.deletePuzzle = skip("deletePuzzle");
       this.prototype.shareFolder = skip("shareFolder");
+      this.prototype.uploadImage = skip("uploadImage");
       this.prototype.purge = skip("purge");
     }
   };

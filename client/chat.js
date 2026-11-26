@@ -494,21 +494,26 @@ const isUploadingImage = new ReactiveVar(false);
  */
 async function uploadImage(mimeType, blob) {
   isUploadingImage.set(true);
+  try {
+    await sendImage(mimeType, blob);
+  } finally {
+    isUploadingImage.set(false);
+  }
+}
 
-  const dataURL = await new Promise((resolve) => {
+async function sendImage(mimeType, blob) {
+  const dataURL = await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
     reader.readAsDataURL(blob);
   });
   const b64Data = dataURL.split(",")[1];
   await Meteor.callAsync("uploadImage", {
     roomName: Session.get("room_name"),
-    nick: Meteor.userId(),
     mimeType,
     b64Data,
   });
-
-  isUploadingImage.set(false);
 }
 
 Template.embedded_chat.onCreated(function () {
@@ -596,7 +601,7 @@ async function dropTargetDropHandler(event) {
   event.preventDefault();
   const files = [...(event.dataTransfer?.items ?? [])]
     .map((item) => item.getAsFile())
-    .filter((file) => !!file);
+    .filter((file) => file?.type.startsWith("image/"));
   for (const file of files) {
     await uploadImage(file.type, file);
   }
@@ -1413,11 +1418,12 @@ Template.messages_input.events({
   },
   /** @param {ClipboardEvent} event */
   async "paste #messageInput"(event, template) {
-    const item = (await navigator.clipboard.read())?.[0];
-    const mimeType = item?.types.find((t) => t.startsWith("image/"));
-    if (mimeType) {
-      const blob = await item.getType(mimeType);
-      await uploadImage(mimeType, blob);
+    const clipboard = event.originalEvent.clipboardData;
+    // Copied spreadsheet cells etc. come with a picture too; paste the text.
+    if (clipboard.types.includes("text/plain")) return;
+    const file = [...clipboard.files].find((f) => f.type.startsWith("image/"));
+    if (file) {
+      await uploadImage(file.type, file);
     }
   },
   "click #messageInputTypeahead a[data-value]"(event, template) {
