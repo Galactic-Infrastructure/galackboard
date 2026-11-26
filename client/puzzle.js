@@ -252,6 +252,12 @@ Template.puzzle.events({
   },
 });
 
+Template.recreate_on_change.helpers({
+  keys() {
+    return [this.key];
+  },
+});
+
 Template.header_breadcrumb_extra_links.helpers({
   currentViewIs(view) {
     return currentViewIs(this, view);

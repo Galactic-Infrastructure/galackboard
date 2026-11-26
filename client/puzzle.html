@@ -212,14 +212,18 @@
       eagerly.}}
   {{#if docLoaded}}
     {{! hide iframe when not current view for faster tab change }}
+    {{#recreate_on_change key=puzzle.doc}}
     <iframe class="bb-spreadsheet-frame" frameborder='0' src='{{doc_link puzzle.doc}}?widget=true&chrome=false&rm=embedded'
             style="{{#unless currentViewIs "doc"}}display:none{{/unless}}"></iframe>
+    {{/recreate_on_change}}
   {{/if}}
 {{/if}}
 {{#if embeddable puzzle.link}}
   {{! hide iframe when not current view for faster tab change }}
+  {{#recreate_on_change key=puzzle.link}}
   <iframe class="bb-puzzle-frame" frameborder='0' src='{{puzzle.link}}'
           style="{{#unless currentViewIs "puzzle"}}display:none;{{/unless}}"></iframe>
+  {{/recreate_on_change}}
 {{/if}}
 {{#if currentViewIs "info"}}
   {{> puzzle_info}}
@@ -229,6 +233,13 @@
   {{> puzzle_callin_modal}}
 {{/with}}
 {{/with}}
+</template>
+
+<template name="recreate_on_change">
+  {{! Render contents, except render a fresh copy whenever `key` changes
+      (like React's `key`) to avoid unwanted browser Back/Forward history
+      entries from changing an existing iframe's src }}
+  {{#each k in keys}}{{> Template.contentBlock ..}}{{/each}}
 </template>
 
 <template name="puzzle_info_frame">

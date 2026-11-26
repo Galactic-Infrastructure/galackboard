@@ -184,6 +184,7 @@ export function navigate(to) {
   if (typeof to !== "string") {
     throw new Error("target of navigate must be string");
   }
+  if (to === location.pathname) return; // don't add a duplicate history entry
   page(to);
 }
 
