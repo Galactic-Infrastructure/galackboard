@@ -250,7 +250,7 @@ Template.blackboard.helpers({
   },
   stuckPuzzles() {
     return Puzzles.find({
-      "tags.status.value": /^stuck/i,
+      "tags.stuckness.value": /^stuck/i,
     })
       .fetch()
       .filter((puzzle) => {

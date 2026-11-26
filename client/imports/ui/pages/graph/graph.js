@@ -278,7 +278,7 @@ Template.graph.onRendered(function () {
         puzzles: 1,
         solved: 1,
         "tags.color": 1,
-        "tags.status": 1,
+        "tags.stuckness": 1,
       },
     }
   ).observe({
